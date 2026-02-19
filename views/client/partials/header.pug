@@ -1,1 +1,80 @@
-header Header
+header.header
+  // TOP BAR
+  .top-bar
+    .container.d-flex.justify-content-between
+      .top-bar-left
+        a(href="")
+          i.fas.fa-phone-alt
+          |  0123456789
+        a(href="mailto:support@sapo.vn" class="d-none d-md-inline")
+          i.fas.fa-envelope
+          |  support@gmail.com
+      .top-bar-right.d-flex.align-items-center
+        a(href="#")
+          i.fas.fa-box
+          |  Kiểm tra đơn hàng
+
+  // MAIN HEADER
+  .main-header
+    .container
+      .row.align-items-center
+        // Logo
+        .col-lg-3.col-md-12.text-center.text-lg-left.mb-3.mb-lg-0
+          .d-flex.align-items-center.justify-content-center.justify-content-lg-start
+            span.logo-text
+              | SHOP 
+              span.logo-orange ABC
+            // SVG Icon bồn tắm
+            svg(width="40" height="30" viewBox="0 0 24 24" fill="none" stroke="#d35400" stroke-width="1.5" class="ml-2")
+              path(d="M2 12h20a2 2 0 0 1 2 2v2a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6v-2a2 2 0 0 1 2-2z")
+              path(d="M7 12V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5")
+
+        // Search
+        .col-lg-6.col-md-8
+          form(action="/search" method="GET")
+            .input-group.search-group
+              input.form-control(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm")
+              .input-group-append
+                button.btn(type="submit")
+                  i.fas.fa-search
+
+        // Icons
+        .col-lg-3.col-md-4.header-actions.d-flex.justify-content-end
+          .header-action-item
+            i.far.fa-user
+            span Tài khoản
+          .header-action-item
+            i.far.fa-heart
+            span.badge-count 0
+            span Yêu thích
+          .header-action-item
+            i.fas.fa-shopping-bag
+            span.badge-count 0
+            span Giỏ hàng
+
+  // NAVIGATION
+  nav.navbar.navbar-expand-lg.navbar-light
+    .container
+      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#mainNav")
+        span.navbar-toggler-icon
+      .collapse.navbar-collapse#mainNav
+        ul.navbar-nav.mr-auto
+          li.nav-item.active
+            a.nav-link(href="/") Trang chủ
+          li.nav-item
+            a.nav-link(href="/about") Giới thiệu
+          li.nav-item.dropdown
+            a.nav-link.dropdown-toggle#prodDropdown(href="#" data-toggle="dropdown") Sản phẩm
+            .dropdown-menu
+              a.dropdown-item(href="/products") Tất cả sản phẩm
+              a.dropdown-item(href="/products/tu-chau") Tủ chậu
+              a.dropdown-item(href="/products/voi-sen") Vòi sen
+          li.nav-item
+            a.nav-link(href="/news") Tin tức
+          li.nav-item
+            a.nav-link(href="/contact") Liên hệ
+          li.nav-item
+            a.nav-link(href="/faq") Câu hỏi thường gặp
+          li.nav-item
+            a.nav-link(href="/stores") Hệ thống
+        

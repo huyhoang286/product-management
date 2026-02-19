@@ -1,0 +1,213 @@
+:root {
+  --lofi-orange: #d35400; /* Màu cam chủ đạo */
+  --lofi-text: #333;
+  --lofi-light-bg: #f8f9fa;
+  --success-color: #28a745; /* Màu xanh lá cho tiêu đề và giá mới */
+  --danger-color: #ff0000;  /* Màu đỏ cho giá cũ và badge giảm giá */
+}
+
+/* ==========================================
+   1. HEADER STYLES (Giữ nguyên giao diện cũ)
+   ========================================== */
+
+/* Top Bar */
+.top-bar {
+  background-color: var(--lofi-light-bg);
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+.top-bar a {
+  color: #666;
+  text-decoration: none;
+  margin-right: 20px;
+}
+.top-bar a:hover {
+  color: var(--lofi-orange);
+}
+.top-bar i {
+  color: var(--lofi-orange);
+  margin-right: 5px;
+}
+
+/* Main Header */
+.main-header {
+  background: #fff;
+  padding: 20px 0;
+}
+.logo-text {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--lofi-text);
+}
+.logo-orange {
+  color: var(--lofi-orange);
+}
+
+/* Search Box */
+.search-group .form-control {
+  border-color: #eee;
+  border-right: none;
+}
+.search-group .btn {
+  background-color: var(--lofi-orange);
+  color: white;
+  border: none;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+/* Header Actions (Icons) */
+.header-action-item {
+  text-align: center;
+  color: #444;
+  cursor: pointer;
+  position: relative;
+  padding: 0 10px;
+  min-width: 70px;
+}
+.header-action-item i {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 2px;
+}
+.header-action-item span {
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-count {
+  position: absolute;
+  top: -5px;
+  right: 15px;
+  background-color: var(--lofi-orange);
+  color: white;
+  font-size: 10px;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
+
+/* Navigation Bar */
+.navbar {
+  background: #fff;
+  border-top: 1px solid #eee;
+  padding: 0;
+}
+.nav-link {
+  color: var(--lofi-text) !important;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 15px 15px !important;
+  text-transform: capitalize;
+}
+.nav-item.active .nav-link, .nav-link:hover {
+  color: var(--lofi-orange) !important;
+}
+.hot-sale {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+/* ==========================================
+   2. PRODUCT SECTION STYLES (Cập nhật mới)
+   ========================================== */
+
+/* Tiêu đề danh sách sản phẩm */
+.box-head {
+  margin-bottom: 30px;
+}
+
+.box-head .inner-title {
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 28px;
+  margin-bottom: 0;
+}
+
+/* Card sản phẩm */
+.product-item {
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.product-item:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Hình ảnh sản phẩm */
+.product-item .inner-image {
+  width: 100%;
+  height: 200px;
+  background: #f8f8f8;
+}
+
+.product-item .inner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nội dung thông tin sản phẩm */
+.product-item .inner-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-item .inner-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Giá mới (Màu xanh) */
+.product-item .inner-price-new {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success-color);
+  margin-bottom: 2px;
+}
+
+/* Giá cũ (Màu đỏ, gạch ngang) */
+.product-item .inner-price-old {
+  font-size: 14px;
+  font-weight: 400;
+  color: #dc3545;
+  text-decoration: line-through;
+  margin-bottom: 8px;
+}
+
+/* Badge giảm giá (Nền đỏ, chữ trắng, bo tròn) */
+.product-item .inner-discount {
+  background-color: var(--danger-color);
+  color: #fff;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .header-actions { margin-top: 15px; justify-content: center; }
+  .top-bar-right { display: none; }
+}
+
+/* Footer */
+.footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}
+/* End Footer */
