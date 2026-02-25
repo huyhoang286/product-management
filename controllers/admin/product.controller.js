@@ -1,6 +1,7 @@
 //[GET] /admin/products
 const Product = require("../../models/product.model")
 const filterStatusHepler = require("../../helpers/filterStatus")
+const searchHepler = require("../../helpers/search")
 
 module.exports.index = async (req, res) => {
     const filterStatus = filterStatusHepler(req.query) 
@@ -11,14 +12,13 @@ module.exports.index = async (req, res) => {
     if(req.query.status) {
         find.status = req.query.status
     }
-    let keyword = ""
-    if(req.query.keyword) {
-        keyword = req.query.keyword
-        find.title = {
-            $regex : keyword,
-            $options: 'i'
-        }
+    //Code Tìm kiếm
+    const objectSearch = searchHepler(req.query)
+    console.log(objectSearch)
+    if(objectSearch.keyword) {
+        find.title = objectSearch.regex 
     }
+
     const products = await Product.find(find)
 
     // console.log(products)
@@ -27,6 +27,6 @@ module.exports.index = async (req, res) => {
         pageTitle: "Trang danh sách sản phẩm",
         products: products,
         filterStatus: filterStatus,
-        keyword :keyword
+        keyword :objectSearch.keyword
     })
 }
