@@ -96,3 +96,21 @@ module.exports.changeMulti = async (req, res) => {
         })
     }
 }
+
+//[DELETE] /admin/products/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    try {
+        const id = req.params.id
+        await Product.deleteOne({_id: id})
+
+        res.json({
+            code: 200,
+            message: "Xóa thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "xóa thất bại!"
+        })
+    }
+}

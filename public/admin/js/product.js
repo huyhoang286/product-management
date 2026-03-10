@@ -37,12 +37,50 @@ if(buttonsChangeStatus.length > 0) {
                 }
             })
             .catch(error => console.error('Error:', error))
-    
-            // console.log(statusCurrent)
-            // console.log(id)
-            // console.log(statusChange)
         })
     })
 }
 // End Change Status
 
+// Delete Item
+const buttonsDelete = document.querySelectorAll("[button-delete]")
+if(buttonsDelete) {
+    buttonsDelete.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute("data-id")
+            Swal.fire({
+                title: "Bạn có chắc chắn muốn xóa?",
+                text: "Hành động này sẽ xóa vĩnh viễn sản phẩm khỏi hệ thống!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Xóa!",
+                cancelButtonText: "Hủy!"
+            }).then((result) => {
+                if(result.isConfirmed){
+                    const path = `/admin/products/delete/${id}`
+                    fetch(path, {
+                        method: "DELETE"
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        const tr = button.closest("tr")
+                        tr.remove()
+
+                        Swal.fire({
+                            toast: true,
+                            position: "top-end",
+                            icon: "success",
+                            title: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    })
+                }
+                    
+            })
+        })
+    })
+}
+// End Delete Item
