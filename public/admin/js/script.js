@@ -46,3 +46,112 @@ if(buttonsPagination) {
     })
 }
 //End Pagination
+
+// CheckBox Multi
+const checkboxMulti = document.querySelector("[checkbox-multi]")
+if(checkboxMulti) {
+    const inputCheckAll = checkboxMulti.querySelector("input[name='checkall']")
+    const inputsId = checkboxMulti.querySelectorAll("input[name='id']")
+    
+    //Khi click vào chọn tất cả
+    inputCheckAll.addEventListener("click", () => {
+        if(inputCheckAll.checked) {
+            inputsId.forEach(input => {
+                input.checked = true
+            })
+        } else {
+            inputsId.forEach(input => {
+                input.checked = false
+            })
+        }
+    })
+
+    //Khi click vào từng nút lẻ
+    inputsId.forEach(input => {
+        input.addEventListener("click", () => {
+            const countChecked = checkboxMulti.querySelectorAll("input[name='id']:checked").length
+            if(countChecked == inputsId.length) {
+                inputCheckAll.checked = true
+            } else {
+                inputCheckAll.checked = false
+            }
+        })
+    })
+}
+// End CheckBox Multi
+
+// Form Change Multi
+const formChangeMulti = document.querySelector("[form-change-multi]")
+if(formChangeMulti) {
+    formChangeMulti.addEventListener("submit", (e) => {
+        e.preventDefault()
+
+        const checkboxMulti = document.querySelector("[checkbox-multi]")
+        const inputsChecked = checkboxMulti.querySelectorAll("input[name='id']:checked")
+
+        const typeChange = e.target.elements.type.value
+        if(typeChange == "") {
+            alert("Vui lòng chọn hành đông!")
+            return
+        }
+
+        if(inputsChecked.length > 0) {
+            //Gom danh sách id cần đổi trạng thái
+            let ids = []
+            inputsChecked.forEach(input => {
+                ids.push(input.value)
+            })
+
+            fetch("/admin/products/change-multi", {
+                method: "PATCH",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    type: typeChange,
+                    ids: ids
+                })
+            })  
+            .then(res => res.json())
+            .then(data => {
+                if(data.code == 200) {
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "success",
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    inputsChecked.forEach(input => {
+                        const tr = input.closest("tr");
+
+                        const buttonStatus = tr.querySelector("[button-change-status]");
+
+                        if(buttonStatus) {
+                            buttonStatus.setAttribute("data-status", typeChange);
+                            if(typeChange == "active") {
+                                buttonStatus.classList.remove("badge-danger");
+                                buttonStatus.classList.add("badge-success");
+                                buttonStatus.innerHTML = "Hoạt động";
+                            } else if (typeChange == "inactive") {
+                                buttonStatus.classList.remove("badge-success");
+                                buttonStatus.classList.add("badge-danger");
+                                buttonStatus.innerHTML = "Dừng hoạt động";
+                            }
+                        }
+                        input.checked = false;
+                    });
+
+                    const inputCheckAll = document.querySelector("input[name='checkall']");
+                    if(inputCheckAll) {
+                        inputCheckAll.checked = false;
+                    }
+                }
+            })
+        } else {
+            alert("Vui lòng chọn ít nhất một bản ghi!")
+        }
+    })
+}
+// End Form Change Multi
