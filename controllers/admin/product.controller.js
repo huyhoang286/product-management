@@ -82,6 +82,45 @@ module.exports.changeMulti = async (req, res) => {
             case "inactive":
                 await Product.updateMany({_id: {$in: ids}}, {status: "inactive"})
                 break
+            case "delete-all":
+                await Product.updateMany({_id:{$in: ids}}, {deleted: true, deletedAt: new Date()})
+                break
+            default:
+                break
+        }
+        res.json({
+            code: 200,
+            message: "Cập nhật trạng thái thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Cập nhật trạng thái thất bại!"
+        })
+    }
+}
+
+//[PATCH] /admin/products/change-multi-trash
+module.exports.changeMultiTrash = async (req, res) => {
+    try {
+        const type = req.body.type
+        const ids = req.body.ids
+
+        switch(type) {
+            case "restore-all":
+                await Product.updateMany(
+                    {_id: {$in: ids}}, 
+                    {
+                        deleted: false, 
+                        $unset: {deletedAt:1}
+                    }
+                )
+                break
+            case "delete-permanent-all":
+                await Product.deleteMany(
+                    {_id: {$in: ids}}
+                )
+                break
             default:
                 break
         }

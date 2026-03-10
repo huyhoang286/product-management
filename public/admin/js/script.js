@@ -102,53 +102,85 @@ if(formChangeMulti) {
                 ids.push(input.value)
             })
 
-            fetch("/admin/products/change-multi", {
-                method: "PATCH",
-                headers: {
-                    "Content-type": "application/json"
-                },
-                body: JSON.stringify({
-                    type: typeChange,
-                    ids: ids
-                })
-            })  
-            .then(res => res.json())
-            .then(data => {
-                if(data.code == 200) {
-                    Swal.fire({
-                        toast: true,
-                        position: "top-end",
-                        icon: "success",
-                        title: data.message,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                    inputsChecked.forEach(input => {
-                        const tr = input.closest("tr");
+            const path = formChangeMulti.getAttribute("data-path")
 
-                        const buttonStatus = tr.querySelector("[button-change-status]");
-
-                        if(buttonStatus) {
-                            buttonStatus.setAttribute("data-status", typeChange);
-                            if(typeChange == "active") {
-                                buttonStatus.classList.remove("badge-danger");
-                                buttonStatus.classList.add("badge-success");
-                                buttonStatus.innerHTML = "Hoạt động";
-                            } else if (typeChange == "inactive") {
-                                buttonStatus.classList.remove("badge-success");
-                                buttonStatus.classList.add("badge-danger");
-                                buttonStatus.innerHTML = "Dừng hoạt động";
-                            }
+            //Đóng gói logic Fetch API vào một hàm để tái sử dụng
+            const sendRequest = () => {
+                fetch(path, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        type: typeChange,
+                        ids: ids
+                    })
+                })  
+                .then(res => res.json())
+                .then(data => {
+                    if(data.code == 200) {
+                        Swal.fire({
+                            toast: true,
+                            position: "top-end",
+                            icon: "success",
+                            title: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        // Nếu là xóa hoặc khôi phục, xóa luôn dòng đó trên giao diện
+                        if(typeChange == "delete-all" || typeChange == "restore-all" || typeChange == "delete-permanent-all") {
+                            inputsChecked.forEach(input => {
+                                input.closest("tr").remove()
+                            })
+                        } else {
+                            // Nếu đổi trạng thái (active/inactive) 
+                            inputsChecked.forEach(input => {
+                                const tr = input.closest("tr");
+        
+                                const buttonStatus = tr.querySelector("[button-change-status]");
+        
+                                if(buttonStatus) {
+                                    buttonStatus.setAttribute("data-status", typeChange);
+                                    if(typeChange == "active") {
+                                        buttonStatus.classList.remove("badge-danger");
+                                        buttonStatus.classList.add("badge-success");
+                                        buttonStatus.innerHTML = "Hoạt động";
+                                    } else if (typeChange == "inactive") {
+                                        buttonStatus.classList.remove("badge-success");
+                                        buttonStatus.classList.add("badge-danger");
+                                        buttonStatus.innerHTML = "Dừng hoạt động";
+                                    }
+                                }
+                            })
                         }
-                        input.checked = false;
-                    });
-
-                    const inputCheckAll = document.querySelector("input[name='checkall']");
-                    if(inputCheckAll) {
-                        inputCheckAll.checked = false;
+                        //Bỏ chọn ô Check all
+                        const inputCheckAll = document.querySelector("input[name='checkall']");
+                        if(inputCheckAll) {
+                            inputCheckAll.checked = false;
+                        }
                     }
-                }
-            })
+                })
+            }
+            //Nếu là xóa hàng loạt thì phải hiện thông báo xác nhận
+            if(typeChange == "delete-all" || typeChange == "delete-permanent-all") {
+                Swal.fire({
+                    title: "Bạn có chắc chắn muốn xóa?",
+                    text: "Hành động này sẽ chuyển sản phẩm vào thùng rác!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Đồng ý",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+                    if(result.isConfirmed) {
+                        sendRequest()
+                    }
+                })
+            } else {
+                //Nếu là các hành động khác như active/ inactive, restore thì không cần thông báo xác nhận
+                sendRequest()
+            }
         } else {
             alert("Vui lòng chọn ít nhất một bản ghi!")
         }

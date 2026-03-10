@@ -22,13 +22,17 @@ block main
     .card.mb-3
         .card-header Danh sách
         .card-body
-            form(form-change-multi)
+            form(
+                form-change-multi
+                data-path="/admin/products/change-multi"
+            )
                 .d-flex.align-items-start
                     .form-group
                         select(name="type" class="form-control")
                             option(disabled selected) -- Chọn hành động --
                             option(value="active") Hoạt động
                             option(value="inactive") Dừng hoạt động
+                            option(value="delete-all") Xóa tất cả
                     button(type="submit" class="btn btn-primary") Áp dụng
             table(
                 class="table table-hover table-sm"

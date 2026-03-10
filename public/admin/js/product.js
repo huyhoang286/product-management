@@ -55,8 +55,8 @@ if(buttonsDelete) {
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Xóa!",
-                cancelButtonText: "Hủy!"
+                confirmButtonText: "Đồng ý",
+                cancelButtonText: "Hủy"
             }).then((result) => {
                 if(result.isConfirmed){
                     const path = `/admin/products/delete/${id}`
