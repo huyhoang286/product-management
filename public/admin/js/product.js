@@ -50,7 +50,7 @@ if(buttonsDelete) {
             const id = button.getAttribute("data-id")
             Swal.fire({
                 title: "Bạn có chắc chắn muốn xóa?",
-                text: "Hành động này sẽ xóa vĩnh viễn sản phẩm khỏi hệ thống!",
+                text: "Hành động này sẽ chuyển sản phẩm vào thùng rác!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
@@ -84,3 +84,80 @@ if(buttonsDelete) {
     })
 }
 // End Delete Item
+
+// Restore Item
+const buttonsRestore = document.querySelectorAll("[button-restore]")
+if(buttonsRestore) {
+    buttonsRestore.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute("data-id")
+            const path = `/admin/products/restore/${id}`
+            fetch(path, {
+                method: "PATCH"
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.code == 200) {
+                    const tr = button.closest("tr")
+                    tr.remove()
+
+                    Swal.fire({
+                        toast: true,
+                        position: "top-end",
+                        icon: "success",
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            })
+        })
+    })
+}
+// End Restore Item
+
+// Delete Permanent Item
+const buttonsDeletePermanent = document.querySelectorAll("[button-delete-permanent]")
+if(buttonsDeletePermanent) {
+    buttonsDeletePermanent.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute("data-id")
+            Swal.fire({
+                title: "Bạn có chắc chắn muốn xóa vĩnh viễn?",
+                text: "Sản phẩm sẽ bị xóa vĩnh viễn và KHÔNG THỂ khôi phục!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Xóa vĩnh viễn",
+                cancelButtonText: "Hủy"
+            }).then((result) => {
+                if(result.isConfirmed) {
+                    const path = `/admin/products/delete-permanent/${id}`
+                    fetch(path, {
+                        method: "DELETE"
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.code == 200) {
+                            const tr = button.closest("tr")
+                            tr.remove()
+
+                            Swal.fire({
+                                toast: true,
+                                position: "top-end",
+                                icon: "success",
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        }
+                    })
+
+                }
+            })
+            
+        })
+    })
+}
+// End Delete Permanent Item

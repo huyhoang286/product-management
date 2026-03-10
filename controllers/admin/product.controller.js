@@ -101,16 +101,66 @@ module.exports.changeMulti = async (req, res) => {
 module.exports.deleteItem = async (req, res) => {
     try {
         const id = req.params.id
-        await Product.deleteOne({_id: id})
+        await Product.updateOne({_id: id}, {
+            deleted: true,
+            deletedAt: new Date()
+        })
 
         res.json({
             code: 200,
-            message: "Xóa thành công!"
+            message: "Đã chuyển vào thùng rác!"
         })
     } catch (error) {
         res.json({
             code: 400,
             message: "xóa thất bại!"
+        })
+    }
+}
+
+//[GET] /admin/products/trash
+module.exports.trash = async (req, res) => {
+    const products = await Product.find({deleted: true})
+    res.render("admin/pages/products/trash.pug", {
+        pageTitle: "Thùng rác",
+        products: products
+    })
+}
+
+//[PATCH] /admin/products/restore/:id
+module.exports.restoreItem = async (req, res) => {
+    try {
+        const id = req.params.id
+        await Product.updateOne({_id: id}, {
+            deleted: false,
+            $unset: {deletedAt: 1}
+        })
+        res.json({
+            code: 200,
+            message: "Khôi phục sản phẩm thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Khôi phục sản phẩm thất bại!"
+        })
+    }
+}
+
+//[DELETE] /admin/products/delete-permanent/:id
+module.exports.deletePermanent = async (req, res) => {
+    try {
+        const id = req.params.id
+        await Product.deleteOne({_id: id})
+
+        res.json({
+            code: 200,
+            message: "Xóa sản phầm thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Xóa sản phẩm thất bại!"
         })
     }
 }
