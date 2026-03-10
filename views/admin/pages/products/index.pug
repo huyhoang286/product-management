@@ -22,9 +22,22 @@ block main
     .card.mb-3
         .card-header Danh sách
         .card-body
-            table.table.table-hover.table-sm
+            form(form-change-multi)
+                .d-flex.align-items-start
+                    .form-group
+                        select(name="type" class="form-control")
+                            option(disabled selected) -- Chọn hành động --
+                            option(value="active") Hoạt động
+                            option(value="inactive") Dừng hoạt động
+                    button(type="submit" class="btn btn-primary") Áp dụng
+            table(
+                class="table table-hover table-sm"
+                checkbox-multi
+            )
                 thead
                     tr
+                        th 
+                            input(type="checkbox" name="checkall")
                         th STT
                         th Hình ảnh
                         th Tiêu đề
@@ -34,6 +47,8 @@ block main
                 tbody
                     each item, index in products
                         tr
+                            td 
+                                input(type="checkbox" name="id" value=item.id)
                             td #{index+1}
                             td
                                 img(
@@ -46,11 +61,25 @@ block main
                             td #{item.price}$
                             td
                                 if(item.status == "active")
-                                    a(href="#" class="badge badge-success") Hoạt động
+                                    a(
+                                        href="javascript:;" 
+                                        data-status=item.status
+                                        data-id=item.id
+                                        button-change-status
+                                        class="badge badge-success"
+                                    ) Hoạt động
                                 else    
-                                    a(href="#" class="badge badge-danger") Dừng hoạt động
+                                    a(
+                                        href="javascript:;" 
+                                        data-status=item.status
+                                        data-id=item.id
+                                        button-change-status
+                                        class="badge badge-danger"
+                                    ) Dừng hoạt động
                             td
                                 button(class="btn btn-warning btn-sm") Sửa
                                 button(class="btn btn-danger btn-sm ml-1") Xóa
             +pagination(pagination)
-            
+    
+
+    script(src="/admin/js/product.js") 

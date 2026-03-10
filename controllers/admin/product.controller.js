@@ -1,9 +1,9 @@
-//[GET] /admin/products
 const Product = require("../../models/product.model")
 const filterStatusHepler = require("../../helpers/filterStatus")
 const searchHepler = require("../../helpers/search")
 const paginationHepler = require("../../helpers/pagination")
 
+//[GET] /admin/products
 module.exports.index = async (req, res) => {
     const filterStatus = filterStatusHepler(req.query)
 
@@ -48,4 +48,51 @@ module.exports.index = async (req, res) => {
         keyword: objectSearch.keyword,
         pagination: objectPagination
     })
+}
+
+//[PATCH] /admin/products/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+    const status = req.params.status
+    const id = req.params.id
+    
+    try{
+        await Product.updateOne({_id:id}, {status: status})
+        res.json({
+            code: 200,
+            message: "Cập nhật trạng thái thành công"
+        })
+    } catch {
+        res.json({
+            code: 400,
+            message: "Cập nhật trạng thái thật bại"
+        })
+    }
+}
+
+//[PATCH] /admin/products/change-multi
+module.exports.changeMulti = async (req, res) => {
+    try {
+        const type = req.body.type
+        const ids = req.body.ids
+
+        switch(type) {
+            case "active":
+                await Product.updateMany({_id: {$in: ids}}, {status: "active"})
+                break
+            case "inactive":
+                await Product.updateMany({_id: {$in: ids}}, {status: "inactive"})
+                break
+            default:
+                break
+        }
+        res.json({
+            code: 200,
+            message: "Cập nhật trạng thái thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Cập nhật trạng thái thất bại!"
+        })
+    }
 }
