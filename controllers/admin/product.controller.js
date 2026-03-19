@@ -203,3 +203,23 @@ module.exports.deletePermanent = async (req, res) => {
         })
     }
 }
+
+//[GET] /admin/products/create
+module.exports.create = async (req, res) => {
+    res.render("admin/pages/products/create.pug", {
+        pageTitle: "Trang thêm mới sản phẩm"
+    })
+}
+
+//[POST] /admin/products/create
+module.exports.createPost = async(req, res) => {
+    req.body.price = parseFloat(req.body.price)
+    req.body.discount = parseFloat(req.body.discount)
+    req.body.stock = parseInt(req.body.stock)
+    if(req.file) {
+        req.body.thumbnail = `/uploads/${req.file.filename}`
+    }
+    const product = new Product(req.body)
+    await product.save()
+    res.redirect(`/admin/products`)
+}

@@ -9,15 +9,19 @@ block main
         .card-header Bộ lọc và Tìm kiếm
         .card-body
             .row
-                .col-6
+                .col-4
                     each item in filterStatus
                         button(
                             class=`btn btn-sm ml-1 btn-outline-success ${item.class}`
                             button-status=item.status
                         ) #{item.name}
-                    
-                .col-6
+                .col-4
                     +search(keyword)
+                .col-4.text-right
+                    a(
+                        href=`${prefixAdmin}/products/create`
+                        class="btn btn-outline-success"
+                    ) + Thêm mới
                 
     .card.mb-3
         .card-header Danh sách
