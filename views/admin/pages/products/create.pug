@@ -60,7 +60,7 @@ block main
                 min="0"
             )
         
-        .form-group
+        .form-group(upload-image)
             label(for="thumbnail") Ảnh minh họa
             input(
                 type="file"
@@ -68,7 +68,18 @@ block main
                 id="thumbnail"
                 name="thumbnail"
                 accept="image/*"
+                upload-image-input
             )
+            div(class="image-preview-container")
+                img(
+                    src=""
+                    upload-image-preview
+                    class="image-preview" 
+                )
+                span(
+                    class="close-image"
+                    upload-image-close
+                ) x
         
         .form-group
             label Trạng thái

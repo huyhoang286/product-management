@@ -187,3 +187,24 @@ if(formChangeMulti) {
     })
 }
 // End Form Change Multi
+
+//Preview image
+const uploadImage = document.querySelector("[upload-image]")
+if(uploadImage) {
+    const uploadImageInput = document.querySelector("[upload-image-input]")
+    const uploadImagePreview = document.querySelector("[upload-image-preview]")
+    const uploadImageClose = document.querySelector("[upload-image-close]")
+    //Khi thêm ảnh
+    uploadImageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0]
+        if(file) {
+            uploadImagePreview.src = URL.createObjectURL(file)
+        }
+    })
+    //Khi xóa ảnh
+    uploadImageClose.addEventListener("click", () => {
+        uploadImageInput.value = ""
+        uploadImagePreview.src = ""
+    })
+}
+//End Preview image
