@@ -8,9 +8,11 @@ html
   body
 
     include ../partials/header.pug 
+    include ../mixins/alert.pug
+    +alert-success(5000)
+    +alert-error(5000)
 
     .body
-
       include ../partials/sider.pug
 
       .main
