@@ -14,6 +14,12 @@ router.post(
     upload.single("thumbnail"),
     validate.createPost,
     controller.createPost)
+router.get("/edit/:id", controller.edit)
+router.patch(
+    "/edit/:id",
+    upload.single("thumbnail"),
+    validate.createPost,
+    controller.editPatch)
 router.patch("/change-status/:status/:id", controller.changeStatus)
 router.patch("/change-multi", controller.changeMulti)
 router.patch("/change-multi-trash", controller.changeMultiTrash)

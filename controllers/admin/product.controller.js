@@ -234,3 +234,51 @@ module.exports.createPost = async(req, res) => {
         })
     }
 }
+
+//[GET] /admin/products/edit/:id
+module.exports.edit = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const product = await Product.findOne({
+            _id: id,
+            deleted: false
+        });
+
+        res.render("admin/pages/products/edit.pug", {
+            pageTitle: "Chỉnh sửa sản phẩm",
+            product: product
+        });
+    } catch (error) {
+        res.redirect(`/admin/products`);
+    }
+}
+
+//[PATCH] /admin/products/edit/:id
+module.exports.editPatch = async (req, res) => {
+    try {
+        const id = req.params.id
+        req.body.price = parseFloat(req.body.price);
+        req.body.discountPercentage = parseFloat(req.body.discountPercentage);
+        req.body.stock = parseInt(req.body.stock);
+
+        if (req.file) {
+            req.body.thumbnail = `/uploads/${req.file.filename}`;
+        }
+
+        await Product.updateOne(
+            { _id: id, deleted: false }, 
+            req.body                     
+        )
+
+        res.json({
+            code: 200,
+            message: "Cập nhật sản phẩm thành công!"
+        });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Đã có lỗi xảy ra, vui lòng thử lại!"
+        });
+    }
+}

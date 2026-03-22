@@ -194,3 +194,40 @@ if(formCreateProduct) {
     })
 }
 // End Create Item
+
+// Edit Item
+const formEditProduct = document.querySelector("#form-edit-product")
+if(formEditProduct) {
+    formEditProduct.addEventListener("submit", (e) => {
+        e.preventDefault()
+        const id = formEditProduct.getAttribute("data-id")
+
+        const formData = new FormData(formEditProduct)
+        const path = `/admin/products/edit/${id}`
+        fetch(path, {
+            method: "PATCH",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.code == 200) {
+                sessionStorage.setItem("successMessage", data.message)
+                window.location.href = "/admin/products"
+            }
+            else {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            }
+        })
+        .catch(error => {
+            console.log("Lỗi", error)
+        })
+    })
+}
+// End Edit Item
