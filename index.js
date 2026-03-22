@@ -6,9 +6,6 @@ database.connect()
 
 const systemConfix = require("./config/system")
 
-const flash = require('express-flash');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
 
 const route = require("./routes/client/index.route");
 const routeAdmin = require("./routes/admin/index.route");
@@ -24,11 +21,6 @@ app.use(express.json())
 
 //App locals Variables
 app.locals.prefixAdmin = systemConfix.prefixAdmin
-
-// Flash message
-app.use(cookieParser('HuyHoangSecretKey')); 
-app.use(session({ cookie: { maxAge: 60000 }})); 
-app.use(flash());
 
 //Routes
 route(app)
