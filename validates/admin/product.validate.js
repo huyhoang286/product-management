@@ -1,12 +1,10 @@
 module.exports.createPost = async(req, res, next) => {
    if(!req.body.title) {
-        req.flash("error", "Vui lòng nhập tiêu đề!")
-        res.redirect(req.get("Referrer") || "/");
+        res.json({ code: 400, message: "Vui lòng nhập tiêu đề!" })
         return
    }
    if(req.body.title.length < 5) {
-        req.flash("error", "Tiêu đề phải dài ít nhất 5 ký tự!")
-        res.redirect(req.get("Referrer") || "/");
+        res.json({ code: 400, message: "Tiêu đề phải dài ít nhất 5 ký tự!" })
         return
    }
    next()

@@ -208,3 +208,18 @@ if(uploadImage) {
     })
 }
 //End Preview image
+
+// Hiển thị thông báo từ chuyển hướng API
+const successMessage = sessionStorage.getItem("successMessage");
+if (successMessage) {
+    Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: successMessage,
+        showConfirmButton: false,
+        timer: 2000
+    });
+    
+    sessionStorage.removeItem("successMessage");
+}

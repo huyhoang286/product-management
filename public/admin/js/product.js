@@ -161,3 +161,36 @@ if(buttonsDeletePermanent) {
     })
 }
 // End Delete Permanent Item
+
+// Create Item
+const  formCreateProduct = document.querySelector("#form-create-product")
+if(formCreateProduct) {
+    formCreateProduct.addEventListener("submit",(e) => {
+        e.preventDefault()
+        const formData = new FormData(formCreateProduct)
+        fetch("/admin/products/create", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.code == 200) {
+                sessionStorage.setItem("successMessage", data.message);
+                window.location.href = "/admin/products";
+            } else {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        })
+        .catch(error => {
+            console.log("Lỗi:", error)
+        })
+    })
+}
+// End Create Item

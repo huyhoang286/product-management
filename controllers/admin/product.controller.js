@@ -50,7 +50,7 @@ module.exports.index = async (req, res) => {
     })
 }
 
-//[PATCH] /admin/products/change-status/:status/:id
+//[PATCH] /admin/products/:id
 module.exports.changeStatus = async (req, res) => {
     const status = req.params.status
     const id = req.params.id
@@ -136,7 +136,7 @@ module.exports.changeMultiTrash = async (req, res) => {
     }
 }
 
-//[DELETE] /admin/products/delete/:id
+//[DELETE] /admin/products/:id
 module.exports.deleteItem = async (req, res) => {
     try {
         const id = req.params.id
@@ -213,13 +213,24 @@ module.exports.create = async (req, res) => {
 
 //[POST] /admin/products/create
 module.exports.createPost = async(req, res) => {
-    req.body.price = parseFloat(req.body.price)
-    req.body.discount = parseFloat(req.body.discount)
-    req.body.stock = parseInt(req.body.stock)
-    if(req.file) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`
+    try {
+        req.body.price = parseFloat(req.body.price)
+        req.body.discount = parseFloat(req.body.discountPercentage)
+        req.body.stock = parseInt(req.body.stock)
+        if(req.file) {
+            req.body.thumbnail = `/uploads/${req.file.filename}`
+        }
+        const product = new Product(req.body)
+        await product.save()
+
+        res.json({
+            code: 200,
+            message: "Thêm mới sản phẩm thành công!"
+        })
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Đã có lỗi xảy ra, vui lòng thử lại!"
+        })
     }
-    const product = new Product(req.body)
-    await product.save()
-    res.redirect(`/admin/products`)
 }
