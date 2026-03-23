@@ -184,24 +184,49 @@ module.exports.create = async (req, res) => {
 //[POST] /admin/products/create
 module.exports.createPost = async(req, res) => {
     try {
-        req.body.price = parseFloat(req.body.price)
-        req.body.discount = parseFloat(req.body.discountPercentage)
-        req.body.stock = parseInt(req.body.stock)
-        if(req.file) {
-            req.body.thumbnail = `/uploads/${req.file.filename}`
+        req.body.price = parseFloat(req.body.price);
+        req.body.discountPercentage = parseFloat(req.body.discountPercentage);
+        
+        const sizes = req.body.sizes;
+        const stocks = req.body.stocks;
+
+        let variants = [];
+        if (typeof sizes === "string") {
+            variants.push({
+                size: sizes,
+                stock: parseInt(stocks)
+            });
+        } else if (Array.isArray(sizes)) {
+            for (let i = 0; i < sizes.length; i++) {
+                variants.push({
+                    size: sizes[i],
+                    stock: parseInt(stocks[i])
+                });
+            }
         }
-        const product = new Product(req.body)
-        await product.save()
+        req.body.variants = variants;
+
+        delete req.body.sizes;
+        delete req.body.stocks;
+        delete req.body.stock; 
+
+        if(req.file) {
+            req.body.thumbnail = `/uploads/${req.file.filename}`;
+        }
+        
+        const product = new Product(req.body);
+        await product.save();
 
         res.json({
             code: 200,
             message: "Thêm mới sản phẩm thành công!"
-        })
+        });
     } catch (error) {
+        console.error(error);
         res.json({
             code: 400,
             message: "Đã có lỗi xảy ra, vui lòng thử lại!"
-        })
+        });
     }
 }
 
@@ -227,25 +252,49 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
-        const id = req.params.id
+        const id = req.params.id;
+
         req.body.price = parseFloat(req.body.price);
         req.body.discountPercentage = parseFloat(req.body.discountPercentage);
-        req.body.stock = parseInt(req.body.stock);
+
+        const sizes = req.body.sizes;
+        const stocks = req.body.stocks;
+
+        let variants = [];
+        if (sizes) {
+            if (typeof sizes === "string") {
+                variants.push({
+                    size: sizes,
+                    stock: parseInt(stocks)
+                });
+            } else if (Array.isArray(sizes)) {
+                for (let i = 0; i < sizes.length; i++) {
+                    variants.push({
+                        size: sizes[i],
+                        stock: parseInt(stocks[i])
+                    });
+                }
+            }
+        }
+        
+        req.body.variants = variants;
+
+        delete req.body.sizes;
+        delete req.body.stocks;
+        delete req.body.stock; 
 
         if (req.file) {
             req.body.thumbnail = `/uploads/${req.file.filename}`;
         }
 
-        await Product.updateOne(
-            { _id: id, deleted: false }, 
-            req.body                     
-        )
+        await Product.updateOne({ _id: id }, req.body);
 
         res.json({
             code: 200,
             message: "Cập nhật sản phẩm thành công!"
         });
     } catch (error) {
+        console.error(error);
         res.json({
             code: 400,
             message: "Đã có lỗi xảy ra, vui lòng thử lại!"

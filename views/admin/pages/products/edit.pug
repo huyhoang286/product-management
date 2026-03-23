@@ -18,6 +18,26 @@ block main
                 value=product.title 
             )
         
+        .row 
+            .col-6.form-group
+                label(for="styleCode") Mã kiểu dáng (Style Code)
+                input(
+                    type="text" 
+                    class="form-control" 
+                    id="styleCode" 
+                    name="styleCode" 
+                    value=product.styleCode
+                )
+            .col-6.form-group
+                label(for="color") Màu sắc sản phẩm
+                input(
+                    type="text" 
+                    class="form-control" 
+                    id="color" 
+                    name="color" 
+                    value=product.color
+                )
+
         .form-group
             label(for="desc") Mô tả
             textarea(
@@ -51,6 +71,60 @@ block main
                 step="any"
             )
         
+        h5.mt-4.mb-3 Thuộc tính Giày bóng đá
+            .row 
+                .col-4.form-group
+                    label(for="brand") Thương hiệu
+                    input(
+                        type="text" 
+                        class="form-control" 
+                        id="brand" 
+                        name="attributes[brand]" 
+                        value=(product.attributes ? product.attributes.brand : '')
+                    )
+                
+                .col-4.form-group
+                    label(for="surface") Loại đinh (Mặt sân)
+                    input(
+                        type="text" 
+                        class="form-control" 
+                        id="surface" 
+                        name="attributes[surface]" 
+                        value=(product.attributes ? product.attributes.surface : '')
+                    )
+                
+                .col-4.form-group
+                    label(for="position") Vị trí khuyên dùng
+                    input(
+                        type="text" 
+                        class="form-control" 
+                        id="position" 
+                        name="attributes[position]" 
+                        value=(product.attributes ? product.attributes.position : '')
+                    )
+
+        h5.mt-4.mb-3 Danh sách Kích cỡ (Size & Tồn kho)
+            div(id="variants-container")
+                if (product.variants && product.variants.length > 0)
+                    each variant in product.variants
+                        .row.mb-2.variant-item
+                            .col-5
+                                input.form-control(type="text" name="sizes" value=variant.size required)
+                            .col-5
+                                input.form-control(type="number" name="stocks" value=variant.stock min="0" required)
+                            .col-2
+                                button.btn.btn-danger.w-100(type="button" button-remove-variant) Xóa
+                else 
+                    .row.mb-2.variant-item
+                        .col-5
+                            input.form-control(type="text" name="sizes" placeholder="Kích cỡ (VD: 40)" required)
+                        .col-5
+                            input.form-control(type="number" name="stocks" placeholder="Số lượng" min="0" required)
+                        .col-2
+                            button.btn.btn-danger.w-100(type="button" button-remove-variant) Xóa
+                        
+            button.btn.btn-success.mb-4(type="button" id="button-add-variant") + Thêm kích cỡ
+
         .form-group
             label(for="stock") Số lượng
             input(

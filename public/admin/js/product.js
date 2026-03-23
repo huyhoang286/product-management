@@ -149,6 +149,41 @@ if(formCreateProduct) {
 }
 // End Create Item
 
+// Add/Remove Variants
+const buttonAddVariant = document.querySelector("#button-add-variant");
+const variantsContainer = document.querySelector("#variants-container");
+if (buttonAddVariant && variantsContainer) {
+    // Thêm dòng mới
+    buttonAddVariant.addEventListener("click", () => {
+        const newVariant = document.createElement("div");
+        newVariant.classList.add("row", "mb-2", "variant-item");
+        newVariant.innerHTML = `
+            <div class="col-5">
+                <input class="form-control" type="text" name="sizes" placeholder="Kích cỡ (VD: 40)" required>
+            </div>
+            <div class="col-5">
+                <input class="form-control" type="number" name="stocks" placeholder="Số lượng" min="0" required>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-danger w-100" type="button" button-remove-variant>Xóa</button>
+            </div>
+        `;
+        variantsContainer.appendChild(newVariant);
+    });
+    // Xóa dòng
+    variantsContainer.addEventListener("click", (e) => {
+        if (e.target.hasAttribute("button-remove-variant")) {
+            const variantItem = e.target.closest(".variant-item");
+            if (variantsContainer.querySelectorAll(".variant-item").length > 1) {
+                variantItem.remove();
+            } else {
+                Swal.fire('Cảnh báo', 'Sản phẩm phải có ít nhất 1 kích cỡ!', 'warning');
+            }
+        }
+    });
+}
+// End Add/Remove Variants
+
 // Edit Item
 const formEditProduct = document.querySelector("#form-edit-product")
 if(formEditProduct) {
