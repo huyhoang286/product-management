@@ -19,3 +19,24 @@ module.exports.index = async (req, res) => {
         products: newProducts
     })
 }
+
+module.exports.detail = async(req, res) => {
+    try {
+        const slug = req.params.slug
+        const product = await Product.findOne({
+            slug: slug,
+            deleted: false,
+            status: "active"
+        })
+        if(!product) {
+            return res.redirect("/products")
+        }
+        product.priceNew = (product.price * (100 - product.discountPercentage) / 100).toFixed(0)
+        res.render("client/pages/products/detail.pug", {
+            pageTitle: product.title,
+            product: product
+        })
+    } catch(error) {
+        res.redirect("/products")
+    }
+}
