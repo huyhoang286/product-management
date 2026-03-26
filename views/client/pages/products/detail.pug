@@ -14,15 +14,24 @@ block main
             
             .col-md-5
                 h1.display-5.font-weight-bold.mb-2 #{product.title}
-                p.text-muted.mb-4(style="font-size: 1.1rem;") Giày bóng đá chuyên nghiệp
+                p.text-muted.mb-4(style="font-size: 1.1rem;") Phối màu: #{product.color || 'Chưa cập nhật'}
 
                 .product-price.mb-4
                     if (product.discountPercentage > 0)
-                        span.h2.font-weight-bold.text-danger.mr-3 #{product.priceNew}đ
-                        span.h5.text-muted(style="text-decoration: line-through;") #{product.price}đ
+                        span.h2.font-weight-bold.text-danger.mr-3 #{product.priceNew}$
+                        span.h5.text-muted(style="text-decoration: line-through;") #{product.price}$
                         span.badge.badge-danger.ml-2 -#{product.discountPercentage}%
                     else 
-                        span.h2.font-weight-bold #{product.price}đ
+                        span.h2.font-weight-bold #{product.price}$
+
+                if (colorways && colorways.length > 1)
+                    .colorways.mb-4
+                        p.font-weight-bold Chọn màu sắc:
+                        .d-flex.flex-wrap
+                            each colorway in colorways
+                                - const isActive = (colorway.slug == product.slug)
+                                a(href=`/products/${colorway.slug}` title=colorway.color style=`display: block; margin-right: 10px; border-radius: 8px; border: 2px solid ${isActive ? '#111' : 'transparent'}; padding: 2px;`)
+                                    img(src=colorway.thumbnail alt=colorway.color style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;")
 
                 form(
                     id="form-add-to-cart"
@@ -30,11 +39,16 @@ block main
                 )
                     .form-group.mb-4
                         label.font-weight-bold(for="size") Chọn kích cỡ (Size)
-                        select.form-control.form-control-lg(id="size" name="size")
-                            option(value="39") Size 39
-                            option(value="40") Size 40
-                            option(value="41") Size 41
-                            option(value="42") Size 42
+                        select.form-control.form-control-lg(id="size" name="size" required)
+                            option(value="" disabled selected) -- Vui lòng chọn Size --
+                            if (product.variants && product.variants.length > 0)
+                                each variant in product.variants
+                                    if (variant.stock > 0)
+                                        option(value=variant.size) Size #{variant.size} - (Còn #{variant.stock})
+                                    else
+                                        option(value=variant.size disabled) Size #{variant.size} - Hết hàng
+                            else 
+                                option(value="" disabled) Đang cập nhật kích cỡ
 
                     .form-group.mb-4
                         label.font-weight-bold(for="quantity") Số lượng
@@ -43,23 +57,29 @@ block main
                             name="quantity"
                             value="1"
                             min="1"
-                            max=product.stock
                             style="width: 100px;"
                         )
-                        if (product.stock > 0)
-                            small.text-success Còn #{product.stock} sản phẩm trong kho
-                        else 
-                            small.text-danger Hết hàng
 
                     button.btn.btn-dark.btn-lg.btn-block.py-3.mt-4(
                         type="submit"
-                        disabled=(product.stock <= 0)
+                        disabled=(totalStock <= 0)
                     ) 
-                        if (product.stock > 0)
+                        if (totalStock > 0)
                             | Thêm vào giỏ hàng
                         else 
-                            | Đã bán hết
+                            | Đã bán hết toàn bộ
 
                 .product-description.mt-5.pt-4(style="border-top: 1px solid #e5e5e5;")
                     h4.font-weight-bold.mb-3 Chi tiết sản phẩm
+                    ul.list-unstyled.mb-4(style="line-height: 2;")
+                        if (product.attributes)
+                            if (product.attributes.brand)
+                                li <strong>Thương hiệu:</strong> #{product.attributes.brand}
+                            if (product.attributes.surface)
+                                li <strong>Mặt sân (Loại đinh):</strong> #{product.attributes.surface}
+                            if (product.attributes.position)
+                                li <strong>Vị trí khuyên dùng:</strong> #{product.attributes.position}
+                        if (product.styleCode)
+                            li <strong>Mã kiểu dáng:</strong> #{product.styleCode}
+                    
                     div.text-justify !{product.description}
