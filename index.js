@@ -22,6 +22,11 @@ app.use(express.json())
 //App locals Variables
 app.locals.prefixAdmin = systemConfix.prefixAdmin
 
+app.use((req, res, next) => {
+    res.locals.path = req.path;
+    next();
+});
+
 //Routes
 route(app)
 routeAdmin(app)

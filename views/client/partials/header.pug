@@ -59,22 +59,23 @@ header.header
         span.navbar-toggler-icon
       .collapse.navbar-collapse#mainNav
         ul.navbar-nav.mr-auto
-          li.nav-item.active
+          li.nav-item(class=(path === '/' ? 'active' : ''))
             a.nav-link(href="/") Trang chủ
-          li.nav-item
+            
+          li.nav-item(class=(path === '/about' ? 'active' : ''))
             a.nav-link(href="/about") Giới thiệu
-          li.nav-item.dropdown
-            a.nav-link.dropdown-toggle#prodDropdown(href="#" data-toggle="dropdown") Sản phẩm
-            .dropdown-menu
-              a.dropdown-item(href="/products") Tất cả sản phẩm
-              a.dropdown-item(href="/products/tu-chau") Tủ chậu
-              a.dropdown-item(href="/products/voi-sen") Vòi sen
-          li.nav-item
+
+          li.nav-item(class=(path && path.startsWith('/products') ? 'active' : ''))
+            a.nav-link(href="/products") Sản phẩm
+            
+          li.nav-item(class=(path === '/news' ? 'active' : ''))
             a.nav-link(href="/news") Tin tức
-          li.nav-item
+            
+          li.nav-item(class=(path === '/contact' ? 'active' : ''))
             a.nav-link(href="/contact") Liên hệ
-          li.nav-item
+            
+          li.nav-item(class=(path === '/faq' ? 'active' : ''))
             a.nav-link(href="/faq") Câu hỏi thường gặp
-          li.nav-item
+            
+          li.nav-item(class=(path === '/stores' ? 'active' : ''))
             a.nav-link(href="/stores") Hệ thống
-        
