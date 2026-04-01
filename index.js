@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("path")
 require('dotenv').config()
 
 const database = require("./config/database")
@@ -18,6 +19,8 @@ app.set('view engine', 'pug');
 
 app.use(express.static("public"))
 app.use(express.json())
+
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 //App locals Variables
 app.locals.prefixAdmin = systemConfix.prefixAdmin

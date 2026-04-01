@@ -45,7 +45,8 @@ block main
                 id="desc"
                 name="description"
                 rows="5"
-            ) #{product.description}
+                textarea-mce
+            ) !{product.description}
         
         .form-group
             label(for="price") Giá
