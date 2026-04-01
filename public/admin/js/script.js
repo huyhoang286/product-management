@@ -255,3 +255,138 @@ if(sort) {
     
 }
 // End Sort
+
+// TreeTable: Đóng/Mở danh mục con
+const buttonsToggle = document.querySelectorAll("[button-toggle-tree]");
+if (buttonsToggle.length > 0) {
+    buttonsToggle.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute("button-toggle-tree");
+            
+            const isExpanded = button.innerText === "-";
+            
+            button.innerText = isExpanded ? "+" : "-";
+
+            const toggleChildren = (parentId, show) => {
+                const childrenRows = document.querySelectorAll(`tr[data-parent-id='${parentId}']`);
+                
+                childrenRows.forEach(row => {
+                    if (show) {
+                        row.classList.remove("d-none");
+                    } else {
+                        row.classList.add("d-none");
+                        
+                        const rowId = row.getAttribute("data-id");
+                        const btn = row.querySelector("[button-toggle-tree]");
+                        if (btn) btn.innerText = "+"; 
+                        
+                        toggleChildren(rowId, false); 
+                    }
+                });
+            };
+
+            toggleChildren(id, !isExpanded);
+        });
+    });
+}
+// End TreeTable: Đóng/Mở danh mục con
+
+
+// Delete category
+const buttonsDelete = document.querySelectorAll("[button-delete]");
+if (buttonsDelete.length > 0) {
+    buttonsDelete.forEach(button => {
+        button.addEventListener("click", () => {
+            const isConfirm = confirm("Bạn có chắc muốn xóa bản ghi này?");
+            
+            if (isConfirm) {
+                const id = button.getAttribute("data-id");
+                
+                fetch(`/admin/products-category/delete/${id}`, {
+                    method: "DELETE"
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        button.closest("tr").remove();
+                        
+                    } else {
+                        alert("Xóa thất bại!");
+                    }
+                })
+                .catch(error => console.log(error));
+            }
+        });
+    });
+}
+// End Delete Category
+
+// Form Edit Category
+const formEditCategory = document.querySelector("#form-edit-category");
+if (formEditCategory) {
+    formEditCategory.addEventListener("submit", (e) => {
+        e.preventDefault(); 
+
+        const action = formEditCategory.getAttribute("action");
+        const formData = new FormData(formEditCategory); 
+
+        fetch(action, {
+            method: "PATCH",
+            body: formData 
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: data.message,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = "/admin/products-category";
+                });
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.log("Lỗi:", error));
+    });
+}
+// End Form Edit Category
+
+// Change status category
+const buttonsChangeStatus = document.querySelectorAll("[button-change-status]");
+if (buttonsChangeStatus.length > 0) {
+    buttonsChangeStatus.forEach(button => {
+        button.addEventListener("click", () => {
+            const statusCurrent = button.getAttribute("data-status");
+            const id = button.getAttribute("data-id");
+
+            const statusChange = statusCurrent === "active" ? "inactive" : "active";
+            
+            const apiPath = `/admin/products-category/change-status/${statusChange}/${id}`;
+
+            fetch(apiPath, {
+                method: "PATCH"
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.code === 200) {
+                    if (statusChange === "active") {
+                        button.innerText = "Hoạt động";
+                        button.classList.remove("badge-danger");
+                        button.classList.add("badge-success");
+                        button.setAttribute("data-status", "active");
+                    } else {
+                        button.innerText = "Dừng hoạt động";
+                        button.classList.remove("badge-success");
+                        button.classList.add("badge-danger");
+                        button.setAttribute("data-status", "inactive");
+                    }
+                }
+            })
+            .catch(error => console.log(error));
+        });
+    });
+}
+// End Change status category

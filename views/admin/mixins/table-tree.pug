@@ -1,0 +1,46 @@
+mixin table-tree(items, level = 1)
+  each item in items
+    tr(
+      data-id=item.id 
+      data-parent-id=item.parent_id 
+      class=(level > 1 ? "d-none" : "")
+    )
+      td
+        div(style=`padding-left: ${(level - 1) * 20}px`)
+          if item.children && item.children.length > 0
+            button(
+              class="btn btn-sm btn-light mr-1 font-weight-bold" 
+              button-toggle-tree=item.id
+            ) +
+          else
+            span.mr-4
+          | #{item.title}
+        //- td
+        //- input(type="number" value=item.position style="width: 60px" min="1" name="position")
+      td
+        if (item.status === "active")
+          a(
+            href="javascript:;" 
+            class="badge badge-success"
+            button-change-status
+            data-id=item.id
+            data-status=item.status
+            ) Hoạt động
+        else
+          a(
+            href="javascript:;" 
+            class="badge badge-danger"
+            button-change-status
+            data-id=item.id
+            data-status=item.status
+            ) Dừng hoạt động
+      td
+        a(href=`/admin/products-category/edit/${item.id}` class="btn btn-warning btn-sm") Sửa
+        button(
+            class="btn btn-danger btn-sm ml-1"
+            button-delete
+            data-id=item.id
+            ) Xóa
+
+    if item.children && item.children.length > 0
+      +table-tree(item.children, level + 1)
