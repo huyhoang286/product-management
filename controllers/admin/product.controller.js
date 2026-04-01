@@ -2,6 +2,7 @@ const Product = require("../../models/product.model")
 const filterStatusHepler = require("../../helpers/filterStatus")
 const searchHepler = require("../../helpers/search")
 const paginationHepler = require("../../helpers/pagination")
+const sortHelper = require("../../helpers/sort")
 
 //[GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -21,6 +22,10 @@ module.exports.index = async (req, res) => {
     }
     //End Search
 
+    // Sort
+    const sort = sortHelper(req.query)
+    // End Sort
+
     //Pagination
     const countProducts = await Product.countDocuments(find)
     let objectPagination = paginationHepler(
@@ -34,6 +39,7 @@ module.exports.index = async (req, res) => {
     //End Pagination
 
     const products = await Product.find(find)
+        .sort(sort)
         .limit(objectPagination.limitItems)
         .skip(objectPagination.skip)
 

@@ -223,3 +223,35 @@ if (successMessage) {
     
     sessionStorage.removeItem("successMessage");
 }
+
+// Sort
+const sort = document.querySelector("[sort]")
+if(sort) {
+    let url = new URL(window.location.href)
+    const sortSelect = document.querySelector("[sort-select]")
+    sortSelect.addEventListener("change", (e) => {
+        const value = e.target.value
+        if(value) {
+            const [sortKey, sortValue] = value.split("-")
+            url.searchParams.set("sortKey", sortKey)
+            url.searchParams.set("sortValue", sortValue)
+        }
+        else {
+            url.searchParams.delete("sortKey");
+            url.searchParams.delete("sortValue");
+        }
+        window.location.href = url.href
+    })
+    const sortKey = url.searchParams.get("sortKey");
+    const sortValue = url.searchParams.get("sortValue");
+
+    if (sortKey && sortValue) {
+        const stringSort = `${sortKey}-${sortValue}`;
+        const optionSelected = sortSelect.querySelector(`option[value='${stringSort}']`);
+        if (optionSelected) {
+            optionSelected.selected = true;
+        }
+    }
+    
+}
+// End Sort
