@@ -110,9 +110,8 @@ module.exports.deleteItem = async (req, res) => {
     try {
         const id = req.params.id;
         
-        await ProductCategory.updateOne(
-            { _id: id },
-            { deleted: true, deletedAt: new Date() }
+        await ProductCategory.deleteOne(
+            { _id: id }
         );
 
         res.json({

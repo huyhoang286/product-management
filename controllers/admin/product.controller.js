@@ -265,9 +265,6 @@ module.exports.edit = async (req, res) => {
 //[PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
-        console.log("=== DỮ LIỆU FORM CHỈNH SỬA GỬI LÊN ===");
-        console.log(req.body);
-        console.log("======================================");
         const id = req.params.id;
 
         req.body.price = parseFloat(req.body.price);

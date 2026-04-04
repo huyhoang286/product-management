@@ -326,30 +326,31 @@ const formEditCategory = document.querySelector("#form-edit-category");
 if (formEditCategory) {
     formEditCategory.addEventListener("submit", (e) => {
         e.preventDefault(); 
+        
+        if (typeof tinymce !== "undefined") {
+            tinymce.triggerSave();
+        }
 
-        const action = formEditCategory.getAttribute("action");
-        const formData = new FormData(formEditCategory); 
+        const id = formEditCategory.getAttribute("data-id"); 
+        const formData = new FormData(formEditCategory);
 
-        fetch(action, {
+        fetch(`/admin/products-category/edit/${id}`, {
             method: "PATCH",
-            body: formData 
+            body: formData
         })
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                Swal.fire({
-                    title: 'Thành công!',
-                    text: data.message,
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = "/admin/products-category";
-                });
+                alert(data.message);
+                window.location.href = "/admin/products-category"; 
             } else {
                 alert(data.message);
             }
         })
-        .catch(error => console.log("Lỗi:", error));
+        .catch(error => {
+            console.error("Lỗi Fetch API:", error);
+            alert("Có lỗi xảy ra, vui lòng thử lại!");
+        });
     });
 }
 // End Form Edit Category
