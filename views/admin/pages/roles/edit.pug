@@ -1,0 +1,33 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") Chỉnh sửa nhóm quyền
+
+  form(
+    id="form-edit-role"
+    data-id=data.id
+  )
+    .form-group
+      label(for="title") Tiêu đề
+      input(
+        type="text"
+        class="form-control"
+        id="title"
+        name="title"
+        required
+        value=data.title
+      )
+    .form-group
+      label(for="desc") Mô tả
+      input(
+        type="text"
+        class="form-control"
+        id="desc"
+        name="description"
+        value=data.description
+      )
+    .form-group
+      button(
+        type="submit"
+        class="btn btn-primary"
+      ) Cập nhật
