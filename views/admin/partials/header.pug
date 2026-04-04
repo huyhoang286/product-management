@@ -3,6 +3,18 @@ header.header
     .row.align-items-center
       .col-3
         .inner-logo
-          a(href="/admin/dashboard") ADMIN
-      
-      .col-9
+          a(href="/admin/dashboard") ADMIN 
+
+      .col-9.text-right
+        div(class="d-inline-block mr-3")
+          img(
+            src=user.avatar
+            style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px;"
+          )
+          span.font-weight-bold.text-light #{user.fullName}
+          span.badge.badge-primary.ml-2 #{role.title}
+          
+        a(
+          href=`${prefixAdmin}/auth/logout`
+          class="btn btn-danger btn-sm"
+        ) Đăng xuất
