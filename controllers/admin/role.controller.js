@@ -89,3 +89,39 @@ module.exports.deleteItem = async (req, res) => {
         });
     }
 };
+
+// [GET] /admin/roles/permissions
+module.exports.permissions = async (req, res) => {
+    try {
+        let find = { deleted: false };
+        const records = await Role.find(find);
+
+        res.render("admin/pages/roles/permissions", {
+            pageTitle: "Phân quyền",
+            records: records
+        });
+    } catch (error) {
+        res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+    }
+};
+
+// [PATCH] /admin/roles/permissions
+module.exports.permissionsPatch = async (req, res) => {
+    try {
+        const permissions = JSON.parse(req.body.permissions);
+
+        for (const item of permissions) {
+            await Role.updateOne({ _id: item.id }, { permissions: item.permissions });
+        }
+
+        res.json({
+            code: 200,
+            message: "Cập nhật phân quyền thành công!"
+        });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message: "Cập nhật thất bại!"
+        });
+    }
+};

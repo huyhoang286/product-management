@@ -107,3 +107,105 @@ if (buttonsDeleteRole.length > 0) {
     });
 }
 //Delete Role
+
+//Permissions
+// Hiển thị mặc định các quyền đã tích
+const dataRecords = document.querySelector("[data-records]");
+if (dataRecords) {
+    const records = JSON.parse(dataRecords.getAttribute("data-records"));
+    const tablePermissions = document.querySelector("[table-permissions]");
+
+    if (tablePermissions) {
+        records.forEach((record, index) => {
+            const permissions = record.permissions; 
+            
+            permissions.forEach(permission => {
+                const row = tablePermissions.querySelector(`[data-name="${permission}"]`);
+                if (row) {
+                    const input = row.querySelectorAll("input")[index];
+                    if (input) {
+                        input.checked = true; 
+                    }
+                }
+            });
+        });
+    }
+}
+
+// Gom dữ liệu và gửi API Cập nhật 
+const buttonSubmit = document.querySelector("[button-submit]");
+if (buttonSubmit) {
+    buttonSubmit.addEventListener("click", () => {
+        const permissions = [];
+        const tablePermissions = document.querySelector("[table-permissions]");
+        const rows = tablePermissions.querySelectorAll("tbody tr[data-name]");
+
+        rows.forEach(row => {
+            const name = row.getAttribute("data-name"); 
+            const inputs = row.querySelectorAll("input");
+
+            if (name === "id") {
+                inputs.forEach(input => {
+                    permissions.push({
+                        id: input.value,
+                        permissions: [] 
+                    });
+                });
+            } else {
+                inputs.forEach((input, index) => {
+                    if (input.checked) {
+                        permissions[index].permissions.push(name);
+                    }
+                });
+            }
+        });
+
+        console.log("Cục dữ liệu chuẩn bị gửi đi:", permissions);
+
+        const formData = new FormData();
+        formData.append("permissions", JSON.stringify(permissions));
+
+        fetch(`/admin/roles/permissions`, {
+            method: "PATCH",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.reload(); 
+                });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
+            }
+        })
+        .catch(error => console.log("Lỗi Fetch API Phân quyền:", error));
+    });
+}
+
+//Nút Chọn tất cả
+const tablePermissionsCheckAll = document.querySelector("[table-permissions]");
+if (tablePermissionsCheckAll) {
+    const checkAllInputs = tablePermissionsCheckAll.querySelectorAll("input[input-check-all-column]");
+    
+    checkAllInputs.forEach((checkAllInput, index) => {
+        checkAllInput.addEventListener("click", () => {
+            const isChecked = checkAllInput.checked;
+            
+            const rows = tablePermissionsCheckAll.querySelectorAll("tbody tr[data-name]:not([data-name='id'])");
+            
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll("input");
+                if (inputs[index]) {
+                    inputs[index].checked = isChecked;
+                }
+            });
+        });
+    });
+}
+//End Permissions
