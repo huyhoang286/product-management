@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
 
 block main
     h1(class="mb-4") Chỉnh sửa sản phẩm
@@ -18,6 +19,16 @@ block main
                 value=product.title 
             )
         
+        .form-group
+            label(for="product_category_id") Danh mục
+            select(
+                name="product_category_id"
+                id="product_category_id"
+                class="form-control"
+            )
+                option(value="") -- Chọn danh mục --
+                +select-tree(categoryRecords, 1, product.product_category_id)
+
         .row 
             .col-6.form-group
                 label(for="styleCode") Mã kiểu dáng (Style Code)
@@ -126,17 +137,6 @@ block main
                         
             button.btn.btn-success.mb-4(type="button" id="button-add-variant") + Thêm kích cỡ
 
-        .form-group
-            label(for="stock") Số lượng
-            input(
-                type="number"
-                class="form-control"
-                id="stock"
-                name="stock"
-                value=product.stock
-                min="0"
-            )
-        
         .form-group(upload-image)
             label(for="thumbnail") Ảnh minh họa
             input(

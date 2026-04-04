@@ -1,4 +1,6 @@
 const Product = require("../../models/product.model")
+const ProductCategory = require("../../models/product-category.model"); 
+const createTreeHelper = require("../../helpers/createTree");
 const filterStatusHepler = require("../../helpers/filterStatus")
 const searchHepler = require("../../helpers/search")
 const paginationHepler = require("../../helpers/pagination")
@@ -182,9 +184,14 @@ module.exports.restoreItem = async (req, res) => {
 
 //[GET] /admin/products/create
 module.exports.create = async (req, res) => {
-    res.render("admin/pages/products/create.pug", {
-        pageTitle: "Trang thêm mới sản phẩm"
-    })
+    let find = { deleted: false };
+    const categoryRecords = await ProductCategory.find(find);
+    const newCategoryRecords = createTreeHelper(categoryRecords);
+
+    res.render("admin/pages/products/create", {
+        pageTitle: "Thêm mới sản phẩm",
+        categoryRecords: newCategoryRecords 
+    });
 }
 
 //[POST] /admin/products/create
@@ -239,25 +246,28 @@ module.exports.createPost = async(req, res) => {
 //[GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
     try {
-        const id = req.params.id;
+        const find = { deleted: false, _id: req.params.id };
+        const product = await Product.findOne(find);
 
-        const product = await Product.findOne({
-            _id: id,
-            deleted: false
-        });
+        const categoryRecords = await ProductCategory.find({ deleted: false });
+        const newCategoryRecords = createTreeHelper(categoryRecords);
 
-        res.render("admin/pages/products/edit.pug", {
+        res.render("admin/pages/products/edit", {
             pageTitle: "Chỉnh sửa sản phẩm",
-            product: product
+            product: product,
+            categoryRecords: newCategoryRecords 
         });
     } catch (error) {
-        res.redirect(`/admin/products`);
+        res.redirect(`${systemConfig.prefixAdmin}/products`);
     }
 }
 
 //[PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
     try {
+        console.log("=== DỮ LIỆU FORM CHỈNH SỬA GỬI LÊN ===");
+        console.log(req.body);
+        console.log("======================================");
         const id = req.params.id;
 
         req.body.price = parseFloat(req.body.price);

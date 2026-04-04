@@ -1,9 +1,9 @@
 // Xử lý logic sản phẩm
 
 // Change Status
-const buttonsChangeStatus = document.querySelectorAll("[button-change-status]")
-if(buttonsChangeStatus.length > 0) {
-    buttonsChangeStatus.forEach(button => {
+const buttonsChangeStatusProduct = document.querySelectorAll("[button-change-status]")
+if(buttonsChangeStatusProduct.length > 0) {
+    buttonsChangeStatusProduct.forEach(button => {
         button.addEventListener("click", () => {
             const statusCurrent = button.getAttribute("data-status")
             const id = button.getAttribute("data-id")
@@ -43,9 +43,9 @@ if(buttonsChangeStatus.length > 0) {
 // End Change Status
 
 // Delete Item
-const buttonsDelete = document.querySelectorAll("[button-delete]")
-if(buttonsDelete) {
-    buttonsDelete.forEach(button => {
+const buttonsDeleteProduct = document.querySelectorAll("[button-delete]")
+if(buttonsDeleteProduct) {
+    buttonsDeleteProduct.forEach(button => {
         button.addEventListener("click", () => {
             const id = button.getAttribute("data-id")
             Swal.fire({

@@ -1,4 +1,5 @@
 extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
 //- include ../../mixin/alert.pug
 
 block main
@@ -17,6 +18,16 @@ block main
                 required
             )
         
+        .form-group
+            label(for="product_category_id") Danh mục
+            select(
+                name="product_category_id"
+                id="product_category_id"
+                class="form-control"
+            )
+                option(value="") -- Chọn danh mục --
+                +select-tree(categoryRecords)
+
         .row 
             .col-6.form-group
                 label(for="styleCode") Mã kiểu dáng (Style Code)
