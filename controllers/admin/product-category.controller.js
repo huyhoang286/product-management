@@ -51,9 +51,15 @@ module.exports.createPost = async (req, res) => {
         const record = new ProductCategory(req.body);
         await record.save();
 
-        res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+        res.json({
+            code: 200,
+            message: "Tạo mới danh mục thành công!"
+        });
     } catch (error) {
-        res.redirect(`${systemConfig.prefixAdmin}/products-category/create`);
+        res.json({
+            code: 400,
+            message: "Có lỗi xảy ra, vui lòng thử lại!"
+        });
     }
 };
 

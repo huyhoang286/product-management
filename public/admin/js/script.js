@@ -291,6 +291,41 @@ if (buttonsToggle.length > 0) {
 }
 // End TreeTable: Đóng/Mở danh mục con
 
+// Add category
+const formCreateCategory = document.querySelector("#form-create-category");
+if (formCreateCategory) {
+    formCreateCategory.addEventListener("submit", (e) => {
+        e.preventDefault(); 
+        
+        if (typeof tinymce !== "undefined") {
+            tinymce.triggerSave();
+        }
+
+        const formData = new FormData(formCreateCategory);
+
+        fetch(`/admin/products-category/create`, {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/admin/products-category"; 
+                });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
+            }
+        })
+        .catch(error => console.error("Lỗi Fetch API:", error));
+    });
+}
+// End Add category
 
 // Delete category
 const buttonsDelete = document.querySelectorAll("[button-delete]");
@@ -308,10 +343,16 @@ if (buttonsDelete.length > 0) {
                 .then(res => res.json())
                 .then(data => {
                     if (data.code === 200) {
-                        button.closest("tr").remove();
-                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "/admin/products-category"; 
+                        });
                     } else {
-                        alert("Xóa thất bại!");
+                        Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
                     }
                 })
                 .catch(error => console.log(error));
@@ -341,10 +382,16 @@ if (formEditCategory) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                alert(data.message);
-                window.location.href = "/admin/products-category"; 
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/admin/products-category"; 
+                });
             } else {
-                alert(data.message);
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
             }
         })
         .catch(error => {

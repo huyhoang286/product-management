@@ -1,10 +1,8 @@
-//Xử lý nhóm quyền và phân quyền
-
-// Create Role
+//Creat Role
 const formCreateRole = document.querySelector("#form-create-role");
 if (formCreateRole) {
     formCreateRole.addEventListener("submit", (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         
         const formData = new FormData(formCreateRole);
 
@@ -15,18 +13,24 @@ if (formCreateRole) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                alert(data.message);
-                window.location.href = "/admin/roles"; 
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/admin/roles"; 
+                });
             } else {
-                alert(data.message);
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
             }
         })
         .catch(error => console.log("Lỗi Fetch API:", error));
     });
 }
-// End Create Role
+//End Creat Role
 
-// Edit Role
+//Edit Role
 const formEditRole = document.querySelector("#form-edit-role");
 if (formEditRole) {
     formEditRole.addEventListener("submit", (e) => {
@@ -42,42 +46,64 @@ if (formEditRole) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                alert(data.message);
-                window.location.href = "/admin/roles"; 
+                Swal.fire({
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = "/admin/roles"; 
+                });
             } else {
-                alert(data.message);
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
             }
         })
         .catch(error => console.log("Lỗi Fetch API:", error));
     });
 }
-// End Edit Role
+//End Edit Role
 
-// Delete Role
+//Delete Role
 const buttonsDeleteRole = document.querySelectorAll("[button-delete-role]");
 if (buttonsDeleteRole.length > 0) {
     buttonsDeleteRole.forEach(button => {
         button.addEventListener("click", () => {
-            const isConfirm = confirm("CẢNH BÁO: Bạn có chắc chắn muốn xóa vĩnh viễn nhóm quyền này khỏi hệ thống không?");
-            
-            if (isConfirm) {
-                const id = button.getAttribute("data-id");
-                
-                fetch(`/admin/roles/delete/${id}`, {
-                    method: "DELETE"
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.code === 200) {
-                        alert(data.message);
-                        window.location.reload(); 
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => console.log("Lỗi Fetch API:", error));
-            }
+            Swal.fire({
+                title: "CẢNH BÁO",
+                text: "Bạn có chắc chắn muốn xóa vĩnh viễn nhóm quyền này không? Hành động này không thể hoàn tác!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Vâng, xóa nó!",
+                cancelButtonText: "Hủy"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const id = button.getAttribute("data-id");
+                    
+                    fetch(`/admin/roles/delete/${id}`, {
+                        method: "DELETE"
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.code === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Đã xóa!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.reload(); 
+                            });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
+                        }
+                    })
+                    .catch(error => console.log("Lỗi Fetch API:", error));
+                }
+            });
         });
     });
 }
-// End Delete Role
+//Delete Role
