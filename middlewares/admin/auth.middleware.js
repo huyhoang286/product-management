@@ -22,3 +22,21 @@ module.exports.requireAuth = async (req, res, next) => {
 
     next();
 };
+
+module.exports.requirePermission = (permission) => {
+    return (req, res, next) => {
+        if (!res.locals.role.permissions.includes(permission)) {
+            
+            if (req.method === "GET") {
+                res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+                return;
+            } else {
+                res.json({ code: 403, message: "Lỗi 403: Bạn không có quyền thực hiện hành động này!" });
+                return;
+            }
+
+        }
+        
+        next();
+    };
+};

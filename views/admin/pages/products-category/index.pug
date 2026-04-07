@@ -10,10 +10,11 @@ block main
       .row
         .col-8
         .col-4.text-right
-          a(
-            href=`/admin/products-category/create`
-            class="btn btn-outline-success"
-          ) + Thêm mới
+          if(role.permissions.includes("products-category_create"))
+            a(
+              href=`/admin/products-category/create`
+              class="btn btn-outline-success"
+            ) + Thêm mới
 
       table.table.table-hover.table-sm.mt-3
         thead

@@ -1,22 +1,48 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../../controllers/admin/role.controller");
+const authMiddleware = require("../../middlewares/admin/auth.middleware");
 
-const multer = require("multer");
-const upload = multer();
+router.get(
+  "/", 
+  authMiddleware.requirePermission("roles_view"), 
+  controller.index
+);
 
-router.get("/", controller.index);
-router.get("/create", controller.create);
-router.post("/create", upload.none(), controller.createPost);
+router.get(
+  "/create", 
+  authMiddleware.requirePermission("roles_create"), 
+  controller.create
+);
 
-//Phân quyền
-router.get("/permissions", controller.permissions);
-router.patch("/permissions", upload.none(), controller.permissionsPatch);
-//End phân quyền
+router.post(
+  "/create", 
+  authMiddleware.requirePermission("roles_create"), 
+  controller.createPost
+);
 
-router.get("/edit/:id", controller.edit);
-router.patch("/edit/:id", upload.none(), controller.editPatch);
+router.get(
+  "/edit/:id", 
+  authMiddleware.requirePermission("roles_edit"), 
+  controller.edit
+);
 
-router.delete("/delete/:id", controller.deleteItem);
+router.patch(
+  "/edit/:id", 
+  authMiddleware.requirePermission("roles_edit"), 
+  controller.editPatch
+);
+
+router.get(
+  "/permissions", 
+  authMiddleware.requirePermission("roles_permissions"), 
+  controller.permissions
+);
+
+router.patch(
+  "/permissions", 
+  authMiddleware.requirePermission("roles_permissions"), 
+  controller.permissionsPatch
+);
 
 module.exports = router;

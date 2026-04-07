@@ -44,11 +44,12 @@ block main
                                     option(value="inactive") Dừng hoạt động
                                     option(value="delete-all") Xóa tất cả
                             button(type="submit" class="btn btn-primary") Áp dụng
-                .col-4.text-right 
-                    a(
-                        href=`${prefixAdmin}/products/create`
-                        class="btn btn-outline-success"
-                    ) + Thêm mới
+                if(role.permissions.includes("products_create"))
+                    .col-4.text-right 
+                        a(
+                            href=`${prefixAdmin}/products/create`
+                            class="btn btn-outline-success"
+                        ) + Thêm mới
             
             table(
                 class="table table-hover table-sm"
@@ -80,32 +81,40 @@ block main
                             td #{item.title}
                             td #{item.price}$
                             td
-                                if(item.status == "active")
-                                    a(
-                                        href="javascript:;" 
-                                        data-status=item.status
-                                        data-id=item.id
-                                        button-change-status
-                                        class="badge badge-success"
-                                    ) Hoạt động
-                                else    
-                                    a(
-                                        href="javascript:;" 
-                                        data-status=item.status
-                                        data-id=item.id
-                                        button-change-status
-                                        class="badge badge-danger"
-                                    ) Dừng hoạt động
+                                if(role.permissions.includes("products_edit"))
+                                    if(item.status == "active")
+                                        a(
+                                            href="javascript:;" 
+                                            data-status=item.status
+                                            data-id=item.id
+                                            button-change-status
+                                            class="badge badge-success"
+                                        ) Hoạt động
+                                    else    
+                                        a(
+                                            href="javascript:;" 
+                                            data-status=item.status
+                                            data-id=item.id
+                                            button-change-status
+                                            class="badge badge-danger"
+                                        ) Dừng hoạt động
+                                else 
+                                    if(item.status == "active")
+                                        span(class="badge badge-success") Hoạt động
+                                    else    
+                                        span(class="badge badge-danger") Dừng hoạt động
                             td
-                                a(
-                                    href=`${prefixAdmin}/products/edit/${item.id}`
-                                    class="btn btn-warning btn-sm"
-                                ) Sửa
-                                button(
-                                    class="btn btn-danger btn-sm ml-1"
-                                    button-delete 
-                                    data-id=item.id
-                                    ) Xóa
+                                if(role.permissions.includes("products_edit"))
+                                    a(
+                                        href=`${prefixAdmin}/products/edit/${item.id}`
+                                        class="btn btn-warning btn-sm"
+                                    ) Sửa
+                                if(role.permissions.includes("products_delete"))
+                                    button(
+                                        class="btn btn-danger btn-sm ml-1"
+                                        button-delete 
+                                        data-id=item.id
+                                        ) Xóa
             +pagination(pagination)
     
 
