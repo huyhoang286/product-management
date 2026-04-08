@@ -420,3 +420,39 @@ if (buttonsChangeStatus.length > 0) {
     });
 }
 // End Change status category
+
+// CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG 
+const selectStatuses = document.querySelectorAll("[select-status]");
+if(selectStatuses.length > 0) {
+    selectStatuses.forEach(select => {
+        select.addEventListener("change", (e) => {
+            const id = select.getAttribute("order-id");
+            const status = e.target.value;
+
+            const pathAdmin = window.location.pathname.split("/")[1]; 
+
+            fetch(`/${pathAdmin}/orders/change-status/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: status })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.code === 200) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    setTimeout(() => {
+                        window.location.reload(); 
+                    }, 2000);
+                }
+            });
+        });
+    });
+}

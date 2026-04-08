@@ -1,0 +1,47 @@
+extends ../../layouts/default.pug
+
+block main
+    h1.mb-4 QUẢN LÝ ĐƠN HÀNG
+
+    .card.mb-3
+        .card-header Danh sách đơn đặt hàng
+        .card-body
+            table.table.table-hover.table-sm
+                thead.thead-light
+                    tr
+                        th STT
+                        th Mã Đơn
+                        th Thông tin khách hàng
+                        th Tổng tiền
+                        th Trạng thái
+                        th Hành động
+                tbody
+                    if orders.length > 0
+                        each item, index in orders
+                            tr
+                                td.align-middle #{index + 1}
+                                td.align-middle 
+                                    b.text-primary ##{item.id.toUpperCase().slice(-6)}
+                                td.align-middle
+                                    b #{item.userInfo.fullName}
+                                    br
+                                    span.text-muted #{item.userInfo.phone}
+                                td.align-middle.text-danger.font-weight-bold #{item.totalPrice.toLocaleString("vi-VN")} đ
+                                td.align-middle
+                                    //- Thẻ Select Box đổi trạng thái động
+                                    select.form-control.form-control-sm(
+                                        select-status
+                                        order-id=item.id
+                                        style="width: 150px; cursor: pointer;"
+                                        class=(item.status === 'success' ? 'border-success text-success' : item.status === 'cancel' ? 'border-danger text-danger' : 'border-warning text-warning')
+                                    )
+                                        option(value="pending" selected=(item.status == "pending" ? true : false)) Chờ xác nhận
+                                        option(value="confirm" selected=(item.status == "confirm" ? true : false)) Đã xác nhận
+                                        option(value="delivering" selected=(item.status == "delivering" ? true : false)) Đang giao
+                                        option(value="success" selected=(item.status == "success" ? true : false)) Hoàn thành
+                                        option(value="cancel" selected=(item.status == "cancel" ? true : false)) Hủy đơn
+                                td.align-middle
+                                    a.btn.btn-secondary.btn-sm(href=`${prefixAdmin}/orders/detail/${item.id}`) Chi tiết
+                    else
+                        tr
+                            td.text-center(colspan="6") Chưa có đơn hàng nào trong hệ thống!

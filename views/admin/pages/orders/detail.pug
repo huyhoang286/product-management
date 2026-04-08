@@ -1,0 +1,63 @@
+extends ../../layouts/default.pug
+
+block main
+    .container-fluid
+        h1.mb-4 CHI TIẾT ĐƠN HÀNG 
+            b.text-primary ##{order.id.toUpperCase().slice(-6)}
+
+        .row
+            //- THÔNG TIN KHÁCH HÀNG VÀ TRẠNG THÁI
+            .col-md-4
+                .card.mb-4.shadow-sm
+                    .card-header.bg-info.text-white.font-weight-bold Thông tin khách hàng
+                    .card-body
+                        p <b>Họ tên:</b> #{order.userInfo.fullName}
+                        p <b>Số điện thoại:</b> #{order.userInfo.phone}
+                        p <b>Địa chỉ:</b> #{order.userInfo.address}
+                        p <b>Ghi chú:</b> #{order.userInfo.note ? order.userInfo.note : "Không có"}
+                        
+                        hr
+                        p <b>Phương thức thanh toán:</b> 
+                            if order.payment_method == "cod"
+                                span.badge.badge-secondary Thanh toán khi nhận hàng (COD)
+                            else 
+                                span.badge.badge-success Thanh toán Online
+                        
+                        p <b>Ngày đặt hàng:</b> #{new Date(order.createdAt).toLocaleString('vi-VN')}
+
+            //- DANH SÁCH SẢN PHẨM KHÁCH MUA
+            .col-md-8
+                .card.mb-4.shadow-sm
+                    .card-header.bg-success.text-white.font-weight-bold Danh sách sản phẩm
+                    .card-body.p-0
+                        table.table.table-hover.table-bordered.mb-0
+                            thead.thead-light
+                                tr
+                                    th Hình ảnh
+                                    th Tên sản phẩm
+                                    th Size
+                                    th Đơn giá
+                                    th Số lượng
+                                    th Thành tiền
+                            tbody
+                                each item in order.products
+                                    tr
+                                        td.align-middle.text-center
+                                            if item.productInfo
+                                                img.border(src=item.productInfo.thumbnail width="60px" height="60px" style="object-fit: contain;")
+                                        td.align-middle 
+                                            if item.productInfo
+                                                a(href=`${prefixAdmin}/products/detail/${item.productInfo.id}` target="_blank") #{item.productInfo.title}
+                                        td.align-middle.text-center
+                                            if item.variantInfo
+                                                span.badge.badge-dark.px-2.py-1 Size #{item.variantInfo.size}
+                                        td.align-middle.text-center #{item.priceNew.toLocaleString("vi-VN")} đ
+                                        td.align-middle.text-center #{item.quantity}
+                                        td.align-middle.text-right.text-danger.font-weight-bold #{item.totalPrice.toLocaleString("vi-VN")} đ
+                        
+                        .p-3.text-right.bg-light
+                            h4 Tổng thanh toán: 
+                                span.text-danger.font-weight-bold.ml-2 #{order.totalOrderPrice.toLocaleString("vi-VN")} VNĐ
+        
+        .mt-3.mb-5
+            a.btn.btn-secondary(href=`${prefixAdmin}/orders`) <i class="fas fa-arrow-left"></i> Quay lại danh sách
