@@ -31,11 +31,11 @@ header.header
 
         // Search
         .col-lg-6.col-md-8
-          form(action="/search" method="GET")
-            .input-group.search-group
-              input.form-control(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm")
+          form(action="/products" method="GET")
+            .input-group
+              input.form-control(type="text" placeholder="Tìm kiếm sản phẩm..." name="keyword" value=keyword)
               .input-group-append
-                button.btn(type="submit")
+                button.btn.btn-primary(type="submit")
                   i.fas.fa-search
 
         // Icons

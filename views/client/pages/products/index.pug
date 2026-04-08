@@ -2,20 +2,33 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main
-  .container.my-3
-    .row
-      .col-12
-        +box-head("Danh sách sản phẩm")
-    .row
-      each item in products
-        .col-4.mb-3
-          .product-item
-            .inner-image
-              a(href=`/products/${item.slug}`)
-                img(src=item.thumbnail, alt=item.title)
-            .inner-content
-              h3.inner-title 
-                a(href=`/products/${item.slug}`) #{item.title}
-              .inner-price-new #{item.newPrice.toLocaleString("vi-VN")} VNĐ
-              .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
-              .inner-discount -#{item.discountPercentage}%
+    .container.mb-5
+        .row.mb-4
+            .col-12
+                if (keyword)
+                    +box-head(`Kết quả tìm kiếm: "${keyword}"`)
+                else 
+                    +box-head("Tất Cả Sản Phẩm")
+
+        if products && products.length > 0
+            .row
+              each item in products
+                .col-4.mb-3
+                  .product-item
+                    .inner-image
+                      a(href=`/products/${item.slug}`)
+                        img(src=item.thumbnail, alt=item.title)
+                    .inner-content
+                      h3.inner-title 
+                        a(href=`/products/${item.slug}`) #{item.title}
+                      .inner-price-new #{item.newPrice.toLocaleString("vi-VN")} VNĐ
+                      .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
+                      .inner-discount -#{item.discountPercentage}%
+                
+        else
+            .alert.alert-warning.text-center.p-5.shadow-sm
+                i.fas.fa-box-open.fa-3x.mb-3.text-muted
+                if (keyword)
+                    h4 Rất tiếc, không tìm thấy sản phẩm nào phù hợp với từ khóa "<b class="text-danger">#{keyword}</b>"
+                else
+                    h4 Hiện tại danh mục này chưa có sản phẩm nào!

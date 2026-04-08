@@ -1,14 +1,21 @@
-//[GET] /products
 const Product = require("../../models/product.model")
 
+//[GET] /products
 module.exports.index = async (req, res) => {
     try {
+        const matchConditions = {
+            status: "active",
+            deleted: false
+        };
+
+        const keyword = req.query.keyword;
+        if (keyword) {
+            matchConditions.title = new RegExp(keyword, "i"); 
+        }
+
         const products = await Product.aggregate([
             {
-                $match: {
-                    status: "active",
-                    deleted: false
-                }
+                $match: matchConditions 
             },
             {
                 $group: {
@@ -29,8 +36,9 @@ module.exports.index = async (req, res) => {
         });
 
         res.render("client/pages/products/index.pug", {
-            pageTitle: "Danh sách sản phẩm",
-            products: products
+            pageTitle: keyword ? `Kết quả tìm kiếm: ${keyword}` : "Danh sách sản phẩm",
+            products: products,
+            keyword: keyword 
         });
     } catch (error) {
         console.error(error);
