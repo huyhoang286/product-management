@@ -1,0 +1,63 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+    .container.my-5
+        .row
+            .col-12
+                +box-head("Thanh toán đơn hàng")
+
+        .row.mt-4
+            .col-lg-7
+                .card.mb-4
+                    .card-header.bg-dark.text-white Thông tin tóm tắt đơn hàng
+                    .card-body
+                        table.table.table-sm.table-borderless
+                            thead
+                                tr
+                                    th Sản phẩm
+                                    th Size
+                                    th SL
+                                    th Thành tiền
+                            tbody
+                                if (cartDetail.products.length > 0)
+                                    each item in cartDetail.products
+                                        if (item.productInfo)
+                                            tr.border-bottom
+                                                td.py-3 
+                                                    img(src=item.productInfo.thumbnail width="50px" class="mr-2 rounded")
+                                                    | #{item.productInfo.title}
+                                                td.py-3 #{item.variantInfo ? item.variantInfo.size : ""}
+                                                td.py-3 #{item.quantity}
+                                                td.py-3.font-weight-bold.text-danger #{item.totalPrice.toFixed(2)}$
+                        
+                        h5.text-right.mt-3 Tổng cộng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toFixed(2)}$</span>
+
+            .col-lg-5
+                .card
+                    .card-header.bg-primary.text-white Thông tin giao hàng
+                    .card-body
+                        form(form-checkout)
+                            .form-group
+                                label(for="fullName") Họ và tên
+                                input.form-control(type="text" id="fullName" name="fullName" required)
+                            .form-group
+                                label(for="phone") Số điện thoại
+                                input.form-control(type="text" id="phone" name="phone" required)
+                            .form-group
+                                label(for="address") Địa chỉ giao hàng
+                                input.form-control(type="text" id="address" name="address" required)
+                            .form-group
+                                label(for="note") Ghi chú đơn hàng (Tùy chọn)
+                                textarea.form-control(id="note" name="note" rows="2")
+                            
+                            hr
+                            label.font-weight-bold Phương thức thanh toán
+                            .form-check.mb-2
+                                input.form-check-input(type="radio" name="payment_method" id="cod" value="cod" checked)
+                                label.form-check-label(for="cod") Thanh toán khi nhận hàng (COD)
+                            .form-check.mb-4
+                                input.form-check-input(type="radio" name="payment_method" id="online" value="online")
+                                label.form-check-label(for="online") Chuyển khoản ngân hàng (Online)
+
+                            button.btn.btn-success.btn-block.btn-lg(type="submit") THANH TOÁN NGAY

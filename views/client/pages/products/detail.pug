@@ -34,19 +34,19 @@ block main
                                     img(src=colorway.thumbnail alt=colorway.color style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;")
 
                 form(
-                    id="form-add-to-cart"
+                    form-add-to-cart 
                     data-id=product.id
                 )
                     .form-group.mb-4
-                        label.font-weight-bold(for="size") Chọn kích cỡ (Size)
-                        select.form-control.form-control-lg(id="size" name="size" required)
+                        label.font-weight-bold(for="variant_id") Chọn kích cỡ (Size)
+                        select.form-control.form-control-lg(id="variant_id" name="variant_id" required)
                             option(value="" disabled selected) -- Vui lòng chọn Size --
                             if (product.variants && product.variants.length > 0)
                                 each variant in product.variants
                                     if (variant.stock > 0)
-                                        option(value=variant.size) Size #{variant.size} - (Còn #{variant.stock})
+                                        option(value=variant.id) Size #{variant.size} - (Còn #{variant.stock})
                                     else
-                                        option(value=variant.size disabled) Size #{variant.size} - Hết hàng
+                                        option(value=variant.id disabled) Size #{variant.size} - Hết hàng
                             else 
                                 option(value="" disabled) Đang cập nhật kích cỡ
 

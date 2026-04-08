@@ -1,0 +1,20 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+    .container.my-5
+        .row.justify-content-center
+            .col-md-8.text-center
+                h1.text-success <i class="fas fa-check-circle"></i> ĐẶT HÀNG THÀNH CÔNG!
+                p.lead Cảm ơn bạn đã mua sắm. Đơn hàng của bạn đang được xử lý.
+                p Mã đơn hàng của bạn là: <b>#{order.id}</b>
+                
+                .card.text-left.mt-4
+                    .card-header Thông tin khách hàng
+                    .card-body
+                        p <b>Họ tên:</b> #{order.userInfo.fullName}
+                        p <b>Số điện thoại:</b> #{order.userInfo.phone}
+                        p <b>Địa chỉ:</b> #{order.userInfo.address}
+                        p <b>Phương thức thanh toán:</b> #{order.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản Online'}
+                
+                a(href="/products" class="btn btn-primary mt-4 px-5") Tiếp tục mua sắm

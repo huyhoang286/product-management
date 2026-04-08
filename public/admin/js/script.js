@@ -310,14 +310,8 @@ if (formCreateCategory) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = "/admin/products-category"; 
-                });
+                sessionStorage.setItem("successMessage", data.message);
+                window.location.reload();
             } else {
                 Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
             }
@@ -343,14 +337,8 @@ if (buttonsDelete.length > 0) {
                 .then(res => res.json())
                 .then(data => {
                     if (data.code === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: data.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = "/admin/products-category"; 
-                        });
+                        sessionStorage.setItem("successMessage", data.message);
+                        window.location.reload();
                     } else {
                         Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
                     }
@@ -382,14 +370,8 @@ if (formEditCategory) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: data.message,
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = "/admin/products-category"; 
-                });
+                sessionStorage.setItem("successMessage", data.message);
+                window.location.reload();
             } else {
                 Swal.fire({ icon: 'error', title: 'Lỗi!', text: data.message });
             }
