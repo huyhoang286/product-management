@@ -4,13 +4,43 @@ include ../../mixins/box-head.pug
 block main
     //- HERO BANNER 
     .hero-section.mb-5
-        .container-fluid.p-0
-            .banner-wrapper(style="position: relative; background-color: #111;")
-                img(src="https://images.unsplash.com/photo-1511886929837-354d827aae26?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt="Banner Giày Bóng Đá", class="img-fluid w-100", style="height: 450px; object-fit: cover; opacity: 0.6;")
-                .banner-content(style="position: absolute; top: 50%; left: 10%; transform: translateY(-50%); color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);")
-                    h1.display-4.font-weight-bold.text-uppercase Bứt Phá Tốc Độ
-                    p.lead.mb-4 Khám phá bộ sưu tập giày bóng đá chính hãng mới nhất mùa giải
-                    a.btn.btn-primary.btn-lg.px-5.py-3.font-weight-bold(href="/products" style="border-radius: 30px;") MUA NGAY
+        #heroCarousel.carousel.slide(data-ride="carousel" data-interval="4000")
+            ol.carousel-indicators
+                li.active(data-target="#heroCarousel" data-slide-to="0")
+                li(data-target="#heroCarousel" data-slide-to="1")
+                li(data-target="#heroCarousel" data-slide-to="2")
+
+            .carousel-inner
+                .carousel-item.active
+                    .banner-wrapper(style="position: relative; background-color: #000;")
+                        img.d-block.w-100(src="/images/banner1.jpg" alt="Bứt Phá Tốc Độ" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; left: 8%; text-align: left; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Bứt Phá Tốc Độ
+                            p.lead.mb-4(style="font-size: 1.3rem;") Khám phá bộ sưu tập Nike Mercurial mới nhất mùa giải
+                            a.btn.btn-primary.btn-lg.px-5.py-3.font-weight-bold(href="/products" style="border-radius: 30px; text-transform: uppercase;") Mua Ngay
+
+                .carousel-item
+                    .banner-wrapper(style="position: relative; background-color: #000;")
+                        img.d-block.w-100(src="/images/banner2.png" alt="Kiểm Soát Thế Trận" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; right: 8%; text-align: right; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Kiểm Soát Trận Đấu
+                            p.lead.mb-4(style="font-size: 1.3rem;") Dòng giày Adidas Predator với độ bám và kiểm soát đỉnh cao
+                            a.btn.btn-danger.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=fg" style="border-radius: 30px; text-transform: uppercase;") Xem Chi Tiết
+
+                .carousel-item
+                    .banner-wrapper(style="position: relative; background-color: #000;")
+                        img.d-block.w-100(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Sale Khủng" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; text-align: center; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase.text-warning(style="letter-spacing: 2px;") Sale Khủng Cuối Tuần
+                            p.lead.mb-4(style="font-size: 1.3rem;") Giảm giá lên đến 50% cho các mẫu giày Futsal (IC)
+                            a.btn.btn-warning.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=ic" style="border-radius: 30px; text-transform: uppercase;") Săn Sale Ngay
+
+            a.carousel-control-prev(href="#heroCarousel" role="button" data-slide="prev" style="width: 5%;")
+                span.carousel-control-prev-icon(aria-hidden="true" style="width: 3rem; height: 3rem;")
+                span.sr-only Previous
+            a.carousel-control-next(href="#heroCarousel" role="button" data-slide="next" style="width: 5%;")
+                span.carousel-control-next-icon(aria-hidden="true" style="width: 3rem; height: 3rem;")
+                span.sr-only Next
 
     //- DANH MỤC NHANH 
     .container.mb-5
