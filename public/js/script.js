@@ -417,3 +417,36 @@ if (formResetPassword) {
         });
     });
 }
+
+// TÍNH NĂNG BỘ LỌC VÀ SẮP XẾP SẢN PHẨM
+const url = new URL(window.location.href);
+
+// Lọc theo giá (Radio buttons)
+const radioPrices = document.querySelectorAll("[filter-price]");
+if (radioPrices.length > 0) {
+    radioPrices.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+            const value = e.target.value;
+            if (value) {
+                url.searchParams.set("price", value);
+            } else {
+                url.searchParams.delete("price"); 
+            }
+            window.location.href = url.href; 
+        });
+    });
+}
+
+// Sắp xếp (Select box)
+const selectSort = document.querySelector("[sort-select]");
+if (selectSort) {
+    selectSort.addEventListener("change", (e) => {
+        const value = e.target.value;
+        if (value && value !== "newest") {
+            url.searchParams.set("sort", value);
+        } else {
+            url.searchParams.delete("sort"); 
+        }
+        window.location.href = url.href;
+    });
+}

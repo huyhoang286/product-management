@@ -1,0 +1,9 @@
+mixin sub-menu(items, path)
+    ul.list-group.list-group-flush
+        each item in items
+            li.list-group-item.border-0.py-2
+                a.text-dark.text-decoration-none.font-weight-bold(href=`${path}?category=${item.slug}`) #{item.title}
+                
+                if item.children && item.children.length > 0
+                    .ml-3.mt-1(style="border-left: 2px solid #e9ecef; padding-left: 10px;")
+                        +sub-menu(item.children, path)

@@ -1,4 +1,5 @@
 const Product = require("../../models/product.model")
+const ProductCategory = require("../../models/product-category.model");
 
 //[GET] /products
 module.exports.index = async (req, res) => {
@@ -8,37 +9,100 @@ module.exports.index = async (req, res) => {
             deleted: false
         };
 
+        // LỌC THEO TỪ KHÓA TÌM KIẾM
         const keyword = req.query.keyword;
         if (keyword) {
             matchConditions.title = new RegExp(keyword, "i"); 
         }
 
-        const products = await Product.aggregate([
-            {
-                $match: matchConditions 
-            },
-            {
-                $group: {
-                    _id: { $ifNull: ["$styleCode", "$_id"] },
-                    doc: { $first: "$$ROOT" } 
-                }
-            },
-            {
-                $replaceRoot: { newRoot: "$doc" }
-            },
-            {
-                $sort: { createdAt: -1 }
-            }
-        ]);
+        // LỌC THEO DANH MỤC ĐA CẤP 
+        const categorySlug = req.query.category;
+        let categoryTitle = ""; 
 
-        products.forEach(item => {
-            item.newPrice = Math.round((item.price * (100 - item.discountPercentage) / 100).toFixed(0));
+        if (categorySlug) {
+            const category = await ProductCategory.findOne({ slug: categorySlug, status: "active", deleted: false });
+
+            if (category) {
+                categoryTitle = category.title;
+
+                // các danh mục con
+                const getSubCategory = async (parentId) => {
+                    const subs = await ProductCategory.find({
+                        parent_id: parentId,
+                        status: "active",
+                        deleted: false
+                    });
+
+                    let allSub = [...subs];
+
+                    for (const sub of subs) {
+                        const childs = await getSubCategory(sub.id);
+                        allSub = allSub.concat(childs);
+                    }
+
+                    return allSub;
+                };
+
+                const listSubCategory = await getSubCategory(category.id);
+                const listSubCategoryId = listSubCategory.map(item => item.id);
+
+                matchConditions.product_category_id = { $in: [category.id, ...listSubCategoryId] };
+            }
+        }
+
+        const pipeline = [
+            { $match: matchConditions },
+            {
+                $addFields: {
+                    newPrice: {
+                        $round: [
+                            { $multiply: [ "$price", { $divide: [ { $subtract: [100, "$discountPercentage"] }, 100 ] } ] },
+                            0
+                        ]
+                    }
+                }
+            }
+        ];
+
+        // LỌC THEO MỨC GIÁ
+        const priceQuery = req.query.price;
+        if (priceQuery) {
+            if (priceQuery === "under1") pipeline.push({ $match: { newPrice: { $lt: 1000000 } } });
+            else if (priceQuery === "1to2") pipeline.push({ $match: { newPrice: { $gte: 1000000, $lte: 2000000 } } });
+            else if (priceQuery === "over2") pipeline.push({ $match: { newPrice: { $gt: 2000000 } } });
+        }
+
+        // GOM NHÓM 
+        pipeline.push({
+            $group: {
+                _id: { $ifNull: ["$styleCode", "$_id"] },
+                doc: { $first: "$$ROOT" } 
+            }
         });
+        pipeline.push({ $replaceRoot: { newRoot: "$doc" } });
+
+        // SẮP XẾP SẢN PHẨM
+        const sortQuery = req.query.sort;
+        let sortObject = { createdAt: -1 }; 
+        
+        if (sortQuery === "price-asc") sortObject = { newPrice: 1 };
+        else if (sortQuery === "price-desc") sortObject = { newPrice: -1 };
+        else if (sortQuery === "best-selling") sortObject = { sold: -1 }; 
+        
+        pipeline.push({ $sort: sortObject });
+
+        const products = await Product.aggregate(pipeline);
+
+        let finalTitle = "Tất Cả Sản Phẩm";
+        if (keyword) finalTitle = `Kết quả tìm kiếm: "${keyword}"`;
+        else if (categoryTitle) finalTitle = `Danh mục: ${categoryTitle}`;
 
         res.render("client/pages/products/index.pug", {
-            pageTitle: keyword ? `Kết quả tìm kiếm: ${keyword}` : "Danh sách sản phẩm",
+            pageTitle: finalTitle,
             products: products,
-            keyword: keyword 
+            keyword: keyword,
+            price: priceQuery, 
+            sort: sortQuery    
         });
     } catch (error) {
         console.error(error);

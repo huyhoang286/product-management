@@ -29,6 +29,10 @@ const productSchema = new mongoose.Schema(
                 stock: Number
             }
         ],
+        sold: { 
+            type: Number, 
+            default: 0 
+        },
 
         status: { type: String, default: "active" },
         slug: { type: String, slug: "title", unique: true },

@@ -87,7 +87,7 @@ module.exports.order = async (req, res) => {
         const order = new Order(orderInfo);
         await order.save();
 
-        // XỬ LÝ THANH TOÁN ONLINE (DỰ PHÒNG TƯƠNG LAI)
+        // XỬ LÝ THANH TOÁN ONLINE 
         if (payment_method === "online") {
             // Gọi service Ngân hàng/VNPay ở đây và trả về URL redirect
         }
@@ -96,7 +96,12 @@ module.exports.order = async (req, res) => {
         for (const item of cart.products) {
             await Product.updateOne(
                 { _id: item.product_id, "variants._id": item.variant_id },
-                { $inc: { "variants.$.stock": -item.quantity } }
+                { 
+                    $inc: { 
+                        "variants.$.stock": -item.quantity, 
+                        "sold": item.quantity
+                    } 
+                }
             );
         }
 
