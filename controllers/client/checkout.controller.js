@@ -74,12 +74,17 @@ module.exports.order = async (req, res) => {
         }
 
         // Tạo đơn hàng mới
-        const order = new Order({
+        const orderInfo = {
             cart_id: cartId,
             userInfo: { fullName, phone, address, note },
             products: orderProducts,
             payment_method: payment_method
-        });
+        };
+
+        if (res.locals.user) {
+            orderInfo.user_id = res.locals.user.id;
+        }
+        const order = new Order(orderInfo);
         await order.save();
 
         // XỬ LÝ THANH TOÁN ONLINE (DỰ PHÒNG TƯƠNG LAI)

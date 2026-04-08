@@ -1,0 +1,45 @@
+extends ../../layouts/default.pug
+
+block main
+    .container.my-5
+        .row.mb-4
+            .col-12
+                h2.font-weight-bold.text-success <i class="fas fa-history"></i> LỊCH SỬ MUA HÀNG
+                p.text-muted Quản lý và theo dõi các đơn hàng bạn đã đặt.
+
+        if orders && orders.length > 0
+            each order in orders
+                .card.shadow-sm.mb-4
+                    .card-header.bg-light.d-flex.justify-content-between.align-items-center
+                        span.font-weight-bold.text-primary Mã đơn: ##{order.id.toUpperCase().slice(-6)}
+                        span.text-muted #{new Date(order.createdAt).toLocaleString('vi-VN')}
+                    
+                    .card-body.p-0
+                        .table-responsive
+                            table.table.table-borderless.mb-0
+                                thead.border-bottom.bg-light
+                                    tr
+                                        th.pl-4 Sản phẩm
+                                        th.text-center Đơn giá
+                                        th.text-center SL
+                                        th.text-right.pr-4 Thành tiền
+                                tbody
+                                    each item in order.products
+                                        if item.productInfo
+                                            tr.border-bottom
+                                                td.pl-4
+                                                    .d-flex.align-items-center
+                                                        img.border.rounded(src=item.productInfo.thumbnail alt=item.productInfo.title style="width: 60px; height: 60px; object-fit: contain;")
+                                                        .ml-3
+                                                            a.text-dark.font-weight-bold.text-decoration-none(href=`/products/${item.productInfo.slug}`) #{item.productInfo.title}
+                                                td.text-center.align-middle #{item.priceNew.toLocaleString("vi-VN")} đ
+                                                td.text-center.align-middle #{item.quantity}
+                                                td.text-right.pr-4.align-middle.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} đ
+                        
+                        .p-3.bg-white.text-right.border-top
+                            h5.mb-0 Tổng thanh toán: <span class="text-danger font-weight-bold ml-2">#{order.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
+        else
+            .alert.alert-warning.text-center.p-5
+                i.fas.fa-shopping-basket.fa-3x.mb-3.text-muted
+                h4 Bạn chưa có đơn hàng nào!
+                a.btn.btn-primary.mt-3(href="/products") Bắt đầu mua sắm ngay

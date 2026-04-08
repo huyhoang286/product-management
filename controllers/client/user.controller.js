@@ -1,5 +1,7 @@
 const User = require("../../models/user.model");
 const Otp = require("../../models/otp.model");
+const Order = require("../../models/order.model"); 
+const Product = require("../../models/product.model");
 const md5 = require("md5");
 const nodemailer = require("nodemailer");
 
@@ -312,3 +314,41 @@ module.exports.resetPasswordPost = async (req, res) => {
     }
 };
 //------End Quên mật khẩu
+
+// [GET] /user/orders
+module.exports.orders = async (req, res) => {
+    try {
+        // 1. Phải đăng nhập mới được xem
+        if (!res.locals.user) return res.redirect("/user/login");
+
+        // 2. Tìm đơn hàng, sắp xếp mới nhất lên đầu
+        const orders = await Order.find({ 
+            user_id: res.locals.user.id,
+            deleted: false
+        }).sort({ createdAt: "desc" });
+
+        // 3. Xử lý tính toán giá tiền và lấy ảnh sản phẩm
+        for (const order of orders) {
+            let totalPrice = 0;
+            for (const item of order.products) {
+                // Lấy ảnh, tên, và slug từ bảng Product
+                const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail slug");
+                item.productInfo = productInfo;
+                
+                // Tính chuẩn VNĐ giống y hệt lúc thanh toán
+                item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
+                item.totalPrice = item.priceNew * item.quantity;
+                totalPrice += item.totalPrice;
+            }
+            order.totalPrice = totalPrice;
+        }
+
+        res.render("client/pages/user/orders", {
+            pageTitle: "Lịch sử đơn hàng",
+            orders: orders
+        });
+    } catch (error) {
+        console.log("Lỗi lấy lịch sử đơn hàng:", error);
+        res.redirect("back");
+    }
+};
