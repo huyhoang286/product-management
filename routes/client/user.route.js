@@ -12,5 +12,13 @@ router.post("/login", controller.loginPost);
 router.get("/logout", controller.logout);
 router.get("/info", controller.info);
 router.patch("/update", controller.updatePatch);
+router.patch("/password/change", controller.changePasswordPatch);
+
+router.get("/password/forgot", controller.forgotPassword);
+router.post("/password/forgot", controller.forgotPasswordPost);
+router.get("/password/otp", controller.otpPassword);
+router.post("/password/otp", controller.otpPasswordPost);
+router.get("/password/reset", controller.resetPassword);
+router.post("/password/reset", controller.resetPasswordPost);
 
 module.exports = router;

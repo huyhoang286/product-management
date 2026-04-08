@@ -57,7 +57,7 @@ module.exports.register = async (req, res) => {
 // [POST] /user/register
 module.exports.registerPost = async (req, res) => {
     try {
-        const { fullName, email, password } = req.body;
+        const { fullName, email, password, phone } = req.body;
 
         const existEmail = await User.findOne({ email: email, deleted: false });
         if (existEmail) {
@@ -67,6 +67,7 @@ module.exports.registerPost = async (req, res) => {
         const user = new User({
             fullName: fullName,
             email: email,
+            phone: phone,
             password: md5(password),
             status: "inactive"
         });
@@ -195,3 +196,119 @@ module.exports.updatePatch = async (req, res) => {
         res.json({ code: 500, message: "Lỗi hệ thống!" });
     }
 };
+
+// [PATCH] /user/password/change
+module.exports.changePasswordPatch = async (req, res) => {
+    try {
+        if (!req.cookies.tokenUser) return res.json({ code: 400, message: "Vui lòng đăng nhập!" });
+
+        const { oldPassword, newPassword } = req.body;
+        const tokenUser = req.cookies.tokenUser;
+
+        const user = await User.findOne({ tokenUser: tokenUser, deleted: false });
+        if (!user) {
+            return res.json({ code: 400, message: "Tài khoản không tồn tại!" });
+        }
+
+        if (md5(oldPassword) !== user.password) {
+            return res.json({ code: 400, message: "Mật khẩu hiện tại không chính xác!" });
+        }
+
+        await User.updateOne(
+            { tokenUser: tokenUser },
+            { password: md5(newPassword) }
+        );
+
+        res.json({ code: 200, message: "Đổi mật khẩu thành công!" });
+    } catch (error) {
+        res.json({ code: 500, message: "Lỗi hệ thống!" });
+    }
+};
+
+//--------Quên mật khẩu
+// [GET] /user/password/forgot
+module.exports.forgotPassword = async (req, res) => {
+    res.render("client/pages/user/forgot-password", {
+        pageTitle: "Lấy lại mật khẩu"
+    });
+};
+
+// [POST] /user/password/forgot
+module.exports.forgotPasswordPost = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const user = await User.findOne({ email: email, deleted: false });
+
+        if (!user) {
+            return res.json({ code: 400, message: "Email không tồn tại trong hệ thống!" });
+        }
+
+        // Tạo mã OTP và lưu vào DB
+        const otp = generateRandomNumber(6);
+        const objectOtp = { email: email, otp: otp };
+        const otpRecord = new Otp(objectOtp);
+        await otpRecord.save();
+
+        // Gửi email
+        const subject = "Mã xác thực OTP lấy lại mật khẩu";
+        const html = `Xin chào <b>${user.fullName}</b>,<br>Mã xác thực lấy lại mật khẩu của bạn là: <h2 style="color: green;">${otp}</h2><br>Mã này sẽ tự động hết hạn sau 3 phút.`;
+        sendEmail(email, subject, html);
+
+        res.json({ code: 200, message: "Đã gửi mã OTP đến email của bạn!", email: email });
+    } catch (error) {
+        res.json({ code: 500, message: "Lỗi hệ thống!" });
+    }
+};
+
+// [GET] /user/password/otp
+module.exports.otpPassword = async (req, res) => {
+    const email = req.query.email;
+    res.render("client/pages/user/otp-password", {
+        pageTitle: "Xác thực OTP",
+        email: email
+    });
+};
+
+// Xử lý Xác thực OTP
+// [POST] /user/password/otp
+module.exports.otpPasswordPost = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const result = await Otp.findOne({ email: email, otp: otp });
+
+        if (!result) {
+            return res.json({ code: 400, message: "Mã OTP không hợp lệ hoặc đã hết hạn!" });
+        }
+
+        res.json({ code: 200, message: "Xác thực thành công!", email: email });
+    } catch (error) {
+        res.json({ code: 500, message: "Lỗi hệ thống!" });
+    }
+};
+
+// [GET] /user/password/reset
+module.exports.resetPassword = async (req, res) => {
+    const email = req.query.email;
+    res.render("client/pages/user/reset-password", {
+        pageTitle: "Đổi mật khẩu mới",
+        email: email
+    });
+};
+
+// Xử lý Lưu mật khẩu mới
+// [POST] /user/password/reset
+module.exports.resetPasswordPost = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        await User.updateOne(
+            { email: email },
+            { password: md5(password) } 
+        );
+
+        res.json({ code: 200, message: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại." });
+    } catch (error) {
+        res.json({ code: 500, message: "Lỗi hệ thống!" });
+    }
+};
+//------End Quên mật khẩu

@@ -153,11 +153,28 @@ const formRegister = document.querySelector("[form-register]");
 if (formRegister) {
     formRegister.addEventListener("submit", (e) => {
         e.preventDefault();
-        const data = {
-            fullName: formRegister.fullName.value,
-            email: formRegister.email.value,
-            password: formRegister.password.value
-        };
+        const fullName = formRegister.fullName.value;
+        const email = formRegister.email.value;
+        const phone = formRegister.phone.value;
+        const password = formRegister.password.value;
+        const confirmPassword = formRegister.confirmPassword.value;
+
+        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        if (!emailRegex.test(email)) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Email không đúng định dạng (Ví dụ: abc@gmail.com)!' });
+        }
+
+        const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+        if (!phoneRegex.test(phone)) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Số điện thoại không hợp lệ!' });
+        }
+
+        if (password !== confirmPassword) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Mật khẩu xác nhận không khớp!' });
+        }
+
+        const data = { fullName, email, phone, password };
         
         Swal.fire({
             title: 'Đang xử lý...',
@@ -269,3 +286,134 @@ if (formUpdateInfo) {
     });
 }
 // End Update Info
+
+// ĐỔI MẬT KHẨU 
+const formChangePassword = document.querySelector("[form-change-password]");
+if (formChangePassword) {
+    formChangePassword.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const oldPassword = formChangePassword.oldPassword.value;
+        const newPassword = formChangePassword.newPassword.value;
+        const confirmNewPassword = formChangePassword.confirmNewPassword.value;
+
+        if (newPassword !== confirmNewPassword) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Mật khẩu xác nhận không khớp!' });
+        }
+
+        if (oldPassword === newPassword) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Mật khẩu mới không được giống mật khẩu hiện tại!' });
+        }
+
+        const data = { oldPassword, newPassword };
+
+        fetch("/user/password/change", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                Swal.fire({ icon: 'success', title: 'Thành công!', text: resData.message }).then(() => {
+                    formChangePassword.reset(); 
+                });
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
+            }
+        });
+    });
+}
+
+// QUÊN MẬT KHẨU (Gửi Email)
+const formForgotPassword = document.querySelector("[form-forgot-password]");
+if (formForgotPassword) {
+    formForgotPassword.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = formForgotPassword.email.value;
+        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;;
+        if (!emailRegex.test(email)) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Email không đúng định dạng!' });
+        }
+        
+        Swal.fire({
+            title: 'Đang xử lý...',
+            text: 'Vui lòng chờ hệ thống gửi mã xác nhận.',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading() }
+        });
+
+        fetch("/user/password/forgot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formForgotPassword.email.value })
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                window.location.href = `/user/password/otp?email=${resData.email}`;
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
+            }
+        });
+    });
+}
+
+// QUÊN MẬT KHẨU (Xác nhận OTP)
+const formOtpPassword = document.querySelector("[form-otp-password]");
+if (formOtpPassword) {
+    formOtpPassword.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = {
+            email: formOtpPassword.email.value,
+            otp: formOtpPassword.otp.value
+        };
+
+        fetch("/user/password/otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                window.location.href = `/user/password/reset?email=${resData.email}`;
+            } else {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: resData.message, showConfirmButton: false, timer: 3000 });
+            }
+        });
+    });
+}
+
+// QUÊN MẬT KHẨU (Đặt mật khẩu mới)
+const formResetPassword = document.querySelector("[form-reset-password]");
+if (formResetPassword) {
+    formResetPassword.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = formResetPassword.email.value;
+        const password = formResetPassword.password.value;
+        const confirmPassword = formResetPassword.confirmPassword.value;
+
+        if (password !== confirmPassword) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Mật khẩu xác nhận không khớp!' });
+        }
+
+        const data = { email, password };
+
+        fetch("/user/password/reset", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                sessionStorage.setItem("successMessage", resData.message);
+                window.location.href = "/user/login"; 
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
+            }
+        });
+    });
+}

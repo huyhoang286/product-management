@@ -30,3 +30,22 @@ block main
                             .d-flex.justify-content-between.mt-4
                                 button.btn.btn-success.px-5(type="submit") Lưu Thay Đổi
                                 a.btn.btn-danger.px-4(href="/user/logout") <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                .card.shadow-sm.mt-4
+                    .card-header.bg-warning.text-dark.text-center
+                        h4.mb-0 <i class="fas fa-key"></i> ĐỔI MẬT KHẨU
+                    .card-body.p-4
+                        form(form-change-password)
+                            .form-group.mb-3
+                                label(for="oldPassword") <b>Mật khẩu hiện tại</b>
+                                input.form-control(type="password" id="oldPassword" name="oldPassword" required)
+                            .row
+                                .col-md-6
+                                    .form-group.mb-3
+                                        label(for="newPassword") <b>Mật khẩu mới</b>
+                                        input.form-control(type="password" id="newPassword" name="newPassword" required)
+                                .col-md-6
+                                    .form-group.mb-3
+                                        label(for="confirmNewPassword") <b>Xác nhận mật khẩu mới</b>
+                                        input.form-control(type="password" id="confirmNewPassword" name="confirmNewPassword" required)
+                            
+                            button.btn.btn-warning.px-5.font-weight-bold(type="submit") Cập Nhật Mật Khẩu
