@@ -47,9 +47,9 @@ header.header
             i.far.fa-heart
             span.badge-count 0
             span Yêu thích
-          .header-action-item
+          a.header-action-item.text-decoration-none.text-dark(href="/cart")
             i.fas.fa-shopping-bag
-            span.badge-count 0
+            span.badge-count #{miniCart ? miniCart.totalQuantity : 0}
             span Giỏ hàng
 
   // NAVIGATION

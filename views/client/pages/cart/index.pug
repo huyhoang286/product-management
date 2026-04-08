@@ -23,7 +23,6 @@ block main
                                     th Hành động
                             tbody
                                 each item, index in cartDetail.products
-                                    //- Chỉ hiển thị nếu tìm thấy sản phẩm (đề phòng sp đã bị admin xóa)
                                     if (item.productInfo)
                                         tr
                                             td #{index + 1}
@@ -31,13 +30,12 @@ block main
                                                 img(src=item.productInfo.thumbnail, alt=item.productInfo.title, width="80px" class="rounded")
                                             td.text-left
                                                 a(href=`/products/${item.productInfo.slug}` class="text-dark font-weight-bold text-decoration-none") #{item.productInfo.title}
-                                                //- Hiển thị Size lấy từ variantInfo
                                                 if (item.variantInfo)
                                                     div.text-muted.mt-1 Size: #{item.variantInfo.size}
                                             td 
-                                                div.font-weight-bold #{item.productInfo.priceNew.toFixed(2)}$
+                                                div.font-weight-bold #{item.productInfo.priceNew.toLocaleString("vi-VN")} VNĐ
                                                 if (item.productInfo.discountPercentage > 0)
-                                                    div.text-muted(style="text-decoration: line-through; font-size: 0.9em;") #{item.productInfo.price}$
+                                                    div.text-muted(style="text-decoration: line-through; font-size: 0.9em;") #{item.productInfo.price.toLocaleString("vi-VN")} VNĐ
                                             td
                                                 input(
                                                     type="number"
@@ -50,7 +48,7 @@ block main
                                                     style="width: 70px; text-align: center;"
                                                     class="form-control mx-auto"
                                                 )
-                                            td.font-weight-bold.text-danger #{item.totalPrice.toFixed(2)}$
+                                            td.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} VNĐ
                                             td
                                                 button(
                                                     class="btn btn-sm btn-outline-danger"
@@ -61,7 +59,7 @@ block main
 
                     .row.mt-4
                         .col-12.text-right
-                            h4 Tổng đơn hàng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toFixed(2)}$</span>
+                            h4 Tổng đơn hàng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
                             a(href="/checkout" class="btn btn-success btn-lg mt-3 px-5") Tiến hành Thanh toán
 
                 else

@@ -21,7 +21,7 @@ module.exports.index = async (req, res) => {
                 if (productInfo) {
                     const variantInfo = productInfo.variants.find(v => v.id == variantId);
 
-                    productInfo.priceNew = productInfo.price * (1 - productInfo.discountPercentage / 100);
+                    productInfo.priceNew = Math.round(productInfo.price * (1 - productInfo.discountPercentage / 100));
                     item.totalPrice = productInfo.priceNew * item.quantity;
                     
                     item.productInfo = productInfo;

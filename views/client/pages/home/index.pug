@@ -1,4 +1,81 @@
 extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
 block main
-  .container.mt-5
-    .jumbotron.text-center.bg-white.border
+    //- HERO BANNER 
+    .hero-section.mb-5
+        .container-fluid.p-0
+            .banner-wrapper(style="position: relative; background-color: #111;")
+                img(src="https://images.unsplash.com/photo-1511886929837-354d827aae26?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt="Banner Giày Bóng Đá", class="img-fluid w-100", style="height: 450px; object-fit: cover; opacity: 0.6;")
+                .banner-content(style="position: absolute; top: 50%; left: 10%; transform: translateY(-50%); color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);")
+                    h1.display-4.font-weight-bold.text-uppercase Bứt Phá Tốc Độ
+                    p.lead.mb-4 Khám phá bộ sưu tập giày bóng đá chính hãng mới nhất mùa giải
+                    a.btn.btn-primary.btn-lg.px-5.py-3.font-weight-bold(href="/products" style="border-radius: 30px;") MUA NGAY
+
+    //- DANH MỤC NHANH 
+    .container.mb-5
+        .row.text-center
+            .col-md-3.col-6.mb-3
+                a(href="/products?category=tf" class="text-decoration-none text-dark")
+                    .p-4.border.rounded.shadow-sm.bg-light(style="transition: all 0.3s;height: 146px" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
+                        img.mb-2(src="/icon/tf.png" alt="TF" style="height: 40px; object-fit: contain;")
+                        h5.mb-0 Giày Sân Cỏ Nhân Tạo (TF)
+                        
+            .col-md-3.col-6.mb-3
+                a(href="/products?category=fg" class="text-decoration-none text-dark")
+                    .p-4.border.rounded.shadow-sm.bg-light(style="transition: all 0.3s;height: 146px" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
+                        img.mb-2(src="/icon/fg.png" alt="FG" style="height: 40px; object-fit: contain;")
+                        h5.mb-0 Giày Sân Cỏ Tự Nhiên (FG)
+                        
+            .col-md-3.col-6.mb-3
+                a(href="/products?category=ic" class="text-decoration-none text-dark")
+                    .p-4.border.rounded.shadow-sm.bg-light(style="transition: all 0.3s;height: 146px" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
+                        img.mb-2(src="/icon/ic.png" alt="IC" style="height: 40px; object-fit: contain;")
+                        h5.mb-0 Giày Futsal (IC)
+                        
+            .col-md-3.col-6.mb-3
+                a(href="/products?category=accessories" class="text-decoration-none text-dark")
+                    .p-4.border.rounded.shadow-sm.bg-light(style="transition: all 0.3s;height: 146px" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
+                        img.mb-2(src="/icon/socks.png" alt="Phụ Kiện" style="height: 40px; object-fit: contain;")
+                        h5.mb-0 Phụ Kiện Bóng Đá
+    //- SẢN PHẨM GIẢM GIÁ 
+    .container.mb-5
+        .row
+            .col-12
+                +box-head("Sản Phẩm Giảm Giá Sốc")
+        .row
+            if productsFeatured && productsFeatured.length > 0
+                each item in productsFeatured
+                    .col-4.mb-3
+                        .product-item
+                            .inner-image
+                                a(href=`/products/${item.slug}`)
+                                    img(src=item.thumbnail, alt=item.title)
+                            .inner-content
+                                h3.inner-title 
+                                    a(href=`/products/${item.slug}`) #{item.title}
+                                .inner-price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")} VNĐ
+                                if (item.discountPercentage > 0)
+                                    .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
+                                    .inner-discount -#{item.discountPercentage}%
+
+    //- SẢN PHẨM MỚI NHẤT 
+    .container.mb-5
+        .row
+            .col-12
+                +box-head("Hàng Mới Về")
+        .row
+            if productsNew && productsNew.length > 0
+                each item in productsNew
+                    .col-4.mb-3
+                        .product-item
+                            .inner-image
+                                a(href=`/products/${item.slug}`)
+                                    img(src=item.thumbnail, alt=item.title)
+                            .inner-content
+                                h3.inner-title 
+                                    a(href=`/products/${item.slug}`) #{item.title}
+                                .inner-price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")} VNĐ
+                                if (item.discountPercentage > 0)
+                                    .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
+                                    .inner-discount -#{item.discountPercentage}%

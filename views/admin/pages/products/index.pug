@@ -79,7 +79,7 @@ block main
                                     height="auto"
                                 )
                             td #{item.title}
-                            td #{item.price}$
+                            td #{item.price.toLocaleString("vi-VN")} VNĐ
                             td
                                 if(role.permissions.includes("products_edit"))
                                     if(item.status == "active")

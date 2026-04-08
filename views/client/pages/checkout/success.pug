@@ -4,17 +4,58 @@ include ../../mixins/box-head.pug
 block main
     .container.my-5
         .row.justify-content-center
-            .col-md-8.text-center
-                h1.text-success <i class="fas fa-check-circle"></i> ĐẶT HÀNG THÀNH CÔNG!
-                p.lead Cảm ơn bạn đã mua sắm. Đơn hàng của bạn đang được xử lý.
-                p Mã đơn hàng của bạn là: <b>#{order.id}</b>
+            .col-md-10
+                .text-center.mb-5
+                    h1.text-success.display-4 <i class="fas fa-check-circle"></i> ĐẶT HÀNG THÀNH CÔNG!
+                    p.lead.mt-3 Cảm ơn bạn đã mua sắm. Đơn hàng của bạn đang được xử lý.
+                    p Mã đơn hàng của bạn là: <b class="text-primary">#{order.id}</b>
                 
-                .card.text-left.mt-4
-                    .card-header Thông tin khách hàng
-                    .card-body
-                        p <b>Họ tên:</b> #{order.userInfo.fullName}
-                        p <b>Số điện thoại:</b> #{order.userInfo.phone}
-                        p <b>Địa chỉ:</b> #{order.userInfo.address}
-                        p <b>Phương thức thanh toán:</b> #{order.payment_method === 'cod' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản Online'}
+                .row
+                    .col-md-5.mb-4
+                        .card.h-100.shadow-sm
+                            .card-header.bg-info.text-white 
+                                h5.mb-0 <i class="fas fa-user"></i> Thông tin khách hàng
+                            .card-body
+                                p.mb-3 <b>Họ tên:</b> #{order.userInfo.fullName}
+                                p.mb-3 <b>Số điện thoại:</b> #{order.userInfo.phone}
+                                p.mb-3 <b>Địa chỉ:</b> #{order.userInfo.address}
+                                if(order.userInfo.note)
+                                    p.mb-3 <b>Ghi chú:</b> #{order.userInfo.note}
+                                hr
+                                p.mb-0 <b>Phương thức thanh toán:</b> 
+                                    if (order.payment_method === 'cod')
+                                        span.badge.badge-secondary.ml-2 Thanh toán khi nhận hàng
+                                    else
+                                        span.badge.badge-success.ml-2 Chuyển khoản Online
+                    
+                    .col-md-7.mb-4
+                        .card.h-100.shadow-sm
+                            .card-header.bg-dark.text-white 
+                                h5.mb-0 <i class="fas fa-file-invoice-dollar"></i> Chi tiết hóa đơn
+                            .card-body.p-0
+                                .table-responsive
+                                    table.table.table-borderless.mb-0
+                                        thead.bg-light
+                                            tr.border-bottom
+                                                th.pl-4 Sản phẩm
+                                                th.text-center Size
+                                                th.text-center SL
+                                                th.text-right.pr-4 Thành tiền
+                                        tbody
+                                            if (order.products.length > 0)
+                                                each item in order.products
+                                                    if (item.productInfo)
+                                                        tr.border-bottom
+                                                            td.py-3.pl-4
+                                                                .d-flex.align-items-center
+                                                                    img(src=item.productInfo.thumbnail width="50px" class="mr-3 rounded border")
+                                                                    span.font-weight-bold #{item.productInfo.title}
+                                                            td.py-3.text-center.align-middle #{item.variantInfo ? item.variantInfo.size : ""}
+                                                            td.py-3.text-center.align-middle #{item.quantity}
+                                                            td.py-3.text-right.pr-4.align-middle.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} VNĐ
+                                
+                                .p-4.bg-light.text-right.border-top
+                                    h4.mb-0 Tổng cộng: <span class="text-danger font-weight-bold ml-3">#{order.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
                 
-                a(href="/products" class="btn btn-primary mt-4 px-5") Tiếp tục mua sắm
+                .text-center.mt-4
+                    a(href="/products" class="btn btn-outline-primary btn-lg px-5 rounded-pill") <i class="fas fa-shopping-cart"></i> Tiếp tục mua sắm

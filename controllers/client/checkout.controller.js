@@ -15,7 +15,7 @@ module.exports.index = async (req, res) => {
                 const productInfo = await Product.findOne({ _id: item.product_id, deleted: false });
                 if (productInfo) {
                     const variantInfo = productInfo.variants.find(v => v.id == item.variant_id);
-                    productInfo.priceNew = productInfo.price * (1 - productInfo.discountPercentage / 100);
+                    productInfo.priceNew = Math.round(productInfo.price * (1 - productInfo.discountPercentage / 100));
                     item.totalPrice = productInfo.priceNew * item.quantity;
                     
                     item.productInfo = productInfo;
@@ -121,7 +121,7 @@ module.exports.success = async (req, res) => {
         for (const item of order.products) {
             const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail variants");
             
-            item.priceNew = item.price * (1 - item.discountPercentage / 100);
+            item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
             item.totalPrice = item.priceNew * item.quantity;
             order.totalPrice += item.totalPrice;
 

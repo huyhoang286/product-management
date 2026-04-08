@@ -18,11 +18,11 @@ block main
 
                 .product-price.mb-4
                     if (product.discountPercentage > 0)
-                        span.h2.font-weight-bold.text-danger.mr-3 #{product.priceNew}$
-                        span.h5.text-muted(style="text-decoration: line-through;") #{product.price}$
+                        span.h2.font-weight-bold.text-danger.mr-3 #{product.priceNew.toLocaleString("vi-VN")} VNĐ
+                        span.h5.text-muted(style="text-decoration: line-through;") #{product.price.toLocaleString("vi-VN")} VNĐ
                         span.badge.badge-danger.ml-2 -#{product.discountPercentage}%
                     else 
-                        span.h2.font-weight-bold #{product.price}$
+                        span.h2.font-weight-bold #{product.price.toLocaleString("vi-VN")} VNĐ
 
                 if (colorways && colorways.length > 1)
                     .colorways.mb-4

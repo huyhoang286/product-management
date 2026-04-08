@@ -29,9 +29,9 @@ block main
                                                     | #{item.productInfo.title}
                                                 td.py-3 #{item.variantInfo ? item.variantInfo.size : ""}
                                                 td.py-3 #{item.quantity}
-                                                td.py-3.font-weight-bold.text-danger #{item.totalPrice.toFixed(2)}$
+                                                td.py-3.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} VNĐ
                         
-                        h5.text-right.mt-3 Tổng cộng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toFixed(2)}$</span>
+                        h5.text-right.mt-3 Tổng cộng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
 
             .col-lg-5
                 .card

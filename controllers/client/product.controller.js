@@ -25,7 +25,7 @@ module.exports.index = async (req, res) => {
         ]);
 
         products.forEach(item => {
-            item.newPrice = (item.price * (100 - item.discountPercentage) / 100).toFixed(0);
+            item.newPrice = Math.round((item.price * (100 - item.discountPercentage) / 100).toFixed(0));
         });
 
         res.render("client/pages/products/index.pug", {
@@ -50,7 +50,7 @@ module.exports.detail = async(req, res) => {
         if(!product) {
             return res.redirect("/products")
         }
-        product.priceNew = (product.price * (100 - product.discountPercentage) / 100).toFixed(0)
+        product.priceNew = Math.round((product.price * (100 - product.discountPercentage) / 100).toFixed(0))
 
         let colorways = [];
         if (product.styleCode) {
