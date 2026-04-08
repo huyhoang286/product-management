@@ -1,0 +1,32 @@
+extends ../../layouts/default.pug
+
+block main
+    .container.my-5
+        .row.justify-content-center
+            .col-md-8
+                .card.shadow-sm
+                    .card-header.bg-success.text-white.text-center
+                        h4 THÔNG TIN CÁ NHÂN
+                    .card-body.p-4
+                        form(form-update-info)
+                            .form-group.mb-3
+                                label(for="fullName") <b>Họ và tên</b>
+                                input.form-control(type="text" id="fullName" name="fullName" value=user.fullName required)
+                            
+                            .form-group.mb-3
+                                label(for="email") <b>Email đăng nhập</b> (Không thể thay đổi)
+                                input.form-control(type="email" id="email" value=user.email readonly disabled)
+                            
+                            .row
+                                .col-md-6
+                                    .form-group.mb-3
+                                        label(for="phone") <b>Số điện thoại mặc định</b>
+                                        input.form-control(type="text" id="phone" name="phone" value=(user.phone ? user.phone : "") placeholder="Nhập số điện thoại...")
+                                .col-md-6
+                                    .form-group.mb-3
+                                        label(for="address") <b>Địa chỉ giao hàng mặc định</b>
+                                        input.form-control(type="text" id="address" name="address" value=(user.address ? user.address : "") placeholder="Số nhà, tên đường, xã/phường, quận/huyện...")
+                            
+                            .d-flex.justify-content-between.mt-4
+                                button.btn.btn-success.px-5(type="submit") Lưu Thay Đổi
+                                a.btn.btn-danger.px-4(href="/user/logout") <i class="fas fa-sign-out-alt"></i> Đăng Xuất

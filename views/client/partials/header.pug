@@ -40,9 +40,14 @@ header.header
 
         // Icons
         .col-lg-3.col-md-4.header-actions.d-flex.justify-content-end
-          .header-action-item
-            i.far.fa-user
-            span Tài khoản
+          if (user)
+            a.header-action-item.text-decoration-none.text-dark(href="/user/info")
+              i.far.fa-user.text-success
+              span.font-weight-bold.text-success #{user.fullName}
+          else
+            a.header-action-item.text-decoration-none.text-dark(href="/user/login")
+              i.far.fa-user
+              span Đăng nhập
           .header-action-item
             i.far.fa-heart
             span.badge-count 0

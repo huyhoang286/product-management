@@ -1,0 +1,24 @@
+extends ../../layouts/default.pug
+
+block main
+    .container.my-5
+        .row.justify-content-center
+            .col-md-6
+                .card.shadow-sm
+                    .card-header.bg-dark.text-white.text-center
+                        h4 ĐĂNG KÝ TÀI KHOẢN
+                    .card-body.p-4
+                        form(form-register)
+                            .form-group.mb-3
+                                label(for="fullName") Họ và tên
+                                input.form-control(type="text" id="fullName" name="fullName" required)
+                            .form-group.mb-3
+                                label(for="email") Email
+                                input.form-control(type="email" id="email" name="email" required)
+                            .form-group.mb-4
+                                label(for="password") Mật khẩu
+                                input.form-control(type="password" id="password" name="password" required)
+                            button.btn.btn-primary.btn-block.btn-lg(type="submit") ĐĂNG KÝ
+                        
+                        .text-center.mt-3
+                            p Đã có tài khoản? <a href="/user/login">Đăng nhập ngay</a>

@@ -40,16 +40,13 @@ block main
                         form(form-checkout)
                             .form-group
                                 label(for="fullName") Họ và tên
-                                input.form-control(type="text" id="fullName" name="fullName" required)
+                                input.form-control(type="text" id="fullName" name="fullName" value=(user ? user.fullName : "") required)
                             .form-group
                                 label(for="phone") Số điện thoại
-                                input.form-control(type="text" id="phone" name="phone" required)
+                                input.form-control(type="text" id="phone" name="phone" value=(user ? user.phone : "") required)
                             .form-group
                                 label(for="address") Địa chỉ giao hàng
-                                input.form-control(type="text" id="address" name="address" required)
-                            .form-group
-                                label(for="note") Ghi chú đơn hàng (Tùy chọn)
-                                textarea.form-control(id="note" name="note" rows="2")
+                                input.form-control(type="text" id="address" name="address" value=(user ? user.address : "") required)
                             
                             hr
                             label.font-weight-bold Phương thức thanh toán

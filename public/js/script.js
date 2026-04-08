@@ -147,3 +147,125 @@ if (formCheckout) {
     });
 }
 // End Checkout
+
+// register
+const formRegister = document.querySelector("[form-register]");
+if (formRegister) {
+    formRegister.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = {
+            fullName: formRegister.fullName.value,
+            email: formRegister.email.value,
+            password: formRegister.password.value
+        };
+        
+        Swal.fire({
+            title: 'Đang xử lý...',
+            text: 'Vui lòng chờ hệ thống tạo tài khoản và gửi mã OTP.',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading() }
+        });
+
+        fetch("/user/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                sessionStorage.setItem("successMessage", resData.message);
+                window.location.href = `/user/otp?email=${resData.email}`;
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
+            }
+        });
+    });
+}
+// End register
+
+// OTP
+const formOtp = document.querySelector("[form-otp]");
+if (formOtp) {
+    formOtp.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = {
+            email: formOtp.email.value,
+            otp: formOtp.otp.value
+        };
+
+        fetch("/user/otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                sessionStorage.setItem("successMessage", resData.message);
+                window.location.href = "/";
+            } else {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: resData.message, showConfirmButton: false, timer: 3000 });
+            }
+        });
+    });
+}
+// End OTP
+
+
+// Login
+const formLogin = document.querySelector("[form-login]");
+if (formLogin) {
+    formLogin.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = {
+            email: formLogin.email.value,
+            password: formLogin.password.value
+        };
+
+        fetch("/user/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                sessionStorage.setItem("successMessage", resData.message);
+                window.location.href = "/"; 
+            } else {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: resData.message, showConfirmButton: false, timer: 3000 });
+            }
+        });
+    });
+}
+// End Login
+
+// Update Info
+const formUpdateInfo = document.querySelector("[form-update-info]");
+if (formUpdateInfo) {
+    formUpdateInfo.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = {
+            fullName: formUpdateInfo.fullName.value,
+            phone: formUpdateInfo.phone.value,
+            address: formUpdateInfo.address.value
+        };
+
+        fetch("/user/update", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(resData => {
+            if (resData.code === 200) {
+                sessionStorage.setItem("successMessage", resData.message);
+                window.location.reload(); 
+            } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
+            }
+        });
+    });
+}
+// End Update Info
