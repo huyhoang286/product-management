@@ -1,213 +1,286 @@
+/* ==========================================
+   1. CẤU HÌNH BIẾN & CHUNG (ROOT)
+   ========================================== */
 :root {
-  --lofi-orange: #d35400; /* Màu cam chủ đạo */
-  --lofi-text: #333;
-  --lofi-light-bg: #f8f9fa;
-  --success-color: #28a745; /* Màu xanh lá cho tiêu đề và giá mới */
-  --danger-color: #ff0000;  /* Màu đỏ cho giá cũ và badge giảm giá */
+  --primary-color: #d35400;    /* Màu cam thương hiệu */
+  --secondary-color: #2c3e50;  /* Màu xanh đen hiện đại */
+  --success-color: #28a745;    /* Màu xanh lá cho giá mới */
+  --danger-color: #dc3545;     /* Màu đỏ cho giảm giá */
+  --light-bg: #f8f9fa;
+  --text-dark: #333;
+  --text-muted: #6c757d;
+  --transition: all 0.3s ease-in-out;
 }
 
-/* ==========================================
-   1. HEADER STYLES (Giữ nguyên giao diện cũ)
-   ========================================== */
-
-/* Top Bar */
-.top-bar {
-  background-color: var(--lofi-light-bg);
-  font-size: 13px;
-  border-bottom: 1px solid #eee;
-  padding: 8px 0;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-dark);
+  background-color: #fff;
+  overflow-x: hidden;
 }
-.top-bar a {
-  color: #666;
+
+a {
+  transition: var(--transition);
+  color: inherit;
+}
+
+a:hover {
   text-decoration: none;
-  margin-right: 20px;
-}
-.top-bar a:hover {
-  color: var(--lofi-orange);
-}
-.top-bar i {
-  color: var(--lofi-orange);
-  margin-right: 5px;
-}
-
-/* Main Header */
-.main-header {
-  background: #fff;
-  padding: 20px 0;
-}
-.logo-text {
-  font-size: 28px;
-  font-weight: bold;
-  color: var(--lofi-text);
-}
-.logo-orange {
-  color: var(--lofi-orange);
-}
-
-/* Search Box */
-.search-group .form-control {
-  border-color: #eee;
-  border-right: none;
-}
-.search-group .btn {
-  background-color: var(--lofi-orange);
-  color: white;
-  border: none;
-  padding-left: 25px;
-  padding-right: 25px;
-}
-
-/* Header Actions (Icons) */
-.header-action-item {
-  text-align: center;
-  color: #444;
-  cursor: pointer;
-  position: relative;
-  padding: 0 10px;
-  min-width: 70px;
-}
-.header-action-item i {
-  font-size: 22px;
-  display: block;
-  margin-bottom: 2px;
-}
-.header-action-item span {
-  font-size: 11px;
-  font-weight: 600;
-}
-.badge-count {
-  position: absolute;
-  top: -5px;
-  right: 15px;
-  background-color: var(--lofi-orange);
-  color: white;
-  font-size: 10px;
-  border-radius: 50%;
-  padding: 2px 6px;
-}
-
-/* Navigation Bar */
-.navbar {
-  background: #fff;
-  border-top: 1px solid #eee;
-  padding: 0;
-}
-.nav-link {
-  color: var(--lofi-text) !important;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 15px 15px !important;
-  text-transform: capitalize;
-}
-.nav-item.active .nav-link, .nav-link:hover {
-  color: var(--lofi-orange) !important;
-}
-.hot-sale {
-  color: #dc3545 !important;
-  font-weight: bold;
+  color: var(--primary-color);
 }
 
 /* ==========================================
-   2. PRODUCT SECTION STYLES (Cập nhật mới)
+   2. HEADER & NAVIGATION (YÊU CẦU 1)
    ========================================== */
 
-/* Tiêu đề danh sách sản phẩm */
-.box-head {
-  margin-bottom: 30px;
+/* Top bar và Main header sẽ cuộn đi theo trang */
+.top-bar {
+  background-color: var(--secondary-color);
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
 }
+
+.top-bar a:hover {
+  color: #fff;
+}
+
+.main-header {
+  border-bottom: 1px solid #eee;
+}
+
+/* Navigation fix cứng trên đầu khi cuộn (Yêu cầu 1) */
+.navbar.sticky-top {
+  top: 0;
+  z-index: 1020;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(5px); /* Hiệu ứng mờ nền hiện đại */
+}
+
+.nav-link {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.nav-item.active .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+/* ==========================================
+   3. HERO BANNER (YÊU CẦU 2)
+   ========================================== */
+
+/* Banner rộng và cao để chiếm trọn khung hình khi Navigation cố định */
+.hero-section .carousel-item {
+  height: calc(100vh - 56px); /* Chiều cao màn hình trừ đi chiều cao của Navbar */
+  min-height: 500px;
+  background-color: #000;
+}
+
+.hero-section .carousel-item img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover; /* Đảm bảo ảnh không bị méo */
+  opacity: 0.7;      /* Làm tối ảnh để text nổi bật hơn */
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+  z-index: 1;
+}
+
+.carousel-caption {
+  z-index: 2;
+  text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+}
+
+/* ==========================================
+   4. PRODUCT CARDS (YÊU CẦU 3 - ĐỒNG NHẤT GRID)
+   ========================================== */
 
 .box-head .inner-title {
-  color: var(--success-color);
-  font-weight: 600;
-  font-size: 28px;
-  margin-bottom: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--secondary-color);
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  display: inline-block; /* QUAN TRỌNG: Thêm dòng này để khung vừa khít chữ */
 }
 
-/* Card sản phẩm */
-.product-item {
-  border: 1px solid #e1e1e1;
-  border-radius: 10px;
+.box-head .inner-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;           /* Sửa từ 50px thành 100% để chạy hết chữ */
+  height: 3px;
+  background-color: var(--primary-color);
+  border-radius: 2px;    /* Thêm chút bo góc cho tinh tế */
+}
+
+/* Đồng nhất thiết kế Card cho cả "Giảm giá" và "Mới về" */
+.product-card {
+  border: 1px solid #f1f1f1 !important;
+  border-radius: 12px !important;
   overflow: hidden;
-  background: #fff;
-  transition: all 0.3s ease;
-  height: 100%;
+  transition: var(--transition);
 }
 
-.product-item:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+  border-color: var(--primary-color) !important;
 }
 
-/* Hình ảnh sản phẩm */
-.product-item .inner-image {
-  width: 100%;
-  height: 200px;
-  background: #f8f8f8;
-}
-
-.product-item .inner-image img {
-  width: 100%;
-  height: 100%;
+.product-card .card-img-top {
+  height: 220px;
   object-fit: cover;
+  transition: transform 0.6s ease;
 }
 
-/* Nội dung thông tin sản phẩm */
-.product-item .inner-content {
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
+.product-card:hover .card-img-top {
+  transform: scale(1.08);
 }
 
-.product-item .inner-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  color: #2c3e50;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+.product-card .card-body {
+  padding: 1.25rem;
+}
+
+.product-card .card-title {
+  font-size: 16px;
+  height: 40px; /* Cố định chiều cao để các card đều nhau */
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  margin-bottom: 10px;
 }
 
-/* Giá mới (Màu xanh) */
-.product-item .inner-price-new {
+.product-card .price-new {
+  color: var(--success-color);
   font-size: 18px;
   font-weight: 700;
-  color: var(--success-color);
-  margin-bottom: 2px;
 }
 
-/* Giá cũ (Màu đỏ, gạch ngang) */
-.product-item .inner-price-old {
-  font-size: 14px;
-  font-weight: 400;
-  color: #dc3545;
+.product-card .price-old {
+  color: var(--text-muted);
   text-decoration: line-through;
-  margin-bottom: 8px;
+  font-size: 14px;
+  margin-left: 8px;
 }
 
-/* Badge giảm giá (Nền đỏ, chữ trắng, bo tròn) */
-.product-item .inner-discount {
+.product-card .badge-discount {
   background-color: var(--danger-color);
   color: #fff;
-  padding: 2px 12px;
-  border-radius: 20px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 0 0 10px 0;
   font-size: 12px;
-  font-weight: 700;
-  display: inline-block;
-  align-self: flex-start;
 }
 
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-  .header-actions { margin-top: 15px; justify-content: center; }
-  .top-bar-right { display: none; }
+/* ==========================================
+   5. DANH MỤC NHANH (CATEGORY CARDS)
+   ========================================== */
+.category-card {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 15px;
+  transition: var(--transition);
 }
 
-/* Footer */
+.category-card:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.category-card:hover h6 {
+  color: #fff !important;
+}
+
+.category-card:hover img {
+  filter: brightness(0) invert(1); /* Đổi màu icon sang trắng khi hover */
+}
+
+/* ==========================================
+   6. FOOTER & PHỤ TRỢ
+   ========================================== */
 .footer {
-  background: #333;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
+  background-color: #1a1a1a;
+  color: #f8f9fa;
+  font-size: 14px;
 }
-/* End Footer */
+
+.footer hr {
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Nút "Thêm vào giỏ" trong card */
+.btn-add-cart {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: var(--transition);
+}
+
+.product-card:hover .btn-add-cart {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero-section .carousel-item {
+    height: 60vh;
+  }
+  
+  .product-card .card-img-top {
+    height: 160px;
+  }
+}
+
+/* Trang Liên Hệ */
+.icon-box {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(211, 84, 0, 0.1); /* Màu cam nhạt dựa trên primary color */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-box i {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.contact-body .form-control {
+  padding: 0.75rem 1.25rem;
+  border-color: #eee;
+  background-color: #fcfcfc;
+  transition: var(--transition);
+}
+
+.contact-body .form-control:focus {
+  background-color: #fff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(211, 84, 0, 0.15);
+}
+
+.contact-map iframe {
+  filter: grayscale(10%) contrast(1.1); /* Giúp map trông hiện đại hơn */
+  margin-bottom: -10px; /* Loại bỏ khoảng trắng chân trang */
+}

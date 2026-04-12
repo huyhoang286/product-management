@@ -1,86 +1,63 @@
-header.header
-  // TOP BAR
-  .top-bar
-    .container.d-flex.justify-content-between
-      .top-bar-left
-        a(href="")
-          i.fas.fa-phone-alt
-          |  0867644926
-        a(href="mailto:support@sapo.vn" class="d-none d-md-inline")
-          i.fas.fa-envelope
-          |  huyhoang.m28@gmail.com
-      .top-bar-right.d-flex.align-items-center
-        a(href="/user/orders")
-          i.fas.fa-box
-          |  Kiểm tra đơn hàng
+header.header.bg-white
+  // Top Bar 
+  .top-bar.bg-dark.text-white.py-2
+    .container.d-flex.justify-content-between.align-items-center
+      .top-bar-left.small
+        span.mr-3
+          i.fas.fa-phone-alt.mr-1
+          | 0867644926
+        span.d-none.d-md-inline
+          i.fas.fa-envelope.mr-1
+          | huyhoang.m28@gmail.com
+      .top-bar-right.small
+        a(href="/user/orders" class="text-white text-decoration-none")
+          i.fas.fa-box.mr-1
+          | Kiểm tra đơn hàng
 
-  // MAIN HEADER
-  .main-header
+  // Main Header 
+  .main-header.py-3
     .container
       .row.align-items-center
-        // Logo
-        .col-lg-3.col-md-12.text-center.text-lg-left.mb-3.mb-lg-0
-          .d-flex.align-items-center.justify-content-center.justify-content-lg-start
-            span.logo-text
-              | SHOP 
-              span.logo-orange ABC
-            // SVG Icon bồn tắm
-            svg(width="40" height="30" viewBox="0 0 24 24" fill="none" stroke="#d35400" stroke-width="1.5" class="ml-2")
-              path(d="M2 12h20a2 2 0 0 1 2 2v2a6 6 0 0 1-6 6H6a6 6 0 0 1-6-6v-2a2 2 0 0 1 2-2z")
-              path(d="M7 12V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5")
+        .col-lg-3.col-6
+          a(href="/" class="text-decoration-none d-flex align-items-center")
+            span.h3.font-weight-bold.mb-0.text-dark SHOP 
+              span.text-primary ABC
+            i.fas.fa-running.ml-2.text-primary.fa-2x
 
-        // Search
-        .col-lg-6.col-md-8
+        .col-lg-6.d-none.d-lg-block
           form(action="/products" method="GET")
-            .input-group
-              input.form-control(type="text" placeholder="Tìm kiếm sản phẩm..." name="keyword" value=keyword)
+            .input-group.rounded-pill.overflow-hidden.border
+              input.form-control.border-0(type="text" placeholder="Tìm kiếm sản phẩm..." name="keyword" value=keyword)
               .input-group-append
-                button.btn.btn-primary(type="submit")
+                button.btn.btn-primary.px-4(type="submit")
                   i.fas.fa-search
 
-        // Icons
-        .col-lg-3.col-md-4.header-actions.d-flex.justify-content-end
-          if (user)
-            a.header-action-item.text-decoration-none.text-dark(href="/user/info")
-              i.far.fa-user.text-success
-              span.font-weight-bold.text-success #{user.fullName}
-          else
-            a.header-action-item.text-decoration-none.text-dark(href="/user/login")
-              i.far.fa-user
-              span Đăng nhập
-          .header-action-item
-            i.far.fa-heart
-            span.badge-count 0
-            span Yêu thích
-          a.header-action-item.text-decoration-none.text-dark(href="/cart")
-            i.fas.fa-shopping-bag
-            span.badge-count #{miniCart ? miniCart.totalQuantity : 0}
-            span Giỏ hàng
+        .col-lg-3.col-6.text-right
+          .header-actions.d-flex.justify-content-end.align-items-center
+            if (user)
+              a.nav-link.text-dark.p-0.mr-3(href="/user/info")
+                i.far.fa-user.mr-1
+                span.d-none.d-md-inline #{user.fullName}
+            else
+              a.nav-link.text-dark.p-0.mr-3(href="/user/login")
+                i.far.fa-user.fa-lg
+            
+            a.nav-link.text-dark.p-0.position-relative(href="/cart")
+              i.fas.fa-shopping-bag.fa-lg
+              span.badge.badge-primary.badge-pill.position-absolute(style="top: -10px; right: -10px;") #{miniCart ? miniCart.totalQuantity : 0}
 
-  // NAVIGATION
-  nav.navbar.navbar-expand-lg.navbar-light
-    .container
-      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#mainNav")
-        span.navbar-toggler-icon
-      .collapse.navbar-collapse#mainNav
-        ul.navbar-nav.mr-auto
-          li.nav-item(class=(path === '/' ? 'active' : ''))
-            a.nav-link(href="/") Trang chủ
-            
-          li.nav-item(class=(path === '/about' ? 'active' : ''))
-            a.nav-link(href="/about") Giới thiệu
-
-          li.nav-item(class=(path && path.startsWith('/products') ? 'active' : ''))
-            a.nav-link(href="/products") Sản phẩm
-            
-          li.nav-item(class=(path === '/news' ? 'active' : ''))
-            a.nav-link(href="/news") Tin tức
-            
-          li.nav-item(class=(path === '/contact' ? 'active' : ''))
-            a.nav-link(href="/contact") Liên hệ
-            
-          li.nav-item(class=(path === '/faq' ? 'active' : ''))
-            a.nav-link(href="/faq") Câu hỏi thường gặp
-            
-          li.nav-item(class=(path === '/stores' ? 'active' : ''))
-            a.nav-link(href="/stores") Hệ thống
+// NAVIGATION 
+nav.navbar.navbar-expand-lg.navbar-light.bg-light.border-top.sticky-top.shadow-sm
+  .container
+    button.navbar-toggler(type="button" data-toggle="collapse" data-target="#mainNav")
+      span.navbar-toggler-icon
+    .collapse.navbar-collapse#mainNav
+      ul.navbar-nav.mx-auto
+        li.nav-item.mx-2(class=(path === '/' ? 'active' : ''))
+          a.nav-link.font-weight-bold(href="/") TRANG CHỦ
+        li.nav-item.mx-2(class=(path && path.startsWith('/products') ? 'active' : ''))
+          a.nav-link.font-weight-bold(href="/products") SẢN PHẨM
+        li.nav-item.mx-2(class=(path === '/about' ? 'active' : ''))
+          a.nav-link.font-weight-bold(href="/about") GIỚI THIỆU
+        li.nav-item.mx-2(class=(path === '/contact' ? 'active' : ''))
+          a.nav-link.font-weight-bold(href="/contact") CHÍNH SÁCH & LIÊN HỆ

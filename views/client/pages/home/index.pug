@@ -4,7 +4,7 @@ include ../../mixins/box-head.pug
 block main
     //- HERO BANNER 
     .hero-section.mb-5
-        #heroCarousel.carousel.slide(data-ride="carousel" data-interval="4000")
+        #heroCarousel.carousel.slide.carousel-fade(data-ride="carousel" data-interval="4000")
             ol.carousel-indicators
                 li.active(data-target="#heroCarousel" data-slide-to="0")
                 li(data-target="#heroCarousel" data-slide-to="1")
@@ -13,7 +13,7 @@ block main
             .carousel-inner
                 .carousel-item.active
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="/images/banner1.jpg" alt="Bứt Phá Tốc Độ" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src="/images/banner1.jpg" alt="Bứt Phá Tốc Độ" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; left: 8%; text-align: left; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Bứt Phá Tốc Độ
                             p.lead.mb-4(style="font-size: 1.3rem;") Khám phá bộ sưu tập Nike Mercurial mới nhất mùa giải
@@ -21,7 +21,7 @@ block main
 
                 .carousel-item
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="/images/banner2.png" alt="Kiểm Soát Thế Trận" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src="/images/banner2.png" alt="Kiểm Soát Thế Trận" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; right: 8%; text-align: right; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Kiểm Soát Trận Đấu
                             p.lead.mb-4(style="font-size: 1.3rem;") Dòng giày Adidas Predator với độ bám và kiểm soát đỉnh cao
@@ -29,7 +29,7 @@ block main
 
                 .carousel-item
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Sale Khủng" style="height: 550px; object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Sale Khủng" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; text-align: center; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase.text-warning(style="letter-spacing: 2px;") Sale Khủng Cuối Tuần
                             p.lead.mb-4(style="font-size: 1.3rem;") Giảm giá lên đến 50% cho các mẫu giày Futsal (IC)
@@ -42,7 +42,7 @@ block main
                 span.carousel-control-next-icon(aria-hidden="true" style="width: 3rem; height: 3rem;")
                 span.sr-only Next
 
-    //- DANH MỤC NHANH 
+    //- DANH MỤC NHANH
     .container.mb-5
         .row.text-center
             .col-md-3.col-6.mb-3
@@ -68,26 +68,29 @@ block main
                     .p-4.border.rounded.shadow-sm.bg-light(style="transition: all 0.3s;height: 146px" onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
                         img.mb-2(src="/icon/socks.png" alt="Phụ Kiện" style="height: 40px; object-fit: contain;")
                         h5.mb-0 Phụ Kiện Bóng Đá
-    //- SẢN PHẨM GIẢM GIÁ 
+
+    //- Sản Phẩm Bán Chạy
     .container.mb-5
         .row
             .col-12
-                +box-head("Sản Phẩm Giảm Giá Sốc")
+                +box-head("Sản Phẩm Bán Chạy")
         .row
-            if productsFeatured && productsFeatured.length > 0
-                each item in productsFeatured
-                    .col-3.mb-3
-                        .product-item
-                            .inner-image
-                                a(href=`/products/${item.slug}`)
-                                    img(src=item.thumbnail, alt=item.title)
-                            .inner-content
-                                h3.inner-title 
-                                    a(href=`/products/${item.slug}`) #{item.title}
-                                .inner-price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")} VNĐ
+            if productsBestSelling && productsBestSelling.length > 0
+                each item in productsBestSelling
+                    .col-lg-3.col-md-6.col-12.mb-4
+                        .product-card.card.h-100.border-0.shadow-sm
+                            .position-relative.overflow-hidden
                                 if (item.discountPercentage > 0)
-                                    .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
-                                    .inner-discount -#{item.discountPercentage}%
+                                    span.badge-discount.position-absolute -#{item.discountPercentage}%
+                                a(href=`/products/${item.slug}`)
+                                    img.card-img-top(src=item.thumbnail, alt=item.title)
+                            .card-body.p-3
+                                h6.card-title.font-weight-bold 
+                                    a.text-dark(href=`/products/${item.slug}`) #{item.title}
+                                .d-flex.align-items-center
+                                    span.price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")}đ
+                                    if (item.discountPercentage > 0)
+                                        small.price-old #{item.price.toLocaleString("vi-VN")}đ
 
     //- SẢN PHẨM MỚI NHẤT 
     .container.mb-5
@@ -97,15 +100,17 @@ block main
         .row
             if productsNew && productsNew.length > 0
                 each item in productsNew
-                    .col-4.mb-3
-                        .product-item
-                            .inner-image
-                                a(href=`/products/${item.slug}`)
-                                    img(src=item.thumbnail, alt=item.title)
-                            .inner-content
-                                h3.inner-title 
-                                    a(href=`/products/${item.slug}`) #{item.title}
-                                .inner-price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")} VNĐ
+                    .col-lg-3.col-md-6.col-12.mb-4
+                        .product-card.card.h-100.border-0.shadow-sm
+                            .position-relative.overflow-hidden
                                 if (item.discountPercentage > 0)
-                                    .inner-price-old #{item.price.toLocaleString("vi-VN")} VNĐ
-                                    .inner-discount -#{item.discountPercentage}%
+                                    span.badge-discount.position-absolute -#{item.discountPercentage}%
+                                a(href=`/products/${item.slug}`)
+                                    img.card-img-top(src=item.thumbnail, alt=item.title)
+                            .card-body.p-3
+                                h6.card-title.font-weight-bold 
+                                    a.text-dark(href=`/products/${item.slug}`) #{item.title}
+                                .d-flex.align-items-center
+                                    span.price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")}đ
+                                    if (item.discountPercentage > 0)
+                                        small.price-old #{item.price.toLocaleString("vi-VN")}đ

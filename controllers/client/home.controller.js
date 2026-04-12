@@ -3,33 +3,63 @@ const Product = require("../../models/product.model");
 // [GET] /
 module.exports.index = async (req, res) => {
     try {
-        // danh sách sản phẩm nổi bật (Ưu tiên giảm giá nhiều nhất)
-        const productsFeatured = await Product.find({
-            deleted: false,
-            status: "active"
-        }).sort({ discountPercentage: "desc" }).limit(6);
+        // 1. Lấy Sản phẩm bán chạy
+        const productsBestSelling = await Product.aggregate([
+            { $match: { status: "active", deleted: false } },
+            { $sort: { sold: -1 } }, 
+            {
+                $group: {
+                    _id: { $ifNull: ["$styleCode", "$_id"] }, 
+                    doc: { $first: "$$ROOT" }
+                }
+            },
+            { $replaceRoot: { newRoot: "$doc" } },
+            {
+                $addFields: {
+                    priceNew: {
+                        $round: [
+                            { $multiply: [ "$price", { $divide: [ { $subtract: [100, "$discountPercentage"] }, 100 ] } ] },
+                            0
+                        ]
+                    }
+                }
+            },
+            { $sort: { sold: -1 } }, 
+            { $limit: 3 } 
+        ]);
 
-        productsFeatured.forEach(item => {
-            item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
-        });
+        // Lấy Sản phẩm mới nhất 
+        const productsNew = await Product.aggregate([
+            { $match: { status: "active", deleted: false } },
+            { $sort: { createdAt: -1 } }, 
+            {
+                $group: {
+                    _id: { $ifNull: ["$styleCode", "$_id"] },
+                    doc: { $first: "$$ROOT" }
+                }
+            },
+            { $replaceRoot: { newRoot: "$doc" } },
+            {
+                $addFields: {
+                    priceNew: {
+                        $round: [
+                            { $multiply: [ "$price", { $divide: [ { $subtract: [100, "$discountPercentage"] }, 100 ] } ] },
+                            0
+                        ]
+                    }
+                }
+            },
+            { $sort: { createdAt: -1 } },
+            { $limit: 3 }
+        ]);
 
-        // lấy ra danh sách sản phẩm mới nhất 
-        const productsNew = await Product.find({
-            deleted: false,
-            status: "active"
-        }).sort({ createdAt: "desc" }).limit(6);
-
-        productsNew.forEach(item => {
-            item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
-        });
-
-        res.render("client/pages/home/index", {
+        res.render("client/pages/home/index.pug", {
             pageTitle: "Trang chủ",
-            productsFeatured: productsFeatured,
+            productsBestSelling: productsBestSelling,
             productsNew: productsNew
         });
     } catch (error) {
-        console.log(error);
-        res.redirect("back");
+        console.error(error);
+        res.redirect("/products");
     }
 };

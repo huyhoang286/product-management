@@ -1,0 +1,57 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  section.about-header.py-5.text-white(style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/banner1.jpg') center/cover; min-height: 300px; display: flex; align-items: center;")
+    .container.text-center
+      h1.display-4.font-weight-bold VỀ SHOP ABC
+      p.lead Khởi nguồn đam mê - Chinh phục mọi sân cỏ
+
+  section.about-story.py-5
+    .container
+      .row.align-items-center
+        .col-lg-6.mb-4
+          img.img-fluid.rounded.shadow(src="/images/test2.png" alt="Our Story")
+        .col-lg-6
+          +box-head("Câu Chuyện Của Chúng Tôi")
+          p.mt-4.text-muted Được thành lập từ tình yêu mãnh liệt với bóng đá, SHOP ABC bắt đầu từ một cửa hàng nhỏ tại Hà Nội với mong muốn mang những đôi giày chính hãng chất lượng nhất đến tay người chơi phong trào.
+          p.text-muted Sau nhiều năm phát triển, chúng tôi tự hào là đối tác tin cậy của hàng nghìn cầu thủ, từ bán chuyên đến chuyên nghiệp, giúp họ tự tin hơn trong từng bước chạy và cú sút.
+
+  section.about-values.py-5.bg-light
+    .container
+      .row.text-center.mb-5
+        .col-12
+          +box-head("Tại Sao Chọn SHOP ABC?")
+      .row
+        - 
+          var values = [
+            {t: 'Cam Kết Chính Hãng', i: 'fa-check-circle', d: 'Bồi thường gấp 10 lần nếu phát hiện hàng giả, hàng nhái.'},
+            {t: 'Tư Vấn Chuyên Sâu', i: 'fa-user-tie', d: 'Đội ngũ am hiểu về kỹ thuật sân cỏ, hỗ trợ chọn giày đúng vị trí.'},
+            {t: 'Hậu Mãi Tận Tâm', i: 'fa-hand-holding-heart', d: 'Bảo hành keo trọn đời và hỗ trợ đổi size linh hoạt trong 7 ngày.'}
+          ]
+        each val in values
+          .col-md-4.mb-4
+            .card.h-100.border-0.shadow-sm.text-center.p-4.transition-all(onmouseover="this.classList.add('shadow')" onmouseout="this.classList.remove('shadow')")
+              .icon-wrap.mb-3.text-primary
+                i.fas(class=val.i + " fa-3x")
+              h5.font-weight-bold #{val.t}
+              p.small.text-muted.mb-0 #{val.d}
+
+  section.about-stats.py-5.bg-dark.text-white
+    .container
+      .row.text-center
+        .col-md-4.mb-3
+          h2.font-weight-bold.text-primary 10,000+
+          p Khách hàng tin dùng
+        .col-md-4.mb-3
+          h2.font-weight-bold.text-primary 5+
+          p Năm kinh nghiệm
+        .col-md-4.mb-3
+          h2.font-weight-bold.text-primary 100%
+          p Sản phẩm chính hãng
+
+  section.about-cta.py-5.text-center
+    .container
+      h3.font-weight-bold Sẵn sàng cho trận đấu tiếp theo?
+      p.text-muted Hãy để chúng tôi đồng hành cùng bạn trên mọi nẻo đường sân cỏ.
+      a.btn.btn-primary.btn-lg.rounded-pill.px-5.mt-3(href="/products") KHÁM PHÁ SẢN PHẨM NGAY

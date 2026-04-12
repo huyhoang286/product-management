@@ -1,0 +1,82 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  section.contact-header.py-5.bg-light.border-bottom
+    .container.text-center
+      +box-head("Thông Tin & Chính Sách")
+      p.lead.text-muted.mt-3 SHOP ABC cam kết mang đến trải nghiệm mua sắm minh bạch và tận tâm nhất.
+
+  section.contact-content.py-5
+    .container
+      .row
+        //- CHÍNH SÁCH CỬA HÀNG 
+        .col-lg-7.mb-4
+          .policy-section
+            h4.font-weight-bold.mb-4 
+              i.fas.fa-shield-alt.text-primary.mr-2
+              | Chính Sách Cửa Hàng
+
+            .card.border-0.shadow-sm.mb-3.rounded-lg
+              .card-body
+                h6.font-weight-bold.text-primary
+                  i.fas.fa-truck.mr-2
+                  | 1. Chính sách giao hàng
+                p.text-muted.small.mb-0 Giao hàng toàn quốc trong vòng 2-4 ngày làm việc. Miễn phí vận chuyển cho đơn hàng từ 1.000.000đ. Khách hàng được kiểm tra hàng trước khi thanh toán (Ship COD).
+
+            .card.border-0.shadow-sm.mb-3.rounded-lg
+              .card-body
+                h6.font-weight-bold.text-primary
+                  i.fas.fa-sync-alt.mr-2
+                  | 2. Chính sách đổi trả
+                p.text-muted.small.mb-0 Hỗ trợ đổi size/mẫu trong vòng 7 ngày kể từ khi nhận hàng. Sản phẩm đổi trả phải còn nguyên tem mác, chưa qua sử dụng và không có dấu hiệu hư hỏng do tác động bên ngoài.
+
+            .card.border-0.shadow-sm.mb-3.rounded-lg
+              .card-body
+                h6.font-weight-bold.text-primary
+                  i.fas.fa-medal.mr-2
+                  | 3. Chính sách bảo hành
+                p.text-muted.small.mb-0 Bảo hành keo và lỗi nhà sản xuất trong vòng 30 ngày. Cam kết hàng chính hãng 100%, bồi thường gấp 10 lần nếu phát hiện hàng giả/nhái.
+
+        .col-lg-5
+          .card.border-0.shadow-sm.rounded-lg.bg-dark.text-white
+            .card-body.p-4
+              h4.font-weight-bold.mb-4 Thông Tin Liên Hệ
+              
+              .contact-item.mb-4
+                h6.font-weight-bold.text-warning 
+                  i.fas.fa-map-marker-alt.mr-2
+                  | Địa chỉ văn phòng
+                p.mb-0 123 Đường ABC, Quận Cầu Giấy, Hà Nội
+              
+              .contact-item.mb-4
+                h6.font-weight-bold.text-warning 
+                  i.fas.fa-phone-alt.mr-2
+                  | Hotline hỗ trợ
+                p.mb-0.h5 0867644926
+                p.small.text-muted (Hỗ trợ từ 8:00 - 22:00 hàng ngày)
+              
+              .contact-item.mb-4
+                h6.font-weight-bold.text-warning 
+                  i.fas.fa-envelope.mr-2
+                  | Email phản hồi
+                p.mb-0 huyhoang.m28@gmail.com
+
+              hr.bg-secondary
+
+              h6.font-weight-bold.mb-3 Kết nối với chúng tôi
+              .social-links
+                a.btn.btn-outline-light.btn-sm.rounded-circle.mr-2(href="#"): i.fab.fa-facebook-f
+                a.btn.btn-outline-light.btn-sm.rounded-circle.mr-2(href="#"): i.fab.fa-instagram
+                a.btn.btn-outline-light.btn-sm.rounded-circle(href="#"): i.fab.fa-youtube
+
+  section.contact-map
+    .container-fluid.p-0
+      iframe(
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.863981044384!2d105.78010387503175!3d21.038127780613533!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab354920c233%3A0x5d0601046e5b8823!2zSOG7jWMgdmnhu4duIEPDtG5n nghu4ddaggerBCBIdXnhu4duIHRo9G5n!5e0!3m2!1svi!2s!4v1712912345678" 
+        width="100%" 
+        height="400" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy"
+      )
