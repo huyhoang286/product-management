@@ -20,8 +20,8 @@ const orderSchema = new mongoose.Schema(
             }
         ],
         payment_method: { 
-        type: String, 
-        default: "cod" 
+            type: String, 
+            default: "cod" 
         },
         payment_status: {
             type: String,
@@ -30,9 +30,9 @@ const orderSchema = new mongoose.Schema(
         payosOrderCode: {
             type: Number 
         },
-        deleted: {
-            type: Boolean,
-            default: false
+        status: {
+            type: String,
+            default: "pending" 
         }
     },
     { timestamps: true }

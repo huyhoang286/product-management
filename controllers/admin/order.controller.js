@@ -1,26 +1,38 @@
 const Order = require("../../models/order.model");
 const Product = require("../../models/product.model");  
+const mongoose = require("mongoose");
 
 // [GET] /admin/orders
 module.exports.index = async (req, res) => {
     try {
-        const orders = await Order.find({ deleted: false }).sort({ createdAt: "desc" });
+        const orders = await Order.find().sort({ createdAt: -1 });
 
         for (const order of orders) {
             let totalPrice = 0;
-            for (const item of order.products) {
-                const priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
-                totalPrice += priceNew * item.quantity;
+            
+            if (order.products && Array.isArray(order.products)) {
+                for (const item of order.products) {
+                    const price = item.price || 0;
+                    const quantity = item.quantity || 0;
+                    const discount = item.discountPercentage || 0;
+                    
+                    const priceNew = Math.round(price * (1 - discount / 100));
+                    totalPrice += priceNew * quantity;
+                }
             }
             order.totalPrice = totalPrice;
+            
+            if (!order.status) {
+                order.status = "pending";
+            }
         }
 
         res.render("admin/pages/orders/index", {
-            pageTitle: "Quản lý đơn hàng",
+            pageTitle: "Danh sách đơn hàng",
             orders: orders
         });
     } catch (error) {
-        console.log(error);
+        console.error("Lỗi trang danh sách đơn hàng:", error);
         res.redirect("back");
     }
 };
@@ -46,10 +58,14 @@ module.exports.changeStatusPatch = async (req, res) => {
 module.exports.detail = async (req, res) => {
     try {
         const id = req.params.id;
-        const order = await Order.findOne({ _id: id, deleted: false });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.redirect("/admin/orders");
+        }
+
+        const order = await Order.findOne({ _id: id});
 
         if (!order) {
-            return res.redirect("back");
+            return res.redirect("/admin/orders");
         }
 
         let totalOrderPrice = 0;
@@ -74,6 +90,6 @@ module.exports.detail = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.redirect("back");
+        res.redirect("/admin/orders");
     }
 };

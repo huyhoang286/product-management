@@ -187,29 +187,37 @@ module.exports.success = async (req, res) => {
 // [POST] /checkout/webhook
 module.exports.webhook = async (req, res) => {
     try {
+        console.log("=========================================");
+        console.log("🔥 ĐÃ NHẬN ĐƯỢC WEBHOOK TỪ PAYOS!");
+        
         const webhookData = req.body;
         
-        const verifiedData = payos.webhooks.verify(webhookData);
-
-        if (verifiedData.success) {
-            await Order.updateOne(
-                { payosOrderCode: verifiedData.orderCode },
-                { 
-                    payment_status: "paid", 
-                    status: "confirm" 
-                }
-            );
-            console.log(`[Webhook] Đã cập nhật thành công đơn hàng: ${verifiedData.orderCode}`);
-            
-            return res.json({
-                success: true,
-                message: "Webhook processed successfully"
-            });
-        }
+        // Hàm verify này sẽ tự động ném ra lỗi (xuống catch) nếu dữ liệu bị Hacker giả mạo.
+        // Nên nếu code chạy qua được dòng này, nghĩa là dữ liệu an toàn 100%.
+        const verifiedData = await payos.webhooks.verify(webhookData);
         
-        return res.json({ success: false, message: "Invalid webhook data" });
+        console.log("✅ Dữ liệu giải mã thành công:", verifiedData);
+
+        // Tiến hành cập nhật Database
+        await Order.updateOne(
+            { payosOrderCode: verifiedData.orderCode },
+            { 
+                payment_status: "paid", 
+                status: "confirm" 
+            }
+        );
+        
+        console.log(`[Thành Công] Đã cập nhật đơn hàng: ${verifiedData.orderCode} thành PAID!`);
+        console.log("=========================================");
+        
+        return res.json({
+            success: true,
+            message: "Webhook xử lý thành công!"
+        });
+            
     } catch (error) {
-        console.error("Lỗi xử lý webhook:", error);
-        return res.json({ success: false, message: "Internal server error" });
+        // Nếu có lỗi (VD: sai mã Checksum), nó sẽ in ra chữ đỏ
+        console.error("❌ Lỗi xử lý webhook:", error.message);
+        return res.json({ success: false, message: "Lỗi hệ thống hoặc sai chữ ký" });
     }
 };
