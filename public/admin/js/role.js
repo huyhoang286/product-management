@@ -161,13 +161,14 @@ if (buttonSubmit) {
         });
 
         console.log("Cục dữ liệu chuẩn bị gửi đi:", permissions);
-
-        const formData = new FormData();
-        formData.append("permissions", JSON.stringify(permissions));
-
         fetch(`/admin/roles/permissions`, {
             method: "PATCH",
-            body: formData
+            headers: {
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify({ 
+                permissions: JSON.stringify(permissions) 
+            })
         })
         .then(res => res.json())
         .then(data => {

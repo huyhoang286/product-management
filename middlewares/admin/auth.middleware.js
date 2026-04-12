@@ -25,7 +25,12 @@ module.exports.requireAuth = async (req, res, next) => {
 
 module.exports.requirePermission = (permission) => {
     return (req, res, next) => {
-        if (!res.locals.role.permissions.includes(permission)) {
+        // (DEBUG)
+        // console.log("=== KIỂM TRA QUYỀN ===");
+        // console.log("- Quyền route đang đòi hỏi:", permission);
+        // console.log("- Quyền tài khoản đang có:", res.locals.role ? res.locals.role.permissions : "Không có role");
+
+        if (!res.locals.role || !res.locals.role.permissions || !res.locals.role.permissions.includes(permission)) {
             
             if (req.method === "GET") {
                 res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
