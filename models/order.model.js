@@ -19,10 +19,16 @@ const orderSchema = new mongoose.Schema(
                 quantity: Number
             }
         ],
-        payment_method: String,
-        status: {
+        payment_method: { 
+        type: String, 
+        default: "cod" 
+        },
+        payment_status: {
             type: String,
-            default: "pending" 
+            default: "unpaid" 
+        },
+        payosOrderCode: {
+            type: Number 
         },
         deleted: {
             type: Boolean,

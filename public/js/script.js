@@ -126,16 +126,19 @@ if (formCheckout) {
             body: JSON.stringify(data)
         })
         .then(res => res.json())
-        .then(resData => {
-            if (resData.code === 200) {
-                sessionStorage.setItem("successMessage", resData.message);
-                window.location.href = `/checkout/success/${resData.orderId}`;
+        .then(data => {
+            if (data.code === 200) {
+                if (data.data.paymentUrl) {
+                    window.location.href = data.data.paymentUrl;
+                } else {
+                    window.location.href = `/checkout/success/${data.data.orderId}`;
+                }
             } else {
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
                     icon: 'error',
-                    title: resData.message,
+                    title: data.message,
                     showConfirmButton: false,
                     timer: 3000
                 });

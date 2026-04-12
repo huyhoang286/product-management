@@ -1,6 +1,13 @@
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
+const { PayOS } = require("@payos/node");
+
+const payos = new PayOS({
+  clientId: process.env.PAYOS_CLIENT_ID,
+  apiKey: process.env.PAYOS_API_KEY,
+  checksumKey: process.env.PAYOS_CHECKSUM_KEY
+});
 
 // [GET] /checkout
 module.exports.index = async (req, res) => {
@@ -47,6 +54,7 @@ module.exports.order = async (req, res) => {
         }
 
         const orderProducts = [];
+        let totalPrice = 0;
 
         for (const item of cart.products) {
             const productInfo = await Product.findOne({ _id: item.product_id, deleted: false });
@@ -63,6 +71,9 @@ module.exports.order = async (req, res) => {
                     message: `Sản phẩm ${productInfo.title} (Size ${variant ? variant.size : '?'}) đã hết hàng hoặc không đủ số lượng!` 
                 });
             }
+
+            const priceNew = Math.round(productInfo.price * (1 - productInfo.discountPercentage / 100));
+            totalPrice += priceNew * item.quantity;
 
             orderProducts.push({
                 product_id: item.product_id,
@@ -84,14 +95,9 @@ module.exports.order = async (req, res) => {
         if (res.locals.user) {
             orderInfo.user_id = res.locals.user.id;
         }
-        const order = new Order(orderInfo);
-        await order.save();
-
-        // XỬ LÝ THANH TOÁN ONLINE 
-        if (payment_method === "online") {
-            // Gọi service Ngân hàng/VNPay ở đây và trả về URL redirect
-        }
-
+        const newOrder = new Order(orderInfo);
+        await newOrder.save();
+        
         // Cập nhật kho
         for (const item of cart.products) {
             await Product.updateOne(
@@ -108,10 +114,38 @@ module.exports.order = async (req, res) => {
         // Làm rỗng giỏ hàng
         await Cart.updateOne({ _id: cartId }, { $set: { products: [] } });
 
-        res.json({
+        // XỬ LÝ THANH TOÁN ONLINE 
+        if (payment_method === "vietqr") {
+            const orderCode = Number(String(Date.now()).slice(-6)); 
+            
+            await Order.updateOne({ _id: newOrder.id }, { payosOrderCode: orderCode });
+
+            const paymentData = {
+                orderCode: orderCode,
+                amount: totalPrice,
+                description: `Thanh toan don ${newOrder.id.slice(-4)}`,
+                returnUrl: `${process.env.CLIENT_URL}/checkout/success/${newOrder.id}`,
+                cancelUrl: `${process.env.CLIENT_URL}/checkout/cancel/${newOrder.id}`,
+            };
+
+            const paymentLink = await payos.paymentRequests.create(paymentData);
+
+            return res.json({
+                code: 200,
+                message: "Tạo link thanh toán thành công!",
+                data: {
+                    paymentUrl: paymentLink.checkoutUrl,
+                    orderId: newOrder.id
+                }
+            });
+        }
+
+        return res.json({
             code: 200,
             message: "Đặt hàng thành công!",
-            orderId: order.id
+            data: {
+                orderId: newOrder.id
+            }
         });
 
     } catch (error) {
@@ -147,5 +181,35 @@ module.exports.success = async (req, res) => {
         });
     } catch (error) {
         res.redirect("/");
+    }
+};
+
+// [POST] /checkout/webhook
+module.exports.webhook = async (req, res) => {
+    try {
+        const webhookData = req.body;
+        
+        const verifiedData = payos.webhooks.verify(webhookData);
+
+        if (verifiedData.success) {
+            await Order.updateOne(
+                { payosOrderCode: verifiedData.orderCode },
+                { 
+                    payment_status: "paid", 
+                    status: "confirm" 
+                }
+            );
+            console.log(`[Webhook] Đã cập nhật thành công đơn hàng: ${verifiedData.orderCode}`);
+            
+            return res.json({
+                success: true,
+                message: "Webhook processed successfully"
+            });
+        }
+        
+        return res.json({ success: false, message: "Invalid webhook data" });
+    } catch (error) {
+        console.error("Lỗi xử lý webhook:", error);
+        return res.json({ success: false, message: "Internal server error" });
     }
 };
