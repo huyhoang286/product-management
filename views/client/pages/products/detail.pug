@@ -3,83 +3,129 @@ extends ../../layouts/default.pug
 block main
     .container.my-5
         .row
-            .col-md-7.mb-4
-                .product-image-gallery
-                    img(
-                        src=product.thumbnail
-                        alt=product.title
-                        class="img-fluid w-100 rounded"
-                        style="object-fit: cover; background-color: #f6f6f6; max-height: 600px;"
-                    )
+            //- Cột Hình Ảnh
+            .col-lg-6.mb-4.mb-lg-0
+                .card.border-0.shadow-sm.h-100
+                    .card-body.p-3.text-center.bg-light.rounded.d-flex.align-items-center.justify-content-center
+                        img(
+                            src=product.thumbnail
+                            alt=product.title
+                            class="img-fluid w-100 rounded"
+                            style="object-fit: contain; max-height: 550px;"
+                        )
             
-            .col-md-5
-                h1.display-5.font-weight-bold.mb-2 #{product.title}
-                p.text-muted.mb-4(style="font-size: 1.1rem;") Phối màu: #{product.color || 'Chưa cập nhật'}
+            //- Cột Thông Tin Sản Phẩm
+            .col-lg-6
+                h1.h2.font-weight-bold.mb-3 #{product.title}
+                p.text-muted.mb-3(style="font-size: 1.1rem;") Phối màu: <span class="font-weight-bold text-dark">#{product.color || 'Chưa cập nhật'}</span>
 
-                .product-price.mb-4
+                //- Khối Giá Tiền
+                .product-price.p-3.bg-light.rounded.mb-4
                     if (product.discountPercentage > 0)
                         span.h2.font-weight-bold.text-danger.mr-3 #{product.priceNew.toLocaleString("vi-VN")} VNĐ
                         span.h5.text-muted(style="text-decoration: line-through;") #{product.price.toLocaleString("vi-VN")} VNĐ
-                        span.badge.badge-danger.ml-2 -#{product.discountPercentage}%
+                        span.badge.badge-danger.ml-3.p-2.font-weight-normal(style="font-size: 1rem;") -#{product.discountPercentage}%
                     else 
-                        span.h2.font-weight-bold #{product.price.toLocaleString("vi-VN")} VNĐ
+                        span.h2.font-weight-bold.text-danger #{product.price.toLocaleString("vi-VN")} VNĐ
 
+                //- Khối Chọn Màu
                 if (colorways && colorways.length > 1)
                     .colorways.mb-4
-                        p.font-weight-bold Chọn màu sắc:
+                        p.font-weight-bold.mb-2 Chọn màu sắc khác:
                         .d-flex.flex-wrap
                             each colorway in colorways
                                 - const isActive = (colorway.slug == product.slug)
-                                a(href=`/products/${colorway.slug}` title=colorway.color style=`display: block; margin-right: 10px; border-radius: 8px; border: 2px solid ${isActive ? '#111' : 'transparent'}; padding: 2px;`)
-                                    img(src=colorway.thumbnail alt=colorway.color style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;")
+                                a(
+                                    href=`/products/${colorway.slug}` 
+                                    title=colorway.color 
+                                    class="mr-2 mb-2"
+                                    style=`display: block; border-radius: 8px; border: 2px solid ${isActive ? '#dc3545' : 'transparent'}; padding: 3px; transition: 0.2s;`
+                                )
+                                    img.shadow-sm(src=colorway.thumbnail alt=colorway.color style="width: 65px; height: 65px; object-fit: cover; border-radius: 5px; border: 1px solid #dee2e6;")
 
-                form(
-                    form-add-to-cart 
-                    data-id=product.id
-                )
-                    .form-group.mb-4
-                        label.font-weight-bold(for="variant_id") Chọn kích cỡ (Size)
-                        select.form-control.form-control-lg(id="variant_id" name="variant_id" required)
-                            option(value="" disabled selected) -- Vui lòng chọn Size --
-                            if (product.variants && product.variants.length > 0)
-                                each variant in product.variants
-                                    if (variant.stock > 0)
-                                        option(value=variant.id) Size #{variant.size} - (Còn #{variant.stock})
-                                    else
-                                        option(value=variant.id disabled) Size #{variant.size} - Hết hàng
-                            else 
-                                option(value="" disabled) Đang cập nhật kích cỡ
+                //- Khối Chọn Size & Nút Mua
+                form(form-add-to-cart data-id=product.id)
+                    .row.mb-4
+                        .col-sm-8.mb-3.mb-sm-0
+                            label.font-weight-bold(for="variant_id") Kích cỡ (Size) <span class="text-danger">*</span>
+                            select.form-control.form-control-lg.custom-select(id="variant_id" name="variant_id" required)
+                                option(value="" disabled selected) -- Vui lòng chọn Size --
+                                if (product.variants && product.variants.length > 0)
+                                    each variant in product.variants
+                                        if (variant.stock > 0)
+                                            option(value=variant.id) Size #{variant.size} - (Còn #{variant.stock} sản phẩm)
+                                        else
+                                            option(value=variant.id disabled) Size #{variant.size} - Hết hàng
+                                else 
+                                    option(value="" disabled) Đang cập nhật kích cỡ
+                        .col-sm-4
+                            label.font-weight-bold(for="quantity") Số lượng
+                            input.form-control.form-control-lg.text-center(
+                                type="number"
+                                name="quantity"
+                                value="1"
+                                min="1"
+                            )
 
-                    .form-group.mb-4
-                        label.font-weight-bold(for="quantity") Số lượng
-                        input.form-control.form-control-lg(
-                            type="number"
-                            name="quantity"
-                            value="1"
-                            min="1"
-                            style="width: 100px;"
-                        )
-
-                    button.btn.btn-dark.btn-lg.btn-block.py-3.mt-4(
-                        type="submit"
-                        disabled=(totalStock <= 0)
-                    ) 
+                    //- Các nút hành động
+                    .row
                         if (totalStock > 0)
-                            | Thêm vào giỏ hàng
+                            .col-sm-6.mb-2.mb-sm-0
+                                button.btn.btn-outline-dark.btn-lg.btn-block.font-weight-bold(
+                                    type="submit"
+                                ) 
+                                    i.fas.fa-cart-plus.mr-2
+                                    | Thêm vào giỏ
+                            .col-sm-6
+                                button.btn.btn-danger.btn-lg.btn-block.font-weight-bold(
+                                    type="button"
+                                    button-buy-now
+                                )
+                                    | Mua ngay
                         else 
-                            | Đã bán hết toàn bộ
+                            .col-12
+                                button.btn.btn-secondary.btn-lg.btn-block.font-weight-bold(
+                                    type="button" disabled
+                                ) 
+                                    | Đã bán hết toàn bộ
 
-                .product-description.mt-5.pt-4(style="border-top: 1px solid #e5e5e5;")
-                    h4.font-weight-bold.mb-3 Chi tiết sản phẩm
-                    ul.list-unstyled.mb-4(style="line-height: 2;")
-                        if (product.attributes)
-                            if (product.attributes.brand)
-                                li <strong>Thương hiệu:</strong> #{product.attributes.brand}
-                            if (product.attributes.surface)
-                                li <strong>Mặt sân (Loại đinh):</strong> #{product.attributes.surface}
-                            if (product.attributes.position)
-                                li <strong>Vị trí khuyên dùng:</strong> #{product.attributes.position}
-                        if (product.styleCode)
-                            li <strong>Mã kiểu dáng:</strong> #{product.styleCode}
+        //- Phần Tabs cho Chi tiết & Mô tả sản phẩm
+        .row.mt-5.pt-4
+            .col-12
+                .card.border-0.shadow-sm
+                    .card-header.bg-white.border-bottom.p-0
+                        ul.nav.nav-pills.nav-fill.p-2#productTabs(role="tablist")
+                            li.nav-item
+                                a.nav-link.active.font-weight-bold.text-uppercase(id="desc-tab" data-toggle="tab" href="#desc" role="tab") Mô tả sản phẩm
+                            li.nav-item
+                                a.nav-link.font-weight-bold.text-uppercase(id="specs-tab" data-toggle="tab" href="#specs" role="tab") Thông số kỹ thuật
                     
-                    div.text-justify !{product.description}
+                    .card-body.p-4.p-md-5
+                        .tab-content#productTabsContent
+                            //- Tab Mô tả
+                            .tab-pane.fade.show.active#desc(role="tabpanel")
+                                .text-justify.product-content(style="line-height: 1.8; font-size: 1.05rem;") 
+                                    | !{product.description}
+                            
+                            //- Tab Thông số
+                            .tab-pane.fade#specs(role="tabpanel")
+                                .table-responsive
+                                    table.table.table-bordered.table-striped.mb-0
+                                        tbody
+                                            if (product.attributes)
+                                                if (product.attributes.brand)
+                                                    tr
+                                                        th.bg-light(style="width: 30%;") Thương hiệu
+                                                        td #{product.attributes.brand}
+                                                if (product.attributes.surface)
+                                                    tr
+                                                        th.bg-light Mặt sân (Loại đinh)
+                                                        td #{product.attributes.surface}
+                                                if (product.attributes.position)
+                                                    tr
+                                                        th.bg-light Vị trí khuyên dùng
+                                                        td #{product.attributes.position}
+                                            if (product.styleCode)
+                                                tr
+                                                    th.bg-light Mã kiểu dáng
+                                                    td #{product.styleCode}

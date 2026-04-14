@@ -129,7 +129,13 @@ if (formCheckout) {
         .then(resData => {
             if (resData.code === 200) {
                 sessionStorage.setItem("successMessage", resData.message);
-                window.location.href = `/checkout/success/${resData.orderId}`;
+                
+                if (resData.data && resData.data.paymentUrl) {
+                    window.location.href = resData.data.paymentUrl;
+                } 
+                else if (resData.data && resData.data.orderId) {
+                    window.location.href = `/checkout/success/${resData.data.orderId}`;
+                }
             } else {
                 Swal.fire({
                     toast: true,
@@ -147,6 +153,37 @@ if (formCheckout) {
     });
 }
 // End Checkout
+
+// Buy now 
+const buttonBuyNow = document.querySelector("[button-buy-now]");
+if (buttonBuyNow) {
+    buttonBuyNow.addEventListener("click", () => {
+        const formAddToCart = buttonBuyNow.closest("[form-add-to-cart]");
+        const productId = formAddToCart.getAttribute("data-id");
+        const quantity = formAddToCart.querySelector("input[name='quantity']").value;
+        const variantId = formAddToCart.querySelector("select[name='variant_id']").value;
+
+        if (!variantId) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: 'Vui lòng chọn kích cỡ!', showConfirmButton: false, timer: 2000 });
+            return;
+        }
+
+        fetch(`/cart/add/${productId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quantity: parseInt(quantity), variant_id: variantId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.code === 200) {
+                window.location.href = "/cart"; 
+            } else {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: data.message, showConfirmButton: false, timer: 2000 });
+            }
+        });
+    });
+}
+// End Buy now 
 
 // register
 const formRegister = document.querySelector("[form-register]");
