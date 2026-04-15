@@ -318,24 +318,19 @@ module.exports.resetPasswordPost = async (req, res) => {
 // [GET] /user/orders
 module.exports.orders = async (req, res) => {
     try {
-        // 1. Phải đăng nhập mới được xem
         if (!res.locals.user) return res.redirect("/user/login");
 
-        // 2. Tìm đơn hàng, sắp xếp mới nhất lên đầu
         const orders = await Order.find({ 
             user_id: res.locals.user.id,
             deleted: false
         }).sort({ createdAt: "desc" });
 
-        // 3. Xử lý tính toán giá tiền và lấy ảnh sản phẩm
         for (const order of orders) {
             let totalPrice = 0;
             for (const item of order.products) {
-                // Lấy ảnh, tên, và slug từ bảng Product
                 const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail slug");
                 item.productInfo = productInfo;
                 
-                // Tính chuẩn VNĐ giống y hệt lúc thanh toán
                 item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
                 item.totalPrice = item.priceNew * item.quantity;
                 totalPrice += item.totalPrice;
@@ -351,4 +346,16 @@ module.exports.orders = async (req, res) => {
         console.log("Lỗi lấy lịch sử đơn hàng:", error);
         res.redirect("back");
     }
+};
+
+// [GET] /user/auth/google/callback
+module.exports.googleLoginCallback = async (req, res) => {
+  const user = req.user;
+  
+  res.cookie("tokenUser", user.tokenUser, {
+    expires: new Date(Date.now() + 900000 * 24), 
+    httpOnly: true
+  });
+
+  res.redirect("/");
 };

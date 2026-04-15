@@ -1,6 +1,8 @@
 const express = require('express');
+const passport = require('passport');
 const path = require("path")
-require('dotenv').config()
+require('dotenv').config();
+
 const app = express();
 const port = process.env.PORT;
 
@@ -12,6 +14,8 @@ const systemConfix = require("./config/system")
 const cookieParser = require("cookie-parser");
 app.use(cookieParser("HuyHoangSecretKey")); 
 
+require('./config/passport'); 
+app.use(passport.initialize());
 
 const route = require("./routes/client/index.route");
 const routeAdmin = require("./routes/admin/index.route");
