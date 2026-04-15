@@ -38,6 +38,7 @@ block main
                     .card-header.bg-primary.text-white Thông tin giao hàng
                     .card-body
                         form(form-checkout)
+                            input(type="hidden" name="selectedItemsString" value=selectedItemsString)
                             .form-group
                                 label(for="fullName") Họ và tên
                                 input.form-control(type="text" id="fullName" name="fullName" value=(user ? user.fullName : "") required)

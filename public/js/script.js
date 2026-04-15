@@ -176,14 +176,22 @@ if (buttonBuyNow) {
         .then(res => res.json())
         .then(data => {
             if (data.code === 200) {
-                window.location.href = "/cart"; 
+                const itemsToCheckout = [{
+                    productId: productId,
+                    variantId: variantId
+                }];
+
+                const encodedItems = encodeURIComponent(JSON.stringify(itemsToCheckout));
+                
+                window.location.href = `/checkout?items=${encodedItems}`; 
+
             } else {
                 Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: data.message, showConfirmButton: false, timer: 2000 });
             }
         });
     });
 }
-// End Buy now 
+// End Buy now
 
 // register
 const formRegister = document.querySelector("[form-register]");
@@ -485,5 +493,92 @@ if (selectSort) {
             url.searchParams.delete("sort"); 
         }
         window.location.href = url.href;
+    });
+}
+
+// Xử lý checkbox và xóa nhiều sản phẩm trong giỏ hàng
+const checkAll = document.querySelector("input[name='checkAll']");
+const checkItems = document.querySelectorAll("input[name='checkItem']");
+const totalPriceEl = document.querySelector("#total-price");
+const btnDeleteMultiple = document.querySelector("[button-delete-multiple]");
+const btnCheckout = document.querySelector("[button-checkout]");
+
+// Hàm tính toán tổng tiền các mục được check
+const calculateTotal = () => {
+    let total = 0;
+    let checkedCount = 0;
+    checkItems.forEach(item => {
+        if(item.checked) {
+            total += parseInt(item.getAttribute("data-price"));
+            checkedCount++;
+        }
+    });
+    totalPriceEl.innerHTML = total.toLocaleString("vi-VN") + " VNĐ";
+    
+    // Hiện/ẩn nút xóa nhiều
+    if(checkedCount > 0) btnDeleteMultiple.classList.remove("d-none");
+    else btnDeleteMultiple.classList.add("d-none");
+}
+// Bắt sự kiện Check All
+if(checkAll) {
+    checkAll.addEventListener("change", () => {
+        checkItems.forEach(item => item.checked = checkAll.checked);
+        calculateTotal();
+    });
+}
+// Bắt sự kiện Check từng Item
+checkItems.forEach(item => {
+    item.addEventListener("change", () => {
+        const totalChecked = document.querySelectorAll("input[name='checkItem']:checked").length;
+        checkAll.checked = totalChecked === checkItems.length;
+        calculateTotal();
+    });
+});
+// Xử lý XÓA NHIỀU SẢN PHẨM
+if(btnDeleteMultiple) {
+    btnDeleteMultiple.addEventListener("click", () => {
+        Swal.fire({
+            title: 'Bạn chắc chắn muốn xóa?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const checkedInputs = document.querySelectorAll("input[name='checkItem']:checked");
+                const itemsToDelete = Array.from(checkedInputs).map(input => ({
+                    product_id: input.getAttribute("product-id"),
+                    variant_id: input.getAttribute("variant-id")
+                }));
+
+                fetch('/cart/delete-multiple', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: itemsToDelete })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.code === 200) window.location.reload();
+                });
+            }
+        });
+    });
+}
+// Xử lý nút thanh toán trong giỏ hàng
+if(btnCheckout) {
+    btnCheckout.addEventListener("click", () => {
+        const checkedInputs = document.querySelectorAll("input[name='checkItem']:checked");
+        if(checkedInputs.length === 0) {
+            Swal.fire("Thông báo", "Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!", "warning");
+            return;
+        }
+
+        const itemsToCheckout = Array.from(checkedInputs).map(input => ({
+            productId: input.getAttribute("product-id"),
+            variantId: input.getAttribute("variant-id")
+        }));
+
+        const encodedItems = encodeURIComponent(JSON.stringify(itemsToCheckout));
+        window.location.href = `/checkout?items=${encodedItems}`;
     });
 }

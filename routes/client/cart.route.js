@@ -6,5 +6,6 @@ router.get("/", controller.index);
 router.post("/add/:productId", controller.addPost);
 router.patch("/update/:productId", controller.updatePatch);
 router.delete("/delete/:productId", controller.deleteItem);
+router.delete("/delete-multiple", controller.deleteMultiple);
 
 module.exports = router;

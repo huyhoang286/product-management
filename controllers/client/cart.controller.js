@@ -183,3 +183,35 @@ module.exports.deleteItem = async (req, res) => {
         });
     }
 };
+
+// [DELETE] /cart/delete-multiple
+module.exports.deleteMultiple = async (req, res) => {
+    try {
+        const cartId = req.cookies.cartId;
+        const items = req.body.items; 
+
+        if (!items || items.length === 0) {
+            return res.json({ code: 400, message: "Không có sản phẩm nào được chọn!" });
+        }
+
+        await Cart.updateOne(
+            { _id: cartId },
+            {
+                $pull: {
+                    products: { $or: items }
+                }
+            }
+        );
+
+        res.json({
+            code: 200,
+            message: "Đã xóa các sản phẩm đã chọn!"
+        });
+    } catch (error) {
+        console.error(error);
+        res.json({
+            code: 400,
+            message: "Xóa sản phẩm thất bại!"
+        });
+    }
+};

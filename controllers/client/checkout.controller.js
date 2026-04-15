@@ -14,8 +14,19 @@ module.exports.index = async (req, res) => {
     try {
         const cartId = req.cookies.cartId;
         const cart = await Cart.findOne({ _id: cartId });
+        
+        let selectedItems = [];
+        if (req.query.items) {
+            selectedItems = JSON.parse(decodeURIComponent(req.query.items));
+        } else {
+            return res.redirect("/cart"); 
+        }
 
         cart.totalPrice = 0;
+        
+        cart.products = cart.products.filter(item => 
+            selectedItems.some(s => s.productId == item.product_id && s.variantId == item.variant_id)
+        );
 
         if (cart.products.length > 0) {
             for (const item of cart.products) {
@@ -34,7 +45,8 @@ module.exports.index = async (req, res) => {
 
         res.render("client/pages/checkout/index", {
             pageTitle: "Thanh toán đơn hàng",
-            cartDetail: cart
+            cartDetail: cart,
+            selectedItemsString: JSON.stringify(selectedItems) 
         });
     } catch (error) {
         console.log(error);
@@ -112,9 +124,23 @@ module.exports.order = async (req, res) => {
         }
 
         // Làm rỗng giỏ hàng
-        await Cart.updateOne({ _id: cartId }, { $set: { products: [] } });
+        const selectedItems = JSON.parse(req.body.selectedItemsString);
 
-        // XỬ LÝ THANH TOÁN ONLINE 
+        await Cart.updateOne(
+            { _id: cartId },
+            {
+                $pull: {
+                    products: {
+                        $or: selectedItems.map(item => ({ 
+                            product_id: item.productId, 
+                            variant_id: item.variantId 
+                        }))
+                    }
+                }
+            }
+        );
+
+        // xử lý thanh toán nếu chọn VietQR
         if (payment_method === "vietqr") {
             const orderCode = Number(String(Date.now()).slice(-6)); 
             

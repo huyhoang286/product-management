@@ -10,10 +10,14 @@ block main
         .row.mt-4
             .col-12
                 if (cartDetail.products.length > 0)
+                    div.mb-3.d-flex.justify-content-between.align-items-center
+                        button(class="btn btn-danger btn-sm d-none" button-delete-multiple) Xóa đã chọn
                     .table-responsive
                         table.table.table-bordered.table-hover.text-center.align-middle
                             thead.thead-dark
                                 tr
+                                    th 
+                                        input(type="checkbox" name="checkAll" id="checkAll")
                                     th STT
                                     th Hình ảnh
                                     th Sản phẩm
@@ -25,6 +29,14 @@ block main
                                 each item, index in cartDetail.products
                                     if (item.productInfo)
                                         tr
+                                            td 
+                                                input(
+                                                    type="checkbox" 
+                                                    name="checkItem" 
+                                                    product-id=item.product_id 
+                                                    variant-id=item.variant_id
+                                                    data-price=item.totalPrice
+                                                )
                                             td #{index + 1}
                                             td
                                                 img(src=item.productInfo.thumbnail, alt=item.productInfo.title, width="80px" class="rounded")
@@ -59,8 +71,8 @@ block main
 
                     .row.mt-4
                         .col-12.text-right
-                            h4 Tổng đơn hàng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
-                            a(href="/checkout" class="btn btn-success btn-lg mt-3 px-5") Tiến hành Thanh toán
+                            h4 Tổng đơn hàng: <span id="total-price" class="text-danger font-weight-bold">0 VNĐ</span>
+                            button(class="btn btn-success btn-lg mt-3 px-5" button-checkout) Thanh toán
 
                 else
                     .alert.alert-warning.text-center.p-5
