@@ -187,37 +187,26 @@ module.exports.success = async (req, res) => {
 // [POST] /checkout/webhook
 module.exports.webhook = async (req, res) => {
     try {
-        console.log("=========================================");
-        console.log("🔥 ĐÃ NHẬN ĐƯỢC WEBHOOK TỪ PAYOS!");
-        
         const webhookData = req.body;
-        
-        // Hàm verify này sẽ tự động ném ra lỗi (xuống catch) nếu dữ liệu bị Hacker giả mạo.
-        // Nên nếu code chạy qua được dòng này, nghĩa là dữ liệu an toàn 100%.
+        // console.log("Dữ liệu webhook nhận được:", webhookData);
         const verifiedData = await payos.webhooks.verify(webhookData);
-        
-        console.log("✅ Dữ liệu giải mã thành công:", verifiedData);
+        // console.log("Dữ liệu đã xác thực:", verifiedData);
 
-        // Tiến hành cập nhật Database
-        await Order.updateOne(
+        const updateResult = await Order.updateOne(
             { payosOrderCode: verifiedData.orderCode },
             { 
                 payment_status: "paid", 
                 status: "confirm" 
             }
         );
-        
-        console.log(`[Thành Công] Đã cập nhật đơn hàng: ${verifiedData.orderCode} thành PAID!`);
-        console.log("=========================================");
-        
+        // console.log(updateResult);
         return res.json({
             success: true,
             message: "Webhook xử lý thành công!"
         });
             
     } catch (error) {
-        // Nếu có lỗi (VD: sai mã Checksum), nó sẽ in ra chữ đỏ
-        console.error("❌ Lỗi xử lý webhook:", error.message);
+        console.error("Lỗi xử lý webhook:", error.message);
         return res.json({ success: false, message: "Lỗi hệ thống hoặc sai chữ ký" });
     }
 };

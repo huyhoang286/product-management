@@ -30,6 +30,6 @@ module.exports.requireAuth = async (req, res, next) => {
         res.clearCookie("tokenUser");
         return res.redirect("/user/login");
     }
-
+    res.locals.user = user;
     next();
 };

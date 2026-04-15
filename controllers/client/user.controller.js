@@ -321,8 +321,7 @@ module.exports.orders = async (req, res) => {
         if (!res.locals.user) return res.redirect("/user/login");
 
         const orders = await Order.find({ 
-            user_id: res.locals.user.id,
-            deleted: false
+            user_id: res.locals.user.id
         }).sort({ createdAt: "desc" });
 
         for (const order of orders) {
@@ -337,6 +336,7 @@ module.exports.orders = async (req, res) => {
             }
             order.totalPrice = totalPrice;
         }
+        // console.log(orders);
 
         res.render("client/pages/user/orders", {
             pageTitle: "Lịch sử đơn hàng",
