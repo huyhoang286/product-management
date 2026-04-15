@@ -1,109 +1,169 @@
-/* Cấu trúc Layout Admin */
-.header {
-  background-color: #20232a; /* Màu nền đen xám cho header */
-  padding: 10px 0;
-  border-bottom: 1px solid #000;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 999;
-  height: 56px;
-}
+/* ==========================================
+   ADMIN UI - MODERN THEME (REFACTORED)
+========================================== */
 
-.header .inner-logo a {
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 24px;
-  text-decoration: none;
-  padding-left: 15px;
+/* --- 1. GLOBAL BASE --- */
+body {
+    background-color: #f4f6f9; 
+    margin: 0;
+    padding: 0;
 }
 
 .body {
-  display: flex;
-  /* min-height: calc(100vh - 56px);  */
-  margin-top: 56px;
+    display: flex;
+    align-items: flex-start;
 }
 
+/* --- 2. HEADER --- */
+.header {
+    background-color: #1c1e21 !important; 
+    padding: 10px 0;
+    border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    z-index: 1050; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.header .inner-logo a {
+    color: #ffffff !important;
+    font-weight: 800;
+    font-size: 22px;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.header .btn-primary {
+    background-color: #343a40;
+    border-color: #454d55;
+    color: #fff;
+}
+
+.header .btn-primary:hover {
+    background-color: #495057;
+    border-color: #6c757d;
+}
+
+
+/* --- 3. SIDEBAR (SIDER) --- */
 .sider {
-  width: 200px;
-  background-color: #333333; 
-  color: #ffffff;
-  padding: 15px;
-  position: fixed;
-  top: 56px; 
-  left: 0;
-  bottom: 0; 
-  z-index: 998;
-  overflow-y: auto;
+    background-color: #343a40;
+    color: #fff;
+    width: 250px;
+    min-height: calc(100vh - 62px); /* Trừ đi độ cao ước tính của header */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    padding-top: 15px;
+    
+    /* Cố định Sidebar khi cuộn */
+    position: sticky;
+    top: 62px; 
+    height: calc(100vh - 62px);
+    overflow-y: auto;
 }
 
-.main {
-  flex: 1; /* Chiếm toàn bộ phần còn lại */
-  padding: 20px;
-  background-color: #ffffff;
-  margin-left: 200px;
-}
-
-/* Định dạng nội dung bên trong main */
-.main h1, .main h2 {
-  margin-top: 0;
-  font-weight: 500;
-}
-
-/* Sider */
 .sider .inner-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sider .inner-menu ul li {
+    border-bottom: 1px solid #454d55;
 }
 
 .sider .inner-menu ul li a {
-  color: #fff;
-  display: block;
-  padding: 6px 10px;
-  border-bottom: 1px solid #515151;
+    color: #c2c7d0;
+    display: block;
+    padding: 16px 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
-/* End Sider */
 
-/* Container bao bọc ảnh và nút X */
+.sider .inner-menu ul li a:hover {
+    color: #ffffff;
+    background-color: #495057;
+    padding-left: 28px; /* Thụt lề tạo hiệu ứng tương tác */
+    border-left: 4px solid #007bff;
+}
+
+/* --- 4. MAIN CONTENT --- */
+.main {
+    flex: 1; 
+    padding: 30px; /* Dùng 30px cho thoáng thay vì 20px cũ */
+    /* Đã loại bỏ background-color: #ffffff và margin-left: 200px 
+       vì flexbox kết hợp body nền xám sẽ làm layout đẹp hơn */
+}
+
+.main h1, 
+.main h2 {
+    margin-top: 0;
+    font-weight: 500;
+}
+
+/* --- 5. COMPONENTS --- */
+
+/* 5.1 Dashboard Cards */
+.card {
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.border-left-danger { border-left: 4px solid #dc3545 !important; }
+.border-left-success { border-left: 4px solid #28a745 !important; }
+.border-left-info { border-left: 4px solid #17a2b8 !important; }
+.border-left-warning { border-left: 4px solid #ffc107 !important; }
+
+/* 5.2 Upload Image Preview */
 .image-preview-container {
-  position: relative;
-  display: inline-block; 
-  margin-top: 10px;
+    position: relative;
+    display: inline-block; 
+    margin-top: 10px;
 }
 
 .image-preview {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  display: none; 
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    display: none; 
 }
 
-/* Hiển thị ảnh khi có src (cả blob và base64 đều nhận) */
 .image-preview[src]:not([src=""]) {
-  display: block;
+    display: block;
 }
 
-/* Thiết kế nút X */
 .close-image {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background: #dc3545; 
-  color: white;
-  width: 25px;
-  height: 25px;
-  text-align: center;
-  line-height: 23px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-weight: bold;
-  display: none; 
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #dc3545; 
+    color: white;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    line-height: 23px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    display: none; 
 }
 
 .image-preview[src]:not([src=""]) ~ .close-image {
-  display: block;
+    display: block;
 }
