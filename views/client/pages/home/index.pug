@@ -11,9 +11,13 @@ block main
                 li(data-target="#heroCarousel" data-slide-to="2")
 
             .carousel-inner
+                - var banner1 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[0]) ? settingGeneral.banners[0] : '/images/banner1.jpg'
+                - var banner2 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[1]) ? settingGeneral.banners[1] : '/images/banner2.png'
+                - var banner3 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[2]) ? settingGeneral.banners[2] : 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+
                 .carousel-item.active
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="/images/banner1.jpg" alt="Bứt Phá Tốc Độ" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src=banner1 alt="Bứt Phá Tốc Độ" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; left: 8%; text-align: left; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Bứt Phá Tốc Độ
                             p.lead.mb-4(style="font-size: 1.3rem;") Khám phá bộ sưu tập Nike Mercurial mới nhất mùa giải
@@ -21,7 +25,7 @@ block main
 
                 .carousel-item
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="/images/banner2.png" alt="Kiểm Soát Thế Trận" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src=banner2 alt="Kiểm Soát Thế Trận" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; right: 8%; text-align: right; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Kiểm Soát Trận Đấu
                             p.lead.mb-4(style="font-size: 1.3rem;") Dòng giày Adidas Predator với độ bám và kiểm soát đỉnh cao
@@ -29,7 +33,7 @@ block main
 
                 .carousel-item
                     .banner-wrapper(style="position: relative; background-color: #000;")
-                        img.d-block.w-100(src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Sale Khủng" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        img.d-block.w-100(src=banner3 alt="Sale Khủng" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
                         .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; text-align: center; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
                             h1.display-3.font-weight-bold.text-uppercase.text-warning(style="letter-spacing: 2px;") Sale Khủng Cuối Tuần
                             p.lead.mb-4(style="font-size: 1.3rem;") Giảm giá lên đến 50% cho các mẫu giày Futsal (IC)

@@ -9,7 +9,7 @@ block main
         .card-header Bộ lọc và Tìm kiếm
         .card-body
             .row
-                .col-3
+                .col-4
                     each item in filterStatus
                         button(
                             class=`btn btn-sm ml-1 btn-outline-success ${item.class}`
@@ -17,7 +17,7 @@ block main
                         ) #{item.name}
                 .col-5
                     +search(keyword)
-                .col-4
+                .col-3
                     div(sort)
                         select.form-control(name="sort" sort-select)
                             option(value="") -- Sắp xếp --

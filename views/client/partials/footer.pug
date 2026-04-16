@@ -27,12 +27,13 @@ footer.footer.bg-dark.text-white.pt-5.pb-3
 
             .col-lg-3.mb-4
                 h6.font-weight-bold.mb-4 LIÊN HỆ
-                p.text-muted: i.fas.fa-map-marker-alt.mr-2
-                    | 123 Đường ABC, Hà Nội
-                p.text-muted: i.fas.fa-phone.mr-2
-                    | 0867644926
-                p.text-muted: i.fas.fa-envelope.mr-2
-                    | huyhoang.m28@gmail.com
+                ul
+                    if(settingGeneral && settingGeneral.phone)
+                        li Điện thoại: #{settingGeneral.phone}
+                    if(settingGeneral && settingGeneral.email)
+                        li Email: #{settingGeneral.email}
+                    if(settingGeneral && settingGeneral.address)
+                        li Địa chỉ: #{settingGeneral.address}
 
         hr.border-secondary
         .text-center.text-muted.small.mt-3

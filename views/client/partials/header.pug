@@ -20,9 +20,10 @@ header.header.bg-white
       .row.align-items-center
         .col-lg-3.col-6
           a(href="/" class="text-decoration-none d-flex align-items-center")
-            span.h3.font-weight-bold.mb-0.text-dark SHOP 
-              span.text-primary ABC
-            i.fas.fa-running.ml-2.text-primary.fa-2x
+            if(settingGeneral && settingGeneral.logo)
+                img(src=settingGeneral.logo, alt=settingGeneral.websiteName, style="max-height: 50px; width: auto; object-fit: contain;")
+            else
+                img(src="/images/logo.svg", alt="Logo", style="max-height: 50px; width: auto; object-fit: contain;")
 
         .col-lg-6.d-none.d-lg-block
           form(action="/products" method="GET")

@@ -1,5 +1,5 @@
 /* ==========================================
-   ADMIN UI - MODERN THEME (REFACTORED)
+   ADMIN UI - MODERN THEME (COMPLETE & OPTIMIZED)
 ========================================== */
 
 /* --- 1. GLOBAL BASE --- */
@@ -7,18 +7,23 @@ body {
     background-color: #f4f6f9; 
     margin: 0;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Lớp vỏ bọc cực kỳ quan trọng để Sidebar và Main nằm ngang nhau */
 .body {
     display: flex;
     align-items: flex-start;
+    margin-top: 0; 
 }
 
 /* --- 2. HEADER --- */
 .header {
     background-color: #1c1e21 !important; 
-    padding: 10px 0;
+    padding: 12px 0; /* Chiều cao tổng thể khoảng ~62px */
     border-bottom: 1px solid #333;
+    
+    /* Giữ Header cố định ở trên cùng */
     position: sticky;
     top: 0;
     z-index: 1050; 
@@ -44,21 +49,21 @@ body {
     border-color: #6c757d;
 }
 
-
 /* --- 3. SIDEBAR (SIDER) --- */
 .sider {
     background-color: #343a40;
     color: #fff;
     width: 250px;
-    min-height: calc(100vh - 62px); /* Trừ đi độ cao ước tính của header */
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     padding-top: 15px;
     
-    /* Cố định Sidebar khi cuộn */
+    /* Cố định Sidebar bên dưới Header */
     position: sticky;
-    top: 62px; 
+    top: 62px; /* Phải khớp với chiều cao thực tế của Header */
     height: calc(100vh - 62px);
+    min-height: calc(100vh - 62px);
     overflow-y: auto;
+    z-index: 999;
 }
 
 .sider .inner-menu ul {
@@ -80,34 +85,45 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Hiệu ứng trỏ chuột */
 .sider .inner-menu ul li a:hover {
     color: #ffffff;
     background-color: #495057;
-    padding-left: 28px; /* Thụt lề tạo hiệu ứng tương tác */
+    padding-left: 28px; 
     border-left: 4px solid #007bff;
 }
 
 /* --- 4. MAIN CONTENT --- */
 .main {
-    flex: 1; 
-    padding: 30px; /* Dùng 30px cho thoáng thay vì 20px cũ */
-    /* Đã loại bỏ background-color: #ffffff và margin-left: 200px 
-       vì flexbox kết hợp body nền xám sẽ làm layout đẹp hơn */
+    flex: 1; /* Tự động giãn và chiếm toàn bộ không gian bên phải */
+    padding: 20px 30px; 
+    background-color: #f4f6f9;
+    min-height: calc(100vh - 62px);
+    margin-top: 0 !important; 
+}
+
+/* FIX LỖI KHOẢNG HỞ TRẮNG: Ép thẻ H1 hoặc Box-head đầu tiên dính sát lên trên */
+.main > h1:first-child,
+.main > .box-head:first-child {
+    margin-top: 0 !important;
+    padding-top: 5px;
 }
 
 .main h1, 
 .main h2 {
-    margin-top: 0;
-    font-weight: 500;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 /* --- 5. COMPONENTS --- */
 
-/* 5.1 Dashboard Cards */
+/* 5.1 Dashboard Cards (Thẻ thống kê) */
 .card {
     border: none;
     border-radius: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff;
 }
 
 .card:hover {
@@ -128,7 +144,7 @@ body {
 .border-left-info { border-left: 4px solid #17a2b8 !important; }
 .border-left-warning { border-left: 4px solid #ffc107 !important; }
 
-/* 5.2 Upload Image Preview */
+/* 5.2 Upload Image Preview (Xem trước ảnh khi tải lên) */
 .image-preview-container {
     position: relative;
     display: inline-block; 
@@ -162,6 +178,7 @@ body {
     cursor: pointer;
     font-weight: bold;
     display: none; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .image-preview[src]:not([src=""]) ~ .close-image {

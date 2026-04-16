@@ -1,0 +1,69 @@
+extends ../../layouts/default.pug
+
+block main
+    h1.mb-4 Cấu hình chung
+
+    form(
+        action=`${prefixAdmin}/settings/general?_method=PATCH`
+        method="POST"
+        enctype="multipart/form-data"
+    )
+        .row
+            .col-md-6
+                .card.mb-4
+                    .card-header Thông tin cơ bản
+                    .card-body
+                        .form-group
+                            label Tên website
+                            input(type="text" class="form-control" name="websiteName" value=(settingGeneral.websiteName || ""))
+                        .form-group
+                            label Số điện thoại
+                            input(type="text" class="form-control" name="phone" value=(settingGeneral.phone || ""))
+                        .form-group
+                            label Email
+                            input(type="email" class="form-control" name="email" value=(settingGeneral.email || ""))
+                        .form-group
+                            label Địa chỉ
+                            input(type="text" class="form-control" name="address" value=(settingGeneral.address || ""))
+                        .form-group
+                            label Copyright
+                            input(type="text" class="form-control" name="copyright" value=(settingGeneral.copyright || ""))
+                
+                .card
+                    .card-header Cấu hình hiển thị
+                    .card-body
+                        .form-group
+                            label Số sản phẩm / 1 Hàng 
+                            input(type="number" min="1" max="6" class="form-control" name="productsPerRow" value=(settingGeneral.productsPerRow || 4))
+                        .form-group
+                            label Số lượng sản phẩm / 1 Trang 
+                            input(type="number" min="1" class="form-control" name="productsPerPage" value=(settingGeneral.productsPerPage || 8))
+
+            .col-md-6
+                .card.mb-4
+                    .card-header Hình ảnh
+                    .card-body
+                        .form-group(upload-image)
+                            label Logo Website
+                            input(type="file" class="form-control-file" name="logo" accept="image/*" upload-image-input)
+                            img(src=(settingGeneral.logo || "") upload-image-preview class="image-preview mt-2" width="150px")
+                            span.close-image x
+                        
+                        hr
+
+                        each i in [1, 2, 3]
+                            .form-group(upload-image)
+                                label Banner #{i}
+                                input(type="file" class="form-control-file" name=`banner${i}` accept="image/*" upload-image-input)
+                                img(
+                                    src=(settingGeneral && settingGeneral.banners && settingGeneral.banners[i-1] ? settingGeneral.banners[i-1] : "") 
+                                    upload-image-preview 
+                                    class="image-preview mt-2" 
+                                    width="100%"
+                                )
+                                span.close-image x
+                            if i < 3
+                                hr
+        
+        .form-group.mt-3
+            button(type="submit" class="btn btn-primary btn-lg") Cập nhật cấu hình
