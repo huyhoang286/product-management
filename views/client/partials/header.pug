@@ -3,12 +3,11 @@ header.header.bg-white
   .top-bar.bg-dark.text-white.py-2
     .container.d-flex.justify-content-between.align-items-center
       .top-bar-left.small
-        span.mr-3
-          i.fas.fa-phone-alt.mr-1
-          | 0867644926
-        span.d-none.d-md-inline
-          i.fas.fa-envelope.mr-1
-          | huyhoang.m28@gmail.com
+        .inner-contact.text-right
+          if(settingGeneral.phone)
+              span.mr-3 Hotline: <b>#{settingGeneral.phone}</b>
+          if(settingGeneral.email)
+              span Email: <b>#{settingGeneral.email}</b>  
       .top-bar-right.small
         a(href="/user/orders" class="text-white text-decoration-none")
           i.fas.fa-box.mr-1

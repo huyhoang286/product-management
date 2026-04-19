@@ -26,17 +26,21 @@ block main
                             label Địa chỉ
                             input(type="text" class="form-control" name="address" value=(settingGeneral.address || ""))
                         .form-group
-                            label Copyright
-                            input(type="text" class="form-control" name="copyright" value=(settingGeneral.copyright || ""))
+                            label Câu chuyện của chúng tôi (Trang giới thiệu)
+                            textarea(
+                            class="form-control"
+                            name="ourStory"
+                            rows="5"
+                            ) #{settingGeneral ? settingGeneral.ourStory : ""}
                 
                 .card
                     .card-header Cấu hình hiển thị
                     .card-body
                         .form-group
-                            label Số sản phẩm / 1 Hàng 
+                            label Số sản phẩm / 1 Hàng (Trang chủ)
                             input(type="number" min="1" max="6" class="form-control" name="productsPerRow" value=(settingGeneral.productsPerRow || 4))
                         .form-group
-                            label Số lượng sản phẩm / 1 Trang 
+                            label Số lượng sản phẩm / 1 Trang (Trang sản phẩm)
                             input(type="number" min="1" class="form-control" name="productsPerPage" value=(settingGeneral.productsPerPage || 8))
 
             .col-md-6

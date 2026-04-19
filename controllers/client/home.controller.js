@@ -25,7 +25,7 @@ module.exports.index = async (req, res) => {
                 }
             },
             { $sort: { sold: -1 } }, 
-            { $limit: 3 } 
+            { $limit: 8 } 
         ]);
 
         // Lấy Sản phẩm mới nhất 
@@ -50,7 +50,7 @@ module.exports.index = async (req, res) => {
                 }
             },
             { $sort: { createdAt: -1 } },
-            { $limit: 3 }
+            { $limit: 8 }
         ]);
 
         res.render("client/pages/home/index.pug", {

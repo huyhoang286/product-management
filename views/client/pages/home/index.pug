@@ -73,6 +73,13 @@ block main
                         img.mb-2(src="/icon/socks.png" alt="Phụ Kiện" style="height: 40px; object-fit: contain;")
                         h5.mb-0 Phụ Kiện Bóng Đá
 
+    //- TÍNH TOÁN CẤU TRÚC LƯỚI SẢN PHẨM THEO SETTING
+    //- Nếu admin chọn 4 sản phẩm/hàng -> 12/4 = 3 -> col-lg-3
+    //- Nếu admin chọn 3 sản phẩm/hàng -> 12/3 = 4 -> col-lg-4
+    - var itemsPerRow = (settingGeneral && settingGeneral.productsPerRow) ? settingGeneral.productsPerRow : 4
+    - var colLg = Math.floor(12 / itemsPerRow)
+    - var gridClass = `col-lg-${colLg} col-md-6 col-12 mb-4`
+
     //- Sản Phẩm Bán Chạy
     .container.mb-5
         .row
@@ -81,7 +88,7 @@ block main
         .row
             if productsBestSelling && productsBestSelling.length > 0
                 each item in productsBestSelling
-                    .col-lg-3.col-md-6.col-12.mb-4
+                    div(class=gridClass)
                         .product-card.card.h-100.border-0.shadow-sm
                             .position-relative.overflow-hidden
                                 if (item.discountPercentage > 0)
@@ -104,7 +111,7 @@ block main
         .row
             if productsNew && productsNew.length > 0
                 each item in productsNew
-                    .col-lg-3.col-md-6.col-12.mb-4
+                    div(class=gridClass)
                         .product-card.card.h-100.border-0.shadow-sm
                             .position-relative.overflow-hidden
                                 if (item.discountPercentage > 0)

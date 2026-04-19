@@ -1,5 +1,6 @@
-const Product = require("../../models/product.model")
 const ProductCategory = require("../../models/product-category.model");
+const Product = require("../../models/product.model");
+const paginationHelper = require("../../helpers/pagination");
 
 //[GET] /products
 module.exports.index = async (req, res) => {
@@ -25,7 +26,6 @@ module.exports.index = async (req, res) => {
             if (category) {
                 categoryTitle = category.title;
 
-                // các danh mục con
                 const getSubCategory = async (parentId) => {
                     const subs = await ProductCategory.find({
                         parent_id: parentId,
@@ -91,6 +91,29 @@ module.exports.index = async (req, res) => {
         
         pipeline.push({ $sort: sortObject });
 
+        // XỬ LÝ PHÂN TRANG (PAGINATION)
+        const countPipeline = [...pipeline, { $count: "totalCount" }];
+        const countResult = await Product.aggregate(countPipeline);
+        const totalProducts = countResult.length > 0 ? countResult[0].totalCount : 0;
+
+        //-- Lấy giới hạn sản phẩm 1 trang từ biến settingGeneral 
+        const limitItems = (res.locals.settingGeneral && res.locals.settingGeneral.productsPerPage) 
+                           ? res.locals.settingGeneral.productsPerPage 
+                           : 8;
+
+        //-- Tính toán thông số phân trang thông qua Helper
+        let objectPagination = paginationHelper(
+            {
+                currentPage: 1,
+                limitItems: limitItems
+            },
+            req.query,
+            totalProducts
+        );
+
+        pipeline.push({ $skip: objectPagination.skip });
+        pipeline.push({ $limit: objectPagination.limitItems });
+
         const products = await Product.aggregate(pipeline);
 
         let finalTitle = "Tất Cả Sản Phẩm";
@@ -102,10 +125,11 @@ module.exports.index = async (req, res) => {
             products: products,
             keyword: keyword,
             price: priceQuery, 
-            sort: sortQuery    
+            sort: sortQuery,
+            pagination: objectPagination
         });
     } catch (error) {
-        console.error(error);
+        console.error("Lỗi Controller Sản phẩm:", error);
         res.redirect("/");
     }
 }

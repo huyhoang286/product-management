@@ -14,9 +14,11 @@ block main
           img.img-fluid.rounded.shadow(src="/images/test2.png" alt="Our Story")
         .col-lg-6
           +box-head("Câu Chuyện Của Chúng Tôi")
-          p.mt-4.text-muted Được thành lập từ tình yêu mãnh liệt với bóng đá, SHOP ABC bắt đầu từ một cửa hàng nhỏ tại Hà Nội với mong muốn mang những đôi giày chính hãng chất lượng nhất đến tay người chơi phong trào.
-          p.text-muted Sau nhiều năm phát triển, chúng tôi tự hào là đối tác tin cậy của hàng nghìn cầu thủ, từ bán chuyên đến chuyên nghiệp, giúp họ tự tin hơn trong từng bước chạy và cú sút.
-
+          .content.mt-4
+            if(settingGeneral.ourStory)
+                div !{settingGeneral.ourStory}
+            else
+                p Nội dung đang được cập nhật...
   section.about-values.py-5.bg-light
     .container
       .row.text-center.mb-5

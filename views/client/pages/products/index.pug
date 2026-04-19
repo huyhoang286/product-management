@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 include ../../mixins/sub-menu.pug 
+include ../../mixins/pagination.pug
 
 block main
   .container.mb-5
@@ -65,12 +66,17 @@ block main
                       a.text-dark(href=`/products/${item.slug}`) #{item.title}
                     
                     .d-flex.align-items-center
-                      span.price-new #{item.newPrice.toLocaleString("vi-VN")} VNĐ
+                      span.price-new #{item.newPrice ? item.newPrice.toLocaleString("vi-VN") : item.price} VNĐ
                       if (item.discountPercentage > 0)
                         small.price-old #{item.price.toLocaleString("vi-VN")} VNĐ
                   
                   .card-footer.bg-white.border-0.p-3.pt-0
                     a.btn.btn-outline-primary.btn-sm.btn-block.rounded-pill(href=`/products/${item.slug}`) Xem chi tiết
+          
+          .row.mt-4
+            .col-12.d-flex.justify-content-center
+              +pagination(pagination)
+
         else
           .alert.alert-warning.text-center.p-5.shadow-sm.w-100
             i.fas.fa-box-open.fa-3x.mb-3.text-muted
