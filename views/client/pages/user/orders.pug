@@ -1,45 +1,77 @@
 extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
 
 block main
-    .container.my-5
-        .row.mb-4
-            .col-12
-                h2.font-weight-bold.text-success <i class="fas fa-history"></i> LỊCH SỬ MUA HÀNG
-                p.text-muted Quản lý và theo dõi các đơn hàng bạn đã đặt.
+  .container.my-5
+    .row
+      .col-12
+        +box-head("Đơn hàng của tôi")
 
-        if orders && orders.length > 0
-            each order in orders
-                .card.shadow-sm.mb-4
-                    .card-header.bg-light.d-flex.justify-content-between.align-items-center
-                        span.font-weight-bold.text-primary Mã đơn: ##{order.id.toUpperCase().slice(-6)}
-                        span.text-muted #{new Date(order.createdAt).toLocaleString('vi-VN')}
-                    
-                    .card-body.p-0
-                        .table-responsive
-                            table.table.table-borderless.mb-0
-                                thead.border-bottom.bg-light
-                                    tr
-                                        th.pl-4 Sản phẩm
-                                        th.text-center Đơn giá
-                                        th.text-center SL
-                                        th.text-right.pr-4 Thành tiền
-                                tbody
-                                    each item in order.products
-                                        if item.productInfo
-                                            tr.border-bottom
-                                                td.pl-4
-                                                    .d-flex.align-items-center
-                                                        img.border.rounded(src=item.productInfo.thumbnail alt=item.productInfo.title style="width: 60px; height: 60px; object-fit: contain;")
-                                                        .ml-3
-                                                            a.text-dark.font-weight-bold.text-decoration-none(href=`/products/${item.productInfo.slug}`) #{item.productInfo.title}
-                                                td.text-center.align-middle #{item.priceNew.toLocaleString("vi-VN")} đ
-                                                td.text-center.align-middle #{item.quantity}
-                                                td.text-right.pr-4.align-middle.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} đ
-                        
-                        .p-3.bg-white.text-right.border-top
-                            h5.mb-0 Tổng thanh toán: <span class="text-danger font-weight-bold ml-2">#{order.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
-        else
-            .alert.alert-warning.text-center.p-5
-                i.fas.fa-shopping-basket.fa-3x.mb-3.text-muted
-                h4 Bạn chưa có đơn hàng nào!
-                a.btn.btn-primary.mt-3(href="/products") Bắt đầu mua sắm ngay
+    //- Thanh điều hướng Trạng thái (Tab Navigation)
+    .order-status-tabs.mb-4.d-flex.justify-content-between.bg-white.shadow-sm.rounded
+      - 
+        var tabs = [
+          { label: 'Tất cả', status: 'all' },
+          { label: 'Chờ xác nhận', status: 'pending' },
+          { label: 'Đã xác nhận', status: 'confirm' },
+          { label: 'Đang giao', status: 'delivering' },
+          { label: 'Hoàn thành', status: 'success' },
+          { label: 'Đã hủy', status: 'cancel' }
+        ]
+      each tab in tabs
+        a(
+          href=(tab.status === 'all' ? "/user/orders" : `/user/orders?status=${tab.status}`)
+          class=`status-tab-item ${activeStatus === tab.status ? 'active' : ''}`
+        ) #{tab.label}
+
+    //- Danh sách đơn hàng
+    if orders.length > 0
+      .orders-list
+        each order in orders
+          .order-card.card.mb-4.shadow-sm.border-0
+            .card-header.bg-white.py-3.d-flex.justify-content-between.align-items-center
+              .order-meta
+                span.mr-3.font-weight-bold Mã đơn: 
+                  span.text-primary ##{order.id.slice(-6).toUpperCase()}
+                span.text-muted.small | #{new Date(order.createdAt).toLocaleString('vi-VN')}
+              
+              .order-status-badge
+                if order.status === 'pending'
+                  span.badge.badge-pill.badge-warning-light Chờ xác nhận
+                else if order.status === 'confirm'
+                  span.badge.badge-pill.badge-info-light Đã xác nhận
+                else if order.status === 'delivering'
+                  span.badge.badge-pill.badge-primary-light Đang giao hàng
+                else if order.status === 'success'
+                  span.badge.badge-pill.badge-success-light Hoàn thành
+                else if order.status === 'cancel'
+                  span.badge.badge-pill.badge-danger-light Đã hủy
+
+            .card-body.py-3
+              each item in order.products
+                .product-item.d-flex.align-items-center.py-2
+                  .product-img.mr-3
+                    img(src=item.productInfo.thumbnail, width="70" height="70" class="rounded object-fit-cover")
+                  .product-info.flex-grow-1
+                    h6.mb-0.text-dark #{item.productInfo.title}
+                    small.text-muted Phân loại: Mặc định | Số lượng: x#{item.quantity}
+                  .product-price.text-right
+                    span.text-danger.font-weight-bold #{item.priceNew.toLocaleString()}đ
+
+            .card-footer.bg-white.py-3.border-top-dashed
+              .row.align-items-center
+                .col-md-6.d-none.d-md-block
+                  span.text-muted.small Ghi chú: Giao vào giờ hành chính
+                .col-md-6.text-right
+                  .total-section.mb-2
+                    span.mr-2 Thành tiền:
+                    span.h4.text-danger.font-weight-bold #{order.totalPrice.toLocaleString()}đ
+                  .actions
+                    a(href=`/user/orders/detail/${order.id}` class="btn btn-sm btn-outline-primary px-4 rounded-pill") Xem chi tiết
+                    if order.status === 'pending'
+                      button(class="btn btn-sm btn-light text-danger ml-2 px-4 rounded-pill") Hủy đơn
+    else
+      .empty-orders.text-center.py-5.bg-white.rounded.shadow-sm
+        i.fas.fa-shopping-basket.fa-3x.mb-3.text-muted
+        h5.text-muted Không tìm thấy đơn hàng nào
+        a(href="/products" class="btn btn-primary mt-3") Mua sắm ngay

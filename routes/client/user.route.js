@@ -23,6 +23,7 @@ router.get("/password/reset", controller.resetPassword);
 router.post("/password/reset", controller.resetPasswordPost);
 
 router.get("/orders", controller.orders);
+router.get("/orders/detail/:id", controller.detail);
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', 

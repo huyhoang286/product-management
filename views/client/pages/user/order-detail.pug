@@ -1,0 +1,85 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  .container.my-5
+    .row
+      .col-12
+        +box-head(`Chi tiết đơn hàng: #${order.id.slice(-6).toUpperCase()}`)
+        a(href="/user/orders" class="btn btn-outline-secondary btn-sm mb-4") 
+          i.fas.fa-arrow-left.mr-1
+          | Quay lại danh sách
+
+    .row
+      .col-lg-8
+        //- Thanh tiến trình (Timeline)
+        .card.shadow-sm.border-0.mb-4
+            .card-body
+                - var statuses = ['pending', 'confirm', 'delivering', 'success']
+                - var currentIndex = statuses.indexOf(order.status)
+                
+                if order.status === 'cancel'
+                    .alert.alert-danger.text-center.mb-0 
+                        i.fas.fa-times-circle.mr-2
+                        | Đơn hàng này đã bị hủy.
+                else
+                    ul.order-progressbar
+                        li(class=(currentIndex >= 0 ? "active" : "")) 
+                            i.fas.fa-file-invoice
+                            span Chờ xác nhận
+                        li(class=(currentIndex >= 1 ? "active" : "")) 
+                            i.fas.fa-clipboard-check
+                            span Đã xác nhận
+                        li(class=(currentIndex >= 2 ? "active" : "")) 
+                            i.fas.fa-truck
+                            span Đang giao
+                        li(class=(currentIndex >= 3 ? "active" : "")) 
+                            i.fas.fa-check-double
+                            span Hoàn thành
+
+            .d-flex.justify-content-between.align-items-center
+                h4 Đơn hàng: <span class="text-primary">##{order.id.slice(-6).toUpperCase()}</span>
+                if order.status === 'pending'
+                    span.badge.badge-warning Chờ xác nhận
+                else if order.status === 'confirm'
+                    span.badge.badge-info Đã xác nhận
+                else if order.status === 'delivering'
+                    span.badge.badge-primary Đang giao
+                else if order.status === 'success'
+                    span.badge.badge-success Hoàn thành
+                else if order.status === 'cancel'
+                    span.badge.badge-danger Hủy đơn
+
+        //- Danh sách sản phẩm
+        .card.shadow-sm.border-0
+          .card-header.bg-white.font-weight-bold Sản phẩm đã mua
+          .card-body
+            table.table.table-borderless
+              thead
+                tr
+                  th Hình ảnh
+                  th Sản phẩm
+                  th.text-center Số lượng
+                  th.text-right Đơn giá
+              tbody
+                each item in order.products
+                  tr
+                    td(width="100px")
+                      img(src=item.productInfo.thumbnail, width="80px" class="rounded")
+                    td
+                      a(href=`/products/${item.productInfo.slug}` class="text-dark font-weight-500") #{item.productInfo.title}
+                    td.text-center x#{item.quantity}
+                    td.text-right.text-danger #{item.priceNew.toLocaleString()}đ
+            hr
+            .text-right
+              h5 Tổng tiền: <span class="text-danger font-weight-bold">#{order.totalPrice.toLocaleString()}đ</span>
+
+      .col-lg-4
+        .card.shadow-sm.border-0
+          .card-header.bg-primary.text-white.font-weight-bold Thông tin nhận hàng
+          .card-body
+            p.mb-2 <b>Người nhận:</b> #{order.userInfo.fullName}
+            p.mb-2 <b>Điện thoại:</b> #{order.userInfo.phone}
+            p.mb-0 <b>Địa chỉ:</b> #{order.userInfo.address}
+          .card-footer.bg-light
+            small Ngày đặt hàng: #{new Date(order.createdAt).toLocaleString('vi-VN')}

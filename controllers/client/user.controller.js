@@ -320,9 +320,15 @@ module.exports.orders = async (req, res) => {
     try {
         if (!res.locals.user) return res.redirect("/user/login");
 
-        const orders = await Order.find({ 
-            user_id: res.locals.user.id
-        }).sort({ createdAt: "desc" });
+        const find = { 
+            user_id: res.locals.user.id,
+        };
+
+        if (req.query.status) {
+            find.status = req.query.status;
+        }
+
+        const orders = await Order.find(find).sort({ createdAt: "desc" });
 
         for (const order of orders) {
             let totalPrice = 0;
@@ -336,15 +342,50 @@ module.exports.orders = async (req, res) => {
             }
             order.totalPrice = totalPrice;
         }
-        // console.log(orders);
 
         res.render("client/pages/user/orders", {
-            pageTitle: "Lịch sử đơn hàng",
-            orders: orders
+            pageTitle: "Đơn hàng của tôi",
+            orders: orders,
+            activeStatus: req.query.status || "all" 
         });
     } catch (error) {
         console.log("Lỗi lấy lịch sử đơn hàng:", error);
         res.redirect("back");
+    }
+};
+
+// [GET] /user/orders/detail/:id
+module.exports.detail = async (req, res) => {
+    try {
+        if (!res.locals.user) return res.redirect("/user/login");
+
+        const order = await Order.findOne({
+            _id: req.params.id,
+            user_id: res.locals.user.id
+        });
+
+        if (!order) {
+            return res.redirect("/user/orders");
+        }
+
+        let totalPrice = 0;
+        for (const item of order.products) {
+            const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail slug");
+            item.productInfo = productInfo;
+            
+            item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
+            item.totalPrice = item.priceNew * item.quantity;
+            totalPrice += item.totalPrice;
+        }
+        order.totalPrice = totalPrice;
+
+        res.render("client/pages/user/order-detail", {
+            pageTitle: `Chi tiết đơn hàng #${order.id.slice(-6).toUpperCase()}`,
+            order: order
+        });
+    } catch (error) {
+        console.log("Lỗi xem chi tiết đơn hàng:", error);
+        res.redirect("/user/orders");
     }
 };
 
