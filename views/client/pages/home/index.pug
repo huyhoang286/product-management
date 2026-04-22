@@ -76,9 +76,6 @@ block main
                         img.mb-2(src="/icon/socks.png" alt="Phụ Kiện" style="height: 40px; object-fit: contain;")
                         h5.mb-0 Phụ Kiện Bóng Đá
 
-    //- TÍNH TOÁN CẤU TRÚC LƯỚI SẢN PHẨM THEO SETTING
-    //- Nếu admin chọn 4 sản phẩm/hàng -> 12/4 = 3 -> col-lg-3
-    //- Nếu admin chọn 3 sản phẩm/hàng -> 12/3 = 4 -> col-lg-4
     - var itemsPerRow = (settingGeneral && settingGeneral.productsPerRow) ? settingGeneral.productsPerRow : 4
     - var colLg = Math.floor(12 / itemsPerRow)
     - var gridClass = `col-lg-${colLg} col-md-6 col-12 mb-4`
@@ -128,3 +125,26 @@ block main
                                     span.price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")}đ
                                     if (item.discountPercentage > 0)
                                         small.price-old #{item.price.toLocaleString("vi-VN")}đ
+    //- KHỐI MÃ GIẢM GIÁ (VOUCHER SLIDER)
+    if vouchers && vouchers.length > 0
+      .container.my-5
+        .row
+          .col-12
+            +box-head("Mã Giảm Giá Dành Cho Bạn")
+        
+        .row
+          .col-12
+            .voucher-slider-container
+              .voucher-track
+                each item in vouchers
+                  .voucher-card
+                    .voucher-left
+                      .discount-val #{item.discountPercentage}%
+                      .discount-text GIẢM
+                    .voucher-right
+                      .voucher-info
+                        h5.voucher-code #{item.code}
+                        p.voucher-cond Đơn tối thiểu: #{item.minOrderValue.toLocaleString()}đ
+                        p.voucher-date HSD: #{new Date(item.expireAt).toLocaleDateString('vi-VN')}
+                      
+                      button.btn.btn-sm.btn-save-voucher(data-id=item.id) Lưu mã

@@ -9,9 +9,13 @@ header.header.bg-white
           if(settingGeneral.email)
               span Email: <b>#{settingGeneral.email}</b>  
       .top-bar-right.small
-        a(href="/user/orders" class="text-white text-decoration-none")
-          i.fas.fa-box.mr-1
-          | Kiểm tra đơn hàng
+        .row.align-items-center
+          a(href="/user/vouchers" class="text-white text-decoration-none mr-4")
+            i.fas.fa-ticket-alt.mr-1
+            | Kho Voucher
+          a(href="/user/orders" class="text-white text-decoration-none")
+            i.fas.fa-box.mr-1
+            | Kiểm tra đơn hàng
 
   // Main Header 
   .main-header.py-3

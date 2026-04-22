@@ -2,61 +2,110 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main
-    .container.my-5
-        .row
-            .col-12
-                +box-head("Thanh toán đơn hàng")
+  .container.my-5
+    .row
+      .col-12
+        +box-head("Thanh toán đơn hàng")
 
-        .row.mt-4
-            .col-lg-7
-                .card.mb-4
-                    .card-header.bg-dark.text-white Thông tin tóm tắt đơn hàng
-                    .card-body
-                        table.table.table-sm.table-borderless
-                            thead
-                                tr
-                                    th Sản phẩm
-                                    th Size
-                                    th SL
-                                    th Thành tiền
-                            tbody
-                                if (cartDetail.products.length > 0)
-                                    each item in cartDetail.products
-                                        if (item.productInfo)
-                                            tr.border-bottom
-                                                td.py-3 
-                                                    img(src=item.productInfo.thumbnail width="50px" class="mr-2 rounded")
-                                                    | #{item.productInfo.title}
-                                                td.py-3 #{item.variantInfo ? item.variantInfo.size : ""}
-                                                td.py-3 #{item.quantity}
-                                                td.py-3.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")} VNĐ
-                        
-                        h5.text-right.mt-3 Tổng cộng: <span class="text-danger font-weight-bold">#{cartDetail.totalPrice.toLocaleString("vi-VN")} VNĐ</span>
+    .row.mt-4
+      .col-lg-7
+        .card.mb-4.shadow-sm
+          .card-header.bg-dark.text-white 
+            h5.mb-0 <i class="fas fa-shopping-basket mr-2"></i> Đơn hàng của bạn
+          .card-body
+            table.table.table-borderless
+              thead.border-bottom
+                tr
+                  th Sản phẩm
+                  th.text-center Size
+                  th.text-center SL
+                  th.text-right Thành tiền
+              tbody
+                - var originalTotal = 0
+                - var productDiscountTotal = 0
+                
+                if (cartDetail.products.length > 0)
+                  each item in cartDetail.products
+                    if (item.productInfo)
+                      - var itemOriginalTotal = item.productInfo.price * item.quantity
+                      - var itemDiscount = itemOriginalTotal - item.totalPrice
+                      - originalTotal += itemOriginalTotal
+                      - productDiscountTotal += itemDiscount
+                      
+                      tr.border-bottom
+                        td.py-3 
+                          .d-flex.align-items-center
+                            img(src=item.productInfo.thumbnail width="50px" class="mr-3 rounded border")
+                            span #{item.productInfo.title}
+                        td.py-3.text-center.align-middle #{item.variantInfo ? item.variantInfo.size : ""}
+                        td.py-3.text-center.align-middle #{item.quantity}
+                        td.py-3.text-right.align-middle.font-weight-bold.text-danger #{item.totalPrice.toLocaleString("vi-VN")}đ
+                
+            //- CHI TIẾT TÍNH TOÁN TIỀN
+            .bg-light.p-4.rounded.mt-3
+              .d-flex.justify-content-between.mb-2
+                span Tổng tiền hàng (Giá gốc):
+                span #{originalTotal.toLocaleString("vi-VN")}đ
+              
+              if (productDiscountTotal > 0)
+                .d-flex.justify-content-between.mb-2.text-primary
+                  span Giảm giá trực tiếp từ sản phẩm:
+                  span -#{productDiscountTotal.toLocaleString("vi-VN")}đ
+              
+              .d-flex.justify-content-between.mb-2.font-weight-bold
+                span Tạm tính:
+                span#subTotal(data-subtotal=cartDetail.totalPrice) #{cartDetail.totalPrice.toLocaleString("vi-VN")}đ
+              
+              .d-flex.justify-content-between.mb-2.text-success
+                span Giảm giá Voucher:
+                span#discountAmount 0đ
+              
+              hr
+              .d-flex.justify-content-between.align-items-center
+                h4.mb-0 Tổng thanh toán:
+                h4.mb-0.text-danger.font-weight-bold#finalTotal #{cartDetail.totalPrice.toLocaleString("vi-VN")}đ
 
-            .col-lg-5
-                .card
-                    .card-header.bg-primary.text-white Thông tin giao hàng
-                    .card-body
-                        form(form-checkout)
-                            input(type="hidden" name="selectedItemsString" value=selectedItemsString)
-                            .form-group
-                                label(for="fullName") Họ và tên
-                                input.form-control(type="text" id="fullName" name="fullName" value=(user ? user.fullName : "") required)
-                            .form-group
-                                label(for="phone") Số điện thoại
-                                input.form-control(type="text" id="phone" name="phone" value=(user ? user.phone : "") required)
-                            .form-group
-                                label(for="address") Địa chỉ giao hàng
-                                input.form-control(type="text" id="address" name="address" value=(user ? user.address : "") required)
-                            
-                            hr
-                            label.font-weight-bold Phương thức thanh toán
-                            .form-check.mb-2
-                                input.form-check-input(type="radio" name="payment_method" id="cod" value="cod" checked)
-                                label.form-check-label(for="cod") Thanh toán khi nhận hàng (COD)
-                            
-                            .form-check.mb-4
-                                input.form-check-input(type="radio" name="payment_method" id="vietqr" value="vietqr")
-                                label.form-check-label(for="vietqr") Chuyển khoản ngân hàng (Online / VietQR)
+      .col-lg-5
+        .card.shadow-sm
+          .card-header.bg-primary.text-white
+            h5.mb-0 <i class="fas fa-truck mr-2"></i> Thông tin giao hàng
+          .card-body
+            form(form-checkout action="/checkout/order" method="POST")
+              input(type="hidden" name="selectedItemsString" value=selectedItemsString)
+              
+              .form-group
+                label(for="fullName") Họ và tên
+                input.form-control(type="text" id="fullName" name="fullName" value=(user ? user.fullName : "") required)
+              
+              .form-group
+                label(for="phone") Số điện thoại
+                input.form-control(type="text" id="phone" name="phone" value=(user ? user.phone : "") required)
+              
+              .form-group
+                label(for="address") Địa chỉ nhận hàng
+                input.form-control(type="text" id="address" name="address" value=(user ? user.address : "") required)
+              
+              if (user && vouchers && vouchers.length > 0)
+                .form-group.p-3.bg-light.rounded.border.border-danger.mt-4
+                  label.font-weight-bold.text-danger(for="voucherSelect") 
+                    i.fas.fa-ticket-alt.mr-2
+                    | Voucher khả dụng
+                  select(name="voucher_id" id="voucherSelect" class="form-control")
+                    option(value="") -- Chọn mã giảm giá --
+                    each item in vouchers
+                      option(
+                        value=item.id 
+                        data-discount=item.discountPercentage
+                      ) #{item.code} (Giảm #{item.discountPercentage}%)
+              
+              hr
+              label.font-weight-bold Phương thức thanh toán
+              .form-check.mb-2
+                input.form-check-input(type="radio" name="payment_method" id="cod" value="cod" checked)
+                label.form-check-label(for="cod") Thanh toán khi nhận hàng (COD)
+              
+              .form-check.mb-4
+                input.form-check-input(type="radio" name="payment_method" id="vietqr" value="vietqr")
+                label.form-check-label(for="vietqr") Chuyển khoản VietQR
 
-                            button.btn.btn-success.btn-block.btn-lg(type="submit") THANH TOÁN NGAY
+              button.btn.btn-success.btn-block.btn-lg.font-weight-bold(type="submit") ĐẶT HÀNG NGAY

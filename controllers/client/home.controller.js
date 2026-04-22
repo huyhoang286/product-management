@@ -1,4 +1,5 @@
 const Product = require("../../models/product.model");
+const Voucher = require("../../models/voucher.model");
 
 // [GET] /
 module.exports.index = async (req, res) => {
@@ -53,10 +54,19 @@ module.exports.index = async (req, res) => {
             { $limit: 8 }
         ]);
 
+        // Lấy mã giảm giá
+        const vouchers = await Voucher.find({
+            status: "active",
+            deleted: false,
+            expireAt: { $gte: new Date() }, 
+            quantity: { $gt: 0 }            
+        }).sort({ discountPercentage: "desc" }); // Sắp xếp ưu tiên mã giảm nhiều nhất hiện trước
+
         res.render("client/pages/home/index.pug", {
             pageTitle: "Trang chủ",
             productsBestSelling: productsBestSelling,
-            productsNew: productsNew
+            productsNew: productsNew,
+            vouchers: vouchers
         });
     } catch (error) {
         console.error(error);

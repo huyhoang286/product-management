@@ -1,0 +1,62 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") #{pageTitle}
+
+  .card.mb-3
+    .card-header Danh sách mã giảm giá
+      .text-right
+        a.btn.btn-outline-success.btn-sm(href=`${prefixAdmin}/vouchers/create`) + Thêm mới
+
+    .card-body
+      table.table.table-hover.table-sm
+        thead
+          tr
+            th STT
+            th Mã Code
+            th % Giảm
+            th Số lượng
+            th Đơn tối thiểu
+            th Hạn dùng
+            th Trạng thái
+            th Hành động
+        tbody
+          if vouchers.length > 0
+            each item, index in vouchers
+              tr 
+                td #{index + 1}
+                td.font-weight-bold.text-primary #{item.code}
+                td #{item.discountPercentage}%
+                td #{item.quantity}
+                td #{item.minOrderValue.toLocaleString()}đ
+                td #{new Date(item.expireAt).toLocaleDateString('vi-VN')}
+                td
+                  if (item.status === "active")
+                    button(
+                      class="badge badge-success"
+                      button-change-status-voucher
+                      data-status="active"
+                      data-id=item.id
+                      style="border: none; cursor: pointer;"
+                    ) Hoạt động
+                  else
+                    button(
+                      class="badge badge-danger"
+                      button-change-status-voucher
+                      data-status="inactive"
+                      data-id=item.id
+                      style="border: none; cursor: pointer;"
+                    ) Dừng
+                td
+                  a(
+                    href=`${prefixAdmin}/vouchers/edit/${item.id}`
+                    class="btn btn-warning btn-sm"
+                  ) Sửa
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                    button-delete-voucher
+                    data-id=item.id
+                  ) Xóa
+          else
+            tr
+              td(colspan="8" class="text-center") Chưa có mã giảm giá nào.

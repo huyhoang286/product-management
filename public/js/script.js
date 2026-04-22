@@ -598,3 +598,76 @@ if (buttonsPagination.length > 0) {
     });
 }
 // End Pagination
+
+// CHỨC NĂNG LƯU MÃ GIẢM GIÁ
+const buttonsSaveVoucher = document.querySelectorAll(".btn-save-voucher");
+if (buttonsSaveVoucher.length > 0) {
+    buttonsSaveVoucher.forEach(button => {
+        button.addEventListener("click", () => {
+            const id = button.getAttribute("data-id");
+
+            fetch(`/user/vouchers/save/${id}`, { method: "POST" })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        // Đổi trạng thái nút
+                        button.innerHTML = "Đã lưu ✓";
+                        button.classList.add("btn-secondary"); 
+                        button.setAttribute("disabled", "true"); 
+
+                        Swal.fire({
+                            toast: true,
+                            position: "top-end",
+                            icon: "success",
+                            title: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    } else if (data.code === 401) {
+                        // Yêu cầu đăng nhập
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Chưa đăng nhập",
+                            text: data.message,
+                            showCancelButton: true,
+                            confirmButtonText: "Đăng nhập ngay",
+                            cancelButtonText: "Hủy"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/user/login";
+                            }
+                        });
+                    } else {
+                        Swal.fire({ icon: "error", title: data.message });
+                    }
+                });
+        });
+    });
+}
+// End CHỨC NĂNG LƯU MÃ GIẢM GIÁ
+
+
+// Xử lý tính toán khi chọn Voucher ở trang Thanh toán
+const voucherSelect = document.querySelector("#voucherSelect");
+if (voucherSelect) {
+  voucherSelect.addEventListener("change", (e) => {
+    const subTotalElement = document.querySelector("#subTotal");
+    const subTotal = parseInt(subTotalElement.getAttribute("data-subtotal")); // Lấy giá Tạm tính
+    
+    const selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+    
+    if (!selectedOption.value) {
+      document.querySelector("#discountAmount").innerHTML = "0 VNĐ";
+      document.querySelector("#finalTotal").innerHTML = `${subTotal.toLocaleString("vi-VN")}`;
+      return;
+    }
+
+    const discountPercent = parseInt(selectedOption.getAttribute("data-discount"));
+    const discountAmount = Math.round((subTotal * discountPercent) / 100);
+    const finalTotal = subTotal - discountAmount;
+
+    document.querySelector("#discountAmount").innerHTML = `-${discountAmount.toLocaleString("vi-VN")} VNĐ`;
+    document.querySelector("#finalTotal").innerHTML = `${finalTotal.toLocaleString("vi-VN")}`;
+  });
+}
+// End Xử lý tính toán khi chọn Voucher ở trang Thanh toán

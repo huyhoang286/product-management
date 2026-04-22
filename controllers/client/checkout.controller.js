@@ -2,6 +2,8 @@ const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 const Order = require("../../models/order.model");
 const { PayOS } = require("@payos/node");
+const User = require("../../models/user.model");
+const Voucher = require("../../models/voucher.model");
 
 const payos = new PayOS({
   clientId: process.env.PAYOS_CLIENT_ID,
@@ -43,10 +45,26 @@ module.exports.index = async (req, res) => {
             }
         }
 
+        let userVouchers = [];
+        if (res.locals.user) {
+            const savedVoucherIds = res.locals.user.vouchers
+            .filter(v => v.isUsed === false) // Chỉ lấy các mã chưa sử dụng
+            .map(v => v.voucher_id);
+
+            userVouchers = await Voucher.find({
+            _id: { $in: savedVoucherIds },
+            status: "active",
+            deleted: false,
+            quantity: { $gt: 0 },
+            expireAt: { $gte: new Date() },
+            minOrderValue: { $lte: cart.totalPrice }   //Chỉ hiển thị mã đủ điều kiện với đơn này
+            });
+        }
         res.render("client/pages/checkout/index", {
             pageTitle: "Thanh toán đơn hàng",
             cartDetail: cart,
-            selectedItemsString: JSON.stringify(selectedItems) 
+            selectedItemsString: JSON.stringify(selectedItems),
+            vouchers: userVouchers
         });
     } catch (error) {
         console.log(error);
@@ -58,7 +76,7 @@ module.exports.index = async (req, res) => {
 module.exports.order = async (req, res) => {
     try {
         const cartId = req.cookies.cartId;
-        const { fullName, phone, address, note, payment_method } = req.body;
+        const { fullName, phone, address, note, payment_method, voucher_id } = req.body;
         
         const cart = await Cart.findOne({ _id: cartId });
         if (!cart || cart.products.length === 0) {
@@ -96,12 +114,55 @@ module.exports.order = async (req, res) => {
             });
         }
 
-        // Tạo đơn hàng mới
+        let discountAmount = 0;
+        let finalTotalPrice = totalPrice;
+
+        if (voucher_id) {
+            const voucher = await Voucher.findOne({
+                _id: voucher_id,
+                status: "active",
+                deleted: false,
+                quantity: { $gt: 0 },
+                minOrderValue: { $lte: totalPrice } // Đảm bảo đơn hàng đủ điều kiện
+            });
+
+            if (!voucher) {
+                return res.json({ code: 400, message: "Mã giảm giá không hợp lệ hoặc không đủ điều kiện áp dụng!" });
+            }
+
+            // Tính số tiền được giảm
+            discountAmount = Math.round((totalPrice * voucher.discountPercentage) / 100);
+            finalTotalPrice = totalPrice - discountAmount;
+
+            // Trừ số lượng mã giảm giá trong kho chung
+            await Voucher.updateOne(
+                { _id: voucher_id },
+                { $inc: { quantity: -1 } }
+            );
+
+            // Đánh dấu mã này "đã sử dụng" 
+            if (res.locals.user) {
+                await User.updateOne(
+                    { 
+                        _id: res.locals.user.id,
+                        "vouchers.voucher_id": voucher_id 
+                    },
+                    { 
+                        $set: { "vouchers.$.isUsed": true } 
+                    }
+                );
+            }
+        }
+
+        // Tạo đơn hàng mới 
         const orderInfo = {
             cart_id: cartId,
             userInfo: { fullName, phone, address, note },
             products: orderProducts,
-            payment_method: payment_method
+            payment_method: payment_method,
+            totalPrice: finalTotalPrice, 
+            voucher_id: voucher_id || "", 
+            discount_amount: discountAmount
         };
 
         if (res.locals.user) {
@@ -110,7 +171,7 @@ module.exports.order = async (req, res) => {
         const newOrder = new Order(orderInfo);
         await newOrder.save();
         
-        // Cập nhật kho
+        // Cập nhật kho sản phẩm
         for (const item of cart.products) {
             await Product.updateOne(
                 { _id: item.product_id, "variants._id": item.variant_id },
@@ -140,7 +201,7 @@ module.exports.order = async (req, res) => {
             }
         );
 
-        // xử lý thanh toán nếu chọn VietQR
+        // Xử lý thanh toán nếu chọn VietQR
         if (payment_method === "vietqr") {
             const orderCode = Number(String(Date.now()).slice(-6)); 
             
@@ -148,7 +209,7 @@ module.exports.order = async (req, res) => {
 
             const paymentData = {
                 orderCode: orderCode,
-                amount: totalPrice,
+                amount: finalTotalPrice, 
                 description: `Thanh toan don ${newOrder.id.slice(-4)}`,
                 returnUrl: `${process.env.CLIENT_URL}/checkout/success/${newOrder.id}`,
                 cancelUrl: `${process.env.CLIENT_URL}/checkout/cancel/${newOrder.id}`,
@@ -186,14 +247,12 @@ module.exports.success = async (req, res) => {
         const orderId = req.params.orderId;
         const order = await Order.findOne({ _id: orderId });
 
-        order.totalPrice = 0;
-
         for (const item of order.products) {
             const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail variants");
             
             item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
             item.totalPrice = item.priceNew * item.quantity;
-            order.totalPrice += item.totalPrice;
+            
 
             if (productInfo) {
                 item.productInfo = productInfo;

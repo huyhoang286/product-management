@@ -30,6 +30,12 @@ const orderSchema = new mongoose.Schema(
         payosOrderCode: {
             type: Number 
         },
+        totalPrice: Number,      // tổng tiền (Đã trừ giảm giá)
+        voucher_id: String,     
+        discount_amount: {
+        type: Number,
+        default: 0
+        },
         status: {
             type: String,
             default: "pending" 

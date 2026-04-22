@@ -2,6 +2,7 @@ const User = require("../../models/user.model");
 const Otp = require("../../models/otp.model");
 const Order = require("../../models/order.model"); 
 const Product = require("../../models/product.model");
+const Voucher = require("../../models/voucher.model");
 const md5 = require("md5");
 const nodemailer = require("nodemailer");
 
@@ -331,16 +332,14 @@ module.exports.orders = async (req, res) => {
         const orders = await Order.find(find).sort({ createdAt: "desc" });
 
         for (const order of orders) {
-            let totalPrice = 0;
+            
             for (const item of order.products) {
                 const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail slug");
                 item.productInfo = productInfo;
                 
                 item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
                 item.totalPrice = item.priceNew * item.quantity;
-                totalPrice += item.totalPrice;
             }
-            order.totalPrice = totalPrice;
         }
 
         res.render("client/pages/user/orders", {
@@ -368,16 +367,15 @@ module.exports.detail = async (req, res) => {
             return res.redirect("/user/orders");
         }
 
-        let totalPrice = 0;
+
         for (const item of order.products) {
             const productInfo = await Product.findOne({ _id: item.product_id }).select("title thumbnail slug");
             item.productInfo = productInfo;
             
             item.priceNew = Math.round(item.price * (1 - item.discountPercentage / 100));
             item.totalPrice = item.priceNew * item.quantity;
-            totalPrice += item.totalPrice;
         }
-        order.totalPrice = totalPrice;
+        
 
         res.render("client/pages/user/order-detail", {
             pageTitle: `Chi tiết đơn hàng #${order.id.slice(-6).toUpperCase()}`,
@@ -399,4 +397,54 @@ module.exports.googleLoginCallback = async (req, res) => {
   });
 
   res.redirect("/");
+};
+
+// [POST] /user/vouchers/save/:id 
+module.exports.saveVoucher = async (req, res) => {
+  try {
+    const voucherId = req.params.id;
+    const user = res.locals.user; 
+
+    if (!user) {
+      return res.json({ code: 401, message: "Vui lòng đăng nhập để lưu mã!" });
+    }
+
+    // Kiểm tra xem người dùng đã lưu mã này chưa
+    const isExist = user.vouchers.find(item => item.voucher_id == voucherId);
+    if (isExist) {
+      return res.json({ code: 400, message: "Mã này đã có trong ví của bạn!" });
+    }
+
+    await User.updateOne(
+      { _id: user.id },
+      { $push: { vouchers: { voucher_id: voucherId } } }
+    );
+
+    res.json({ code: 200, message: "Đã lưu thành công vào Kho Voucher!" });
+  } catch (error) {
+    res.json({ code: 400, message: "Lỗi hệ thống!" });
+  }
+};
+
+// [GET] /user/vouchers 
+module.exports.vouchers = async (req, res) => {
+  try {
+    const user = res.locals.user;
+
+    const savedVouchers = user.vouchers.filter(v => v.isUsed === false);
+    const voucherIds = savedVouchers.map(v => v.voucher_id);
+
+    const vouchers = await Voucher.find({
+      _id: { $in: voucherIds },
+      deleted: false,
+      status: "active"
+    });
+
+    res.render("client/pages/user/vouchers", {
+      pageTitle: "Kho Voucher Của Tôi",
+      vouchers: vouchers
+    });
+  } catch (error) {
+    res.redirect("back");
+  }
 };

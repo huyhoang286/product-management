@@ -1,0 +1,30 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main
+  .container.my-5
+    .row
+      .col-12
+        +box-head("Kho Voucher Của Tôi")
+    
+    .row
+      if vouchers.length > 0
+        each item in vouchers
+          .col-md-6.col-lg-4.mb-4
+            .voucher-card.w-100 
+              .voucher-left
+                .discount-val #{item.discountPercentage}%
+                .discount-text GIẢM
+              .voucher-right
+                .voucher-info
+                  h5.voucher-code #{item.code}
+                  p.voucher-cond Đơn tối thiểu: #{item.minOrderValue.toLocaleString()}đ
+                  p.voucher-date HSD: #{new Date(item.expireAt).toLocaleDateString('vi-VN')}
+                
+                button.btn.btn-sm.btn-outline-danger Mua sắm ngay
+      else
+        .col-12
+          .alert.alert-warning.text-center
+            | Bạn chưa lưu mã giảm giá nào. 
+            a(href="/") Trở về trang chủ
+            |  để săn mã ngay!

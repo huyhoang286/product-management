@@ -456,3 +456,152 @@ if(selectStatuses.length > 0) {
         });
     });
 }
+
+// Chức năng đổi trạng thái Voucher
+const buttonsChangeStatusVoucher = document.querySelectorAll("[button-change-status-voucher]");
+if (buttonsChangeStatusVoucher.length > 0) {
+  buttonsChangeStatusVoucher.forEach((button) => {
+    button.addEventListener("click", () => {
+      const statusCurrent = button.getAttribute("data-status");
+      const id = button.getAttribute("data-id");
+      const statusChange = statusCurrent == "active" ? "inactive" : "active";
+
+      const path = `/admin/vouchers/change-status/${statusChange}/${id}`;
+
+      fetch(path, {
+        method: "PATCH",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.code === 200) {
+            button.setAttribute("data-status", statusChange);
+            
+            if (statusChange === "active") {
+              button.classList.remove("badge-danger");
+              button.classList.add("badge-success");
+              button.innerHTML = "Hoạt động";
+            } else {
+              button.classList.remove("badge-success");
+              button.classList.add("badge-danger");
+              button.innerHTML = "Dừng";
+            }
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+          }
+        });
+    });
+  });
+}
+// End Chức năng đổi trạng thái Voucher
+
+// Chức năng xóa Voucher
+const buttonsDeleteVoucher = document.querySelectorAll("[button-delete-voucher]");
+buttonsDeleteVoucher.forEach(button => {
+  button.addEventListener("click", () => {
+    const id = button.getAttribute("data-id");
+    const path = `/${window.location.pathname.split("/")[1]}/vouchers/delete/${id}`;
+
+    Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: "Mã giảm giá này sẽ bị xóa vĩnh viễn!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Đồng ý xóa!',
+      cancelButtonText: 'Hủy bỏ'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(path, { method: "DELETE" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === 200) {
+            button.closest("tr").remove();
+            Swal.fire('Đã xóa!', data.message, 'success');
+          }
+        });
+      }
+    });
+  });
+});
+// End Chức năng xóa Voucher
+
+// Xử lý Tạo mới Voucher
+const formCreateVoucher = document.querySelector("#form-create-voucher");
+if (formCreateVoucher) {
+  formCreateVoucher.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const path = formCreateVoucher.getAttribute("data-path");
+    const formData = new FormData(formCreateVoucher);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch(path, {
+      method: "POST", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200) {
+          Swal.fire({
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          }).then(() => {
+            const prefix = window.location.pathname.split("/")[1];
+            window.location.href = `/${prefix}/vouchers`;
+          });
+        } else {
+          Swal.fire({ icon: "error", title: data.message });
+        }
+      });
+  });
+}
+// End Xử lý Tạo mới Voucher
+
+// Chỉnh sửa Voucher 
+const formEditVoucher = document.querySelector("#form-edit-voucher");
+if (formEditVoucher) {
+  formEditVoucher.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const path = formEditVoucher.getAttribute("data-path");
+    const formData = new FormData(formEditVoucher);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch(path, {
+      method: "PATCH", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          setTimeout(() => {
+            const prefix = window.location.pathname.split("/")[1];
+            window.location.href = `/${prefix}/vouchers`;
+          }, 1500);
+        } else {
+          Swal.fire({ icon: "error", title: data.message });
+        }
+      });
+  });
+}
+// End Chỉnh sửa Voucher

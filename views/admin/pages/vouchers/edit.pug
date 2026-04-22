@@ -1,0 +1,42 @@
+extends ../../layouts/default.pug
+
+block main
+  h1(class="mb-4") #{pageTitle}
+
+  .card.shadow-sm
+    .card-body
+      form(
+        id="form-edit-voucher" 
+        data-path=`${prefixAdmin}/vouchers/edit/${voucher.id}`
+      )
+        .row
+          .col-md-6
+            .form-group
+              label(for="code") Mã giảm giá
+              input(type="text" class="form-control" name="code" value=voucher.code required)
+            .form-group
+              label(for="discountPercentage") % Giảm
+              input(type="number" class="form-control" name="discountPercentage" value=voucher.discountPercentage required)
+            .form-group
+              label(for="minOrderValue") Đơn tối thiểu
+              input(type="number" class="form-control" name="minOrderValue" value=voucher.minOrderValue required)
+          .col-md-6
+            .form-group
+              label(for="quantity") Số lượng
+              input(type="number" class="form-control" name="quantity" value=voucher.quantity required)
+            .form-group
+              label(for="expireAt") Hạn dùng
+              - var date = voucher.expireAt.toISOString().split('T')[0]
+              input(type="date" class="form-control" name="expireAt" value=date required)
+            .form-group
+              label Trạng thái
+              div
+                .form-check.form-check-inline
+                  input(type="radio" class="form-check-input" id="editActive" name="status" value="active" checked=(voucher.status === "active"))
+                  label(for="editActive" class="form-check-label") Hoạt động
+                .form-check.form-check-inline
+                  input(type="radio" class="form-check-input" id="editInactive" name="status" value="inactive" checked=(voucher.status === "inactive"))
+                  label(for="editInactive" class="form-check-label") Dừng
+        
+        .form-group.mt-3
+          button(type="submit" class="btn btn-warning px-4") CẬP NHẬT THÔNG TIN

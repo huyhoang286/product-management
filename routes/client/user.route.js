@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../../controllers/client/user.controller");
 const passport = require('passport');
+const authMiddleware = require("../../middlewares/client/user.middleware");
 
 router.get("/register", controller.register);
 router.post("/register", controller.registerPost);
@@ -24,6 +25,9 @@ router.post("/password/reset", controller.resetPasswordPost);
 
 router.get("/orders", controller.orders);
 router.get("/orders/detail/:id", controller.detail);
+
+router.post("/vouchers/save/:id", authMiddleware.requireAuth, controller.saveVoucher);
+router.get("/vouchers", authMiddleware.requireAuth, controller.vouchers);
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', 

@@ -64,6 +64,11 @@ block main
                   span.text-muted.small Ghi chú: Giao vào giờ hành chính
                 .col-md-6.text-right
                   .total-section.mb-2
+                    if (order.discount_amount > 0)
+                      .text-success.small.mb-1
+                        i.fas.fa-ticket-alt.mr-1
+                        | Giảm giá Voucher: -#{order.discount_amount.toLocaleString()}đ
+                    
                     span.mr-2 Thành tiền:
                     span.h4.text-danger.font-weight-bold #{order.totalPrice.toLocaleString()}đ
                   .actions

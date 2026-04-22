@@ -16,7 +16,13 @@ const userSchema = new mongoose.Schema({
     deleted: { 
         type: Boolean, 
         default: false 
-    } 
+    },
+    vouchers: [
+      {
+        voucher_id: String, 
+        isUsed: { type: Boolean, default: false } 
+      }
+    ]
 }, 
 { 
     timestamps: true 
