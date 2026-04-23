@@ -65,11 +65,22 @@ module.exports.index = async (req, res) => {
         ];
 
         // LỌC THEO MỨC GIÁ
-        const priceQuery = req.query.price;
-        if (priceQuery) {
-            if (priceQuery === "under1") pipeline.push({ $match: { newPrice: { $lt: 1000000 } } });
-            else if (priceQuery === "1to2") pipeline.push({ $match: { newPrice: { $gte: 1000000, $lte: 2000000 } } });
-            else if (priceQuery === "over2") pipeline.push({ $match: { newPrice: { $gt: 2000000 } } });
+        const minPriceQuery = req.query.minPrice;
+        const maxPriceQuery = req.query.maxPrice;
+
+        if (minPriceQuery || maxPriceQuery) {
+            const priceMatch = {};
+            
+            if (minPriceQuery) {
+                priceMatch.$gte = parseInt(minPriceQuery);
+            }
+            if (maxPriceQuery) {
+                priceMatch.$lte = parseInt(maxPriceQuery);
+            }
+
+            if (Object.keys(priceMatch).length > 0) {
+                pipeline.push({ $match: { newPrice: priceMatch } });
+            }
         }
 
         // GOM NHÓM 
@@ -124,7 +135,8 @@ module.exports.index = async (req, res) => {
             pageTitle: finalTitle,
             products: products,
             keyword: keyword,
-            price: priceQuery, 
+            minPrice: minPriceQuery, 
+            maxPrice: maxPriceQuery,
             sort: sortQuery,
             pagination: objectPagination
         });

@@ -20,18 +20,34 @@ block main
             i.fas.fa-filter.mr-2
             | LỌC THEO GIÁ
           .card-body
-            .form-check.mb-2
-              input.form-check-input(type="radio" name="price" value="under1" id="price1" filter-price checked=(price === 'under1' ? true : false))
-              label.form-check-label(for="price1") Dưới 1.000.000đ
-            .form-check.mb-2
-              input.form-check-input(type="radio" name="price" value="1to2" id="price2" filter-price checked=(price === '1to2' ? true : false))
-              label.form-check-label(for="price2") 1.000.000đ - 2.000.000đ
-            .form-check.mb-2
-              input.form-check-input(type="radio" name="price" value="over2" id="price3" filter-price checked=(price === 'over2' ? true : false))
-              label.form-check-label(for="price3") Trên 2.000.000đ
-            .form-check.mb-2
-              input.form-check-input(type="radio" name="price" value="" id="priceAll" filter-price checked=(!price ? true : false))
-              label.form-check-label(for="priceAll") Tất cả mức giá
+            form(id="form-filter-price")
+              .form-group.mb-2
+                label(for="minPrice" class="small font-weight-bold text-muted") Giá từ (VNĐ)
+                input.form-control.form-control-sm(
+                  type="number" 
+                  id="minPrice" 
+                  name="minPrice" 
+                  placeholder="VD: 100000" 
+                  min="0" 
+                  value=minPrice
+                )
+              .form-group.mb-3
+                label(for="maxPrice" class="small font-weight-bold text-muted") Đến (VNĐ)
+                input.form-control.form-control-sm(
+                  type="number" 
+                  id="maxPrice" 
+                  name="maxPrice" 
+                  placeholder="VD: 500000" 
+                  min="0" 
+                  value=maxPrice
+                )
+              .d-flex.justify-content-between
+                button.btn.btn-outline-success.btn-sm.w-50.mr-1(type="submit" title="Áp dụng lọc") 
+                  i.fas.fa-check
+                
+                button.btn.btn-outline-secondary.btn-sm.w-50.ml-1(type="button" id="btn-clear-price" title="Hủy lọc giá") 
+                  i.fas.fa-undo-alt.mr-1
+                  | Hủy
 
       .col-lg-9
         .row.mb-3

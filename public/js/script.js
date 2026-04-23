@@ -671,3 +671,18 @@ if (voucherSelect) {
   });
 }
 // End Xử lý tính toán khi chọn Voucher ở trang Thanh toán
+
+
+// CHỨC NĂNG NÚT HỦY LỌC GIÁ
+const btnClearPrice = document.querySelector("#btn-clear-price");
+if (btnClearPrice) {
+    btnClearPrice.addEventListener("click", () => {
+        url.searchParams.delete("minPrice");
+        url.searchParams.delete("maxPrice");
+        url.searchParams.delete("price"); 
+        
+        url.searchParams.set("page", 1); 
+
+        window.location.href = url.href; 
+    });
+}
