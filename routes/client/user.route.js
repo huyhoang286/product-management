@@ -26,7 +26,7 @@ router.post("/password/reset", controller.resetPasswordPost);
 router.get("/orders", controller.orders);
 router.get("/orders/detail/:id", controller.detail);
 
-router.post("/vouchers/save/:id", authMiddleware.requireAuth, controller.saveVoucher);
+router.post("/vouchers/save/:id", controller.saveVoucher);
 router.get("/vouchers", authMiddleware.requireAuth, controller.vouchers);
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

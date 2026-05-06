@@ -60,7 +60,7 @@ module.exports.register = async (req, res) => {
 // [POST] /user/register
 module.exports.registerPost = async (req, res) => {
     try {
-        const { fullName, email, password, phone } = req.body;
+        const { fullName, email, password, phone, gender } = req.body;
 
         const existEmail = await User.findOne({ email: email, deleted: false });
         if (existEmail) {
@@ -72,7 +72,8 @@ module.exports.registerPost = async (req, res) => {
             email: email,
             phone: phone,
             password: md5(password),
-            status: "inactive"
+            status: "inactive",
+            gender: gender  
         });
         await user.save();
 
@@ -183,14 +184,15 @@ module.exports.updatePatch = async (req, res) => {
     try {
         if (!req.cookies.tokenUser) return res.json({ code: 400, message: "Vui lòng đăng nhập!" });
 
-        const { fullName, phone, address } = req.body;
+        const { fullName, phone, address, gender } = req.body;
 
         await User.updateOne(
             { tokenUser: req.cookies.tokenUser },
             {
                 fullName: fullName,
                 phone: phone,
-                address: address
+                address: address,
+                gender: gender
             }
         );
 
@@ -437,7 +439,8 @@ module.exports.vouchers = async (req, res) => {
     const vouchers = await Voucher.find({
       _id: { $in: voucherIds },
       deleted: false,
-      status: "active"
+      status: "active",
+      expireAt: { $gte: new Date() }
     });
 
     res.render("client/pages/user/vouchers", {

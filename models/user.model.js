@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     avatar: String,
     phone: String, 
     address: String, 
+    gender: String,
     status: { 
         type: String, 
         default: "active" 

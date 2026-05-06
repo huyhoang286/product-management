@@ -4,7 +4,7 @@ const Voucher = require("../../models/voucher.model");
 // [GET] /
 module.exports.index = async (req, res) => {
     try {
-        // 1. Lấy Sản phẩm bán chạy
+        // Lấy Sản phẩm bán chạy
         const productsBestSelling = await Product.aggregate([
             { $match: { status: "active", deleted: false } },
             { $sort: { sold: -1 } }, 

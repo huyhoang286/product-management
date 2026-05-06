@@ -203,7 +203,14 @@ if (formRegister) {
         const phone = formRegister.phone.value;
         const password = formRegister.password.value;
         const confirmPassword = formRegister.confirmPassword.value;
+        const genderChecked = formRegister.querySelector('input[name="gender"]:checked');
+        const gender = genderChecked ? genderChecked.value : "other";
 
+        const nameRegex = /^[\p{L}\s]+$/u;
+        if (!nameRegex.test(fullName) || fullName.length < 2) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Họ tên chỉ được chứa chữ cái và phải dài hơn 1 ký tự!' });
+        }
+        
         // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
         if (!emailRegex.test(email)) {
@@ -219,7 +226,7 @@ if (formRegister) {
             return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Mật khẩu xác nhận không khớp!' });
         }
 
-        const data = { fullName, email, phone, password };
+        const data = { fullName, email, phone, password, gender };
         
         Swal.fire({
             title: 'Đang xử lý...',
@@ -303,15 +310,124 @@ if (formLogin) {
 }
 // End Login
 
+// LOGIC XỬ LÝ ĐỊA CHỈ (PROVINCE API)
+const provinceSelect = document.getElementById("province");
+const districtSelect = document.getElementById("district");
+const wardSelect = document.getElementById("ward");
+
+if (provinceSelect) {
+    // Load danh sách Tỉnh/Thành phố khi mở trang
+    fetch('https://provinces.open-api.vn/api/p/')
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.code;
+                option.text = item.name; 
+                provinceSelect.add(option);
+            });
+        });
+
+    // Bắt sự kiện chọn Tỉnh -> Load danh sách Quận/Huyện
+    provinceSelect.addEventListener("change", (e) => {
+        const provinceCode = e.target.value;
+        // Reset lại Quận/Huyện và Phường/Xã
+        districtSelect.innerHTML = '<option value="" disabled selected>Chọn Quận/Huyện</option>';
+        wardSelect.innerHTML = '<option value="" disabled selected>Chọn Phường/Xã</option>';
+        wardSelect.disabled = true;
+
+        if (provinceCode) {
+            fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
+                .then(res => res.json())
+                .then(data => {
+                    districtSelect.disabled = false;
+                    data.districts.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.code;
+                        option.text = item.name;
+                        districtSelect.add(option);
+                    });
+                });
+        }
+    });
+
+    // Bắt sự kiện chọn Quận/Huyện -> Load danh sách Phường/Xã
+    districtSelect.addEventListener("change", (e) => {
+        const districtCode = e.target.value;
+        wardSelect.innerHTML = '<option value="" disabled selected>Chọn Phường/Xã</option>';
+
+        if (districtCode) {
+            fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+                .then(res => res.json())
+                .then(data => {
+                    wardSelect.disabled = false;
+                    data.wards.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.code;
+                        option.text = item.name;
+                        wardSelect.add(option);
+                    });
+                });
+        }
+    });
+}
+// End LOGIC XỬ LÝ ĐỊA CHỈ (PROVINCE API)
+
 // Update Info
 const formUpdateInfo = document.querySelector("[form-update-info]");
 if (formUpdateInfo) {
     formUpdateInfo.addEventListener("submit", (e) => {
         e.preventDefault();
+
+        const fullName = formUpdateInfo.fullName.value.trim();
+        const phone = formUpdateInfo.phone.value;
+
+        const nameRegex = /^[\p{L}\s]+$/u;
+        if (!nameRegex.test(fullName) || fullName.length < 2) {
+            return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Họ tên chỉ được chứa chữ cái và phải dài hơn 1 ký tự!' });
+        }
+
+        if (phone) {
+            const phoneRegex = /^(0|\+84)[3|5|7|8|9][0-9]{8}$/;
+            if (!phoneRegex.test(phone)) {
+                return Swal.fire({ icon: 'error', title: 'Lỗi!', text: 'Số điện thoại không hợp lệ!' });
+            }
+        }
+        
+        // Lấy địa chỉ cũ làm giá trị mặc định
+        const oldAddress = document.getElementById("oldAddress").value;
+        let finalAddress = oldAddress; 
+
+        // Kiểm tra xem người dùng có đang cố gắng chọn địa chỉ mới không
+        const provinceVal = provinceSelect.value;
+        
+        if (provinceVal) { 
+            const streetVal = document.getElementById("street").value.trim();
+            
+            if (!districtSelect.value || !wardSelect.value || !streetVal) {
+                Swal.fire({ 
+                    icon: 'warning', 
+                    title: 'Thiếu thông tin!', 
+                    text: 'Bạn đang cập nhật địa chỉ mới. Vui lòng chọn đầy đủ Quận/Huyện, Phường/Xã và nhập số nhà!' 
+                });
+                return; 
+            }
+
+            // Đã nhập đủ -> Tiến hành gộp chuỗi
+            const provinceText = provinceSelect.options[provinceSelect.selectedIndex].text;
+            const districtText = districtSelect.options[districtSelect.selectedIndex].text;
+            const wardText = wardSelect.options[wardSelect.selectedIndex].text;
+            
+            finalAddress = `${streetVal}, ${wardText}, ${districtText}, ${provinceText}`;
+        }
+
+        const genderChecked = formUpdateInfo.querySelector('input[name="gender"]:checked');
+
         const data = {
             fullName: formUpdateInfo.fullName.value,
             phone: formUpdateInfo.phone.value,
-            address: formUpdateInfo.address.value
+            gender: genderChecked ? genderChecked.value : "",
+            address: finalAddress 
         };
 
         fetch("/user/update", {
@@ -322,8 +438,15 @@ if (formUpdateInfo) {
         .then(res => res.json())
         .then(resData => {
             if (resData.code === 200) {
-                sessionStorage.setItem("successMessage", resData.message);
-                window.location.reload(); 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: resData.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.reload(); 
+                });
             } else {
                 Swal.fire({ icon: 'error', title: 'Lỗi!', text: resData.message });
             }
@@ -640,6 +763,10 @@ if (buttonsSaveVoucher.length > 0) {
                     } else {
                         Swal.fire({ icon: "error", title: data.message });
                     }
+                })
+                .catch(error => { 
+                    console.error("Lỗi khi lưu voucher:", error);
+                    alert("Có lỗi xảy ra, vui lòng mở Console để kiểm tra!"); 
                 });
         });
     });

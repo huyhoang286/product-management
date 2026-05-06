@@ -12,6 +12,19 @@ block main
                             .form-group.mb-3
                                 label(for="fullName") Họ và tên
                                 input.form-control(type="text" id="fullName" name="fullName" required)
+    
+                            .form-group.mb-3
+                                label <b>Giới tính</b>
+                                .d-flex.gap-3.mt-2
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="male" value="male")
+                                        label.form-check-label(for="male") Nam
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="female" value="female" )
+                                        label.form-check-label(for="female") Nữ
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="other" value="other")
+                                        label.form-check-label(for="other") Khác
                             .form-group.mb-3
                                 label(for="email") Email
                                 input.form-control(type="email" id="email" name="email" required)

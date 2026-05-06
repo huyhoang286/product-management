@@ -45,6 +45,10 @@ module.exports.edit = async (req, res) => {
 // [POST] /admin/vouchers/create
 module.exports.createPost = async (req, res) => {
   try {
+    const expireDate = new Date(req.body.expireAt);
+    if (expireDate < new Date()) {
+      return res.json({ code: 400, message: "Ngày hết hạn phải lớn hơn hiện tại!" });
+    }
     req.body.code = req.body.code.toUpperCase();
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.minOrderValue = parseInt(req.body.minOrderValue);
@@ -84,6 +88,10 @@ module.exports.changeStatus = async (req, res) => {
 // [PATCH] /admin/vouchers/edit/:id
 module.exports.editPatch = async (req, res) => {
   try {
+    const expireDate = new Date(req.body.expireAt);
+    if (expireDate < new Date()) {
+      return res.json({ code: 400, message: "Ngày hết hạn phải lớn hơn hiện tại!" });
+    }
     req.body.code = req.body.code.toUpperCase();
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.minOrderValue = parseInt(req.body.minOrderValue);

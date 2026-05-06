@@ -493,6 +493,15 @@ if (buttonsChangeStatusVoucher.length > 0) {
                 showConfirmButton: false,
                 timer: 2000
             });
+          } else {
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
           }
         });
     });
@@ -524,6 +533,15 @@ buttonsDeleteVoucher.forEach(button => {
           if (data.code === 200) {
             button.closest("tr").remove();
             Swal.fire('Đã xóa!', data.message, 'success');
+          } else {
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
           }
         });
       }

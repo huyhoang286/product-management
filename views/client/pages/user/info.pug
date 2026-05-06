@@ -14,6 +14,19 @@ block main
                                 input.form-control(type="text" id="fullName" name="fullName" value=user.fullName required)
                             
                             .form-group.mb-3
+                                label <b>Giới tính</b>
+                                .d-flex.gap-3.mt-2
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="male" value="male" checked=(user.gender == 'male'))
+                                        label.form-check-label(for="male") Nam
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="female" value="female" checked=(user.gender == 'female'))
+                                        label.form-check-label(for="female") Nữ
+                                    .form-check
+                                        input.form-check-input(type="radio" name="gender" id="other" value="other" checked=(user.gender == 'other'))
+                                        label.form-check-label(for="other") Khác
+                            
+                            .form-group.mb-3
                                 label(for="email") <b>Email đăng nhập</b> (Không thể thay đổi)
                                 input.form-control(type="email" id="email" value=user.email readonly disabled)
                             
@@ -22,11 +35,23 @@ block main
                                     .form-group.mb-3
                                         label(for="phone") <b>Số điện thoại mặc định</b>
                                         input.form-control(type="text" id="phone" name="phone" value=(user.phone ? user.phone : "") placeholder="Nhập số điện thoại...")
-                                .col-md-6
-                                    .form-group.mb-3
-                                        label(for="address") <b>Địa chỉ giao hàng mặc định</b>
-                                        input.form-control(type="text" id="address" name="address" value=(user.address ? user.address : "") placeholder="Số nhà, tên đường, xã/phường, quận/huyện...")
-                            
+                                input(type="hidden" id="oldAddress" value=(user.address ? user.address : ""))
+                                .col-md-12.mt-3
+                                    label <b>Địa chỉ giao hàng mặc định</b>
+                                    .row.mb-2
+                                        .col-md-4
+                                            select.form-control#province(name="province" )
+                                                option(value="" disabled selected) Chọn Tỉnh/Thành
+                                        .col-md-4
+                                            select.form-control#district(name="district" disabled )
+                                                option(value="" disabled selected) Chọn Quận/Huyện
+                                        .col-md-4
+                                            select.form-control#ward(name="ward" disabled )
+                                                option(value="" disabled selected) Chọn Phường/Xã
+                                    input.form-control(type="text" id="street" name="street" placeholder="Nhập số nhà, tên đường..." )
+                                    
+                                    if user.address
+                                        small.text-muted Địa chỉ hiện tại: <i>#{user.address}</i>
                             .d-flex.justify-content-between.mt-4
                                 button.btn.btn-success.px-5(type="submit") Lưu Thay Đổi
                                 a.btn.btn-danger.px-4(href="/user/logout") <i class="fas fa-sign-out-alt"></i> Đăng Xuất
