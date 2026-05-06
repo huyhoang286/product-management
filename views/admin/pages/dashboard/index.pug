@@ -1,69 +1,112 @@
 extends ../../layouts/default.pug
 
 block main
-    h1.mb-4.font-weight-bold Tổng quan hệ thống
+  .container-fluid.py-4
+    h1.h3.mb-4.text-gray-800 <i class="fas fa-chart-line mr-2 text-primary"></i> Tổng quan doanh thu
 
+    //- KHỐI 1: DOANH THU TÀI CHÍNH
     .row.mb-4
-        .col-12
-            .card.shadow-sm
-                .card-header.bg-dark.text-white.font-weight-bold
-                    i.fas.fa-user-shield.mr-2
-                    | Thông tin tài khoản của bạn
-                .card-body
-                    .row.align-items-center
-                        .col-md-2.text-center
-                            if(user.avatar)
-                                img(src=user.avatar alt=user.fullName class="img-thumbnail rounded-circle" style="height: 120px; width: 120px; object-fit: cover;")
-                            else 
-                                img(src="/admin/images/avatar.png" class="img-thumbnail rounded-circle" style="height: 120px; width: 120px;")
-                        .col-md-10
-                            if(user.fullName)
-                                h4.text-primary.font-weight-bold #{user.fullName}
-                            if(role.title)
-                                p.mb-1 Vai trò: <span class="badge badge-success px-2 py-1">#{role.title}</span>
-                            if(user.email)
-                                p.mb-1 Email: <b>#{user.email}</b>
-                            if(user.phone)
-                                p.mb-1 Số điện thoại: <b>#{user.phone}</b>
+      //- Doanh thu thực tế (Thành công)
+      .col-xl-6.col-md-6.mb-4
+        .card.border-left-success.shadow-sm.h-100.py-2
+          .card-body
+            .row.no-gutters.align-items-center
+              .col.mr-2
+                .text-xs.font-weight-bold.text-success.text-uppercase.mb-1 TỔNG DOANH THU THỰC TẾ
+                .h4.mb-0.font-weight-bold.text-gray-800 #{statistic.order.totalRevenue.toLocaleString("vi-VN")}đ
+                .text-xs.text-muted.mt-2 Đã hoàn thành #{statistic.order.success} đơn hàng
+              .col-auto
+                i.fas.fa-money-check-alt.fa-2x.text-gray-300
 
+      //- Tổng chiết khấu Voucher
+      .col-xl-6.col-md-6.mb-4
+        .card.border-left-danger.shadow-sm.h-100.py-2
+          .card-body
+            .row.no-gutters.align-items-center
+              .col.mr-2
+                .text-xs.font-weight-bold.text-danger.text-uppercase.mb-1 TỔNG GIẢM GIÁ VOUCHER
+                .h4.mb-0.font-weight-bold.text-gray-800 -#{statistic.order.totalDiscount.toLocaleString("vi-VN")}đ
+                .text-xs.text-muted.mt-2 Ngân sách khuyến mãi đã sử dụng
+              .col-auto
+                i.fas.fa-ticket-alt.fa-2x.text-gray-300
+
+    //- KHỐI 2: TRẠNG THÁI ĐƠN HÀNG (Bổ sung)
+    .row.mb-4
+      .col-12
+        .card.shadow-sm.border-0
+          .card-header.bg-white.py-3
+            h6.m-0.font-weight-bold.text-primary <i class="fas fa-tasks mr-2"></i> Trạng thái đơn hàng (Tổng số: #{statistic.order.total} đơn)
+          .card-body
+            .row.text-center
+              .col-md-2.col-6.mb-3
+                .p-3.bg-light.rounded.border
+                  .text-warning.h4.mb-1.font-weight-bold #{statistic.order.pending}
+                  .small.font-weight-bold Chờ duyệt
+              .col-md-2.col-6.mb-3
+                .p-3.bg-light.rounded.border
+                  .text-info.h4.mb-1.font-weight-bold #{statistic.order.confirm}
+                  .small.font-weight-bold Đã xác nhận
+              .col-md-2.col-6.mb-3
+                .p-3.bg-light.rounded.border
+                  .text-primary.h4.mb-1.font-weight-bold #{statistic.order.delivering}
+                  .small.font-weight-bold Đang giao
+              .col-md-3.col-6.mb-3
+                .p-3.bg-success-light.rounded.border.border-success
+                  .text-success.h4.mb-1.font-weight-bold #{statistic.order.success}
+                  .small.font-weight-bold Hoàn thành
+              .col-md-3.col-12.mb-3
+                .p-3.bg-danger-light.rounded.border.border-danger
+                  .text-danger.h4.mb-1.font-weight-bold #{statistic.order.cancel}
+                  .small.font-weight-bold Đã hủy
+
+    //- KHỐI 3: BẢNG DOANH THU THEO THÁNG
+    .row.mb-4
+      .col-12
+        .card.shadow-sm.border-0
+          .card-header.bg-white.py-3
+            h6.m-0.font-weight-bold.text-primary <i class="fas fa-calendar-alt mr-2"></i> Chi tiết doanh thu theo tháng
+          .card-body
+            table.table.table-hover.mb-0
+              thead.thead-light
+                tr
+                  th Tháng/Năm
+                  th.text-right Doanh thu thành công
+              tbody
+                if (statistic.order.monthlyRevenue.length > 0)
+                  each item in statistic.order.monthlyRevenue
+                    tr
+                      td.font-weight-bold #{item.label}
+                      td.text-right.text-success.font-weight-bold #{item.value.toLocaleString("vi-VN")}đ
+                else
+                  tr
+                    td(colspan="2" class="text-center text-muted") Chưa có dữ liệu doanh thu thành công.
+
+    //- KHỐI 4: THỐNG KÊ THỰC THỂ (Sản phẩm, Danh mục, Khách hàng, Voucher)
     .row
-        .col-xl-3.col-md-6.mb-4
-            .card.shadow-sm.border-left-danger.h-100
-                .card-header.bg-danger.text-white.font-weight-bold
-                    i.fas.fa-shopping-cart.mr-2
-                    | Đơn hàng
-                .card-body
-                    p.mb-2 Tổng số đơn: <b class="float-right">#{statistic.order.total}</b>
-                    p.mb-2 Chờ xác nhận: <b class="float-right text-warning">#{statistic.order.pending}</b>
-                    p.mb-2 Hoàn thành: <b class="float-right text-success">#{statistic.order.success}</b>
-                    p.mb-0 Đã hủy: <b class="float-right text-danger">#{statistic.order.cancel}</b>
+      - 
+        var entities = [
+          { label: 'Sản phẩm', data: statistic.product, color: 'info', icon: 'fa-box' },
+          { label: 'Danh mục', data: statistic.categoryProduct, color: 'secondary', icon: 'fa-list' },
+          { label: 'Voucher', data: statistic.voucher, color: 'danger', icon: 'fa-gift' },
+          { label: 'Khách hàng', data: statistic.user, color: 'warning', icon: 'fa-users' }
+        ]
+      each entity in entities
+        .col-md-3.mb-4
+          .card.shadow-sm.border-0.h-100
+            .card-body
+              .d-flex.justify-content-between.mb-3
+                h6.font-weight-bold #{entity.label}
+                i(class=`fas ${entity.icon} text-${entity.color}`)
+              .h3.font-weight-bold #{entity.data.total}
+              .progress.mb-2(style="height: 4px;")
+                - var percent = entity.data.total > 0 ? (entity.data.active / entity.data.total) * 100 : 0
+                .progress-bar(class=`bg-${entity.color}` style=`width: ${percent}%`)
+              .d-flex.justify-content-between.small.mt-2
+                span.text-success <i class="fas fa-circle mr-1" style="font-size: 8px;"></i> Hoạt động: #{entity.data.active}
+                span.text-danger <i class="fas fa-circle mr-1" style="font-size: 8px;"></i> Khóa: #{entity.data.inactive}
 
-        .col-xl-3.col-md-6.mb-4
-            .card.shadow-sm.border-left-success.h-100
-                .card-header.bg-success.text-white.font-weight-bold
-                    i.fas.fa-box-open.mr-2
-                    | Sản phẩm
-                .card-body
-                    p.mb-2 Tổng sản phẩm: <b class="float-right">#{statistic.product.total}</b>
-                    p.mb-2 Đang kinh doanh: <b class="float-right text-success">#{statistic.product.active}</b>
-                    p.mb-0 Dừng kinh doanh: <b class="float-right text-danger">#{statistic.product.inactive}</b>
-
-        .col-xl-3.col-md-6.mb-4
-            .card.shadow-sm.border-left-info.h-100
-                .card-header.bg-info.text-white.font-weight-bold
-                    i.fas.fa-users.mr-2
-                    | Khách hàng
-                .card-body
-                    p.mb-2 Tổng tài khoản: <b class="float-right">#{statistic.user.total}</b>
-                    p.mb-2 Đang hoạt động: <b class="float-right text-success">#{statistic.user.active}</b>
-                    p.mb-0 Bị khóa: <b class="float-right text-danger">#{statistic.user.inactive}</b>
-
-        .col-xl-3.col-md-6.mb-4
-            .card.shadow-sm.border-left-warning.h-100
-                .card-header.bg-warning.text-dark.font-weight-bold
-                    i.fas.fa-user-cog.mr-2
-                    | Quản trị viên
-                .card-body
-                    p.mb-2 Tổng tài khoản: <b class="float-right">#{statistic.account.total}</b>
-                    p.mb-2 Đang hoạt động: <b class="float-right text-success">#{statistic.account.active}</b>
-                    p.mb-0 Bị khóa: <b class="float-right text-danger">#{statistic.account.inactive}</b>
+  style.
+    .border-left-success { border-left: .25rem solid #28a745 !important; }
+    .border-left-danger { border-left: .25rem solid #dc3545 !important; }
+    .bg-success-light { background-color: #f0fff4 !important; }
+    .bg-danger-light { background-color: #fff5f5 !important; }
