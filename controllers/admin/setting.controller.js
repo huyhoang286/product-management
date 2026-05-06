@@ -21,20 +21,32 @@ module.exports.generalPatch = async (req, res) => {
     try {
         const settingGeneral = await SettingGeneral.findOne({});
         
-        let banners = ["", "", ""];
-        if (settingGeneral && Array.isArray(settingGeneral.banners) && settingGeneral.banners.length > 0) {
-            banners = [...settingGeneral.banners];
+        if (req.files && req.files["logo"]) {
+            req.body.logo = `/uploads/${req.files["logo"][0].filename}`;
         }
 
-        if (req.files) {
-            if (req.files["logo"]) req.body.logo = `/uploads/${req.files["logo"][0].filename}`;
-            
-            if (req.files["banner1"]) banners[0] = `/uploads/${req.files["banner1"][0].filename}`;
-            if (req.files["banner2"]) banners[1] = `/uploads/${req.files["banner2"][0].filename}`;
-            if (req.files["banner3"]) banners[2] = `/uploads/${req.files["banner3"][0].filename}`;
+        let finalBanners = [];
+        let newBannerFiles = (req.files && req.files["banners"]) ? req.files["banners"] : [];
+        let fileIndex = 0;
+
+        let bannerUrls = req.body.bannerUrls || [];
+        if (!Array.isArray(bannerUrls)) bannerUrls = [bannerUrls];
+
+        for (let i = 0; i < bannerUrls.length; i++) {
+            if (bannerUrls[i] !== "") {
+                // Nếu chứa URL -> Admin giữ lại ảnh cũ ở vị trí này
+                finalBanners.push(bannerUrls[i]);
+            } else {
+                // Nếu rỗng -> Admin đã chọn tải lên 1 file mới ở vị trí này
+                if (newBannerFiles[fileIndex]) {
+                    finalBanners.push(`/uploads/${newBannerFiles[fileIndex].filename}`);
+                    fileIndex++;
+                }
+            }
         }
 
-        req.body.banners = banners;
+        req.body.banners = finalBanners;
+        delete req.body.bannerUrls;
 
         if (settingGeneral) {
             await SettingGeneral.updateOne({ _id: settingGeneral.id }, req.body);

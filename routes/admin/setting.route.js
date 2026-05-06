@@ -10,9 +10,7 @@ router.get("/general", controller.general);
 
 router.patch("/general", upload.fields([
     { name: 'logo', maxCount: 1 },
-    { name: 'banner1', maxCount: 1 },
-    { name: 'banner2', maxCount: 1 },
-    { name: 'banner3', maxCount: 1 }
+    { name: 'banners', maxCount: 10 } 
 ]), controller.generalPatch);
 
 module.exports = router;

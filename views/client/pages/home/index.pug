@@ -2,46 +2,46 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main
+    - var banners = (settingGeneral && settingGeneral.banners && settingGeneral.banners.length > 0) ? settingGeneral.banners : ['/images/banner1.jpg', '/images/banner2.png', 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80']
+
     //- HERO BANNER 
     .hero-section.mb-5
       #heroCarousel.carousel.slide.carousel-fade(data-ride="carousel" data-interval="4000")
+        
         ol.carousel-indicators
-          li.active(data-target="#heroCarousel" data-slide-to="0")
-          li(data-target="#heroCarousel" data-slide-to="1")
-          li(data-target="#heroCarousel" data-slide-to="2")
+            each banner, index in banners
+                li(class=(index === 0 ? "active" : "") data-target="#heroCarousel" data-slide-to=index)
 
         .carousel-inner
-          - var banner1 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[0]) ? settingGeneral.banners[0] : '/images/banner1.jpg'
-          - var banner2 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[1]) ? settingGeneral.banners[1] : '/images/banner2.png'
-          - var banner3 = (settingGeneral && settingGeneral.banners && settingGeneral.banners[2]) ? settingGeneral.banners[2] : 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+          each banner, index in banners
+            .carousel-item(class=(index === 0 ? "active" : ""))
+                .banner-wrapper(style="position: relative; background-color: #000;")
+                    
+                    if index === 0
+                        img.d-block.w-100(src=banner alt="Bứt Phá Tốc Độ" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; left: 8%; text-align: left; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Bứt Phá Tốc Độ
+                            p.lead.mb-4(style="font-size: 1.3rem;") Khám phá bộ sưu tập Nike Mercurial mới nhất mùa giải
+                            a.btn.btn-primary.btn-lg.px-5.py-3.font-weight-bold(href="/products" style="border-radius: 30px; text-transform: uppercase;") Mua Ngay
+                    
+                    else if index === 1
+                        img.d-block.w-100(src=banner alt="Kiểm Soát Thế Trận" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; right: 8%; text-align: right; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Kiểm Soát Trận Đấu
+                            p.lead.mb-4(style="font-size: 1.3rem;") Dòng giày Adidas Predator với độ bám và kiểm soát đỉnh cao
+                            a.btn.btn-danger.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=fg" style="border-radius: 30px; text-transform: uppercase;") Xem Chi Tiết
+                    
+                    else if index === 2
+                        img.d-block.w-100(src=banner alt="Sale Khủng" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
+                        .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; text-align: center; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
+                            h1.display-3.font-weight-bold.text-uppercase.text-warning(style="letter-spacing: 2px;") Sale Khủng Cuối Tuần
+                            p.lead.mb-4(style="font-size: 1.3rem;") Giảm giá lên đến 50% cho các mẫu giày Futsal (IC)
+                            a.btn.btn-warning.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=ic" style="border-radius: 30px; text-transform: uppercase;") Săn Sale Ngay
+                    
+                    else
+                        img.d-block.w-100(src=banner alt=`Banner ${index + 1}` style="height: calc(100vh - 66px); object-fit: cover;")
 
-          //- SLIDE 1
-          .carousel-item.active
-            .banner-wrapper(style="position: relative; background-color: #000;")
-              img.d-block.w-100(src=banner1 alt="Bứt Phá Tốc Độ" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
-              .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; left: 8%; text-align: left; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
-                h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Bứt Phá Tốc Độ
-                p.lead.mb-4(style="font-size: 1.3rem;") Khám phá bộ sưu tập Nike Mercurial mới nhất mùa giải
-                a.btn.btn-primary.btn-lg.px-5.py-3.font-weight-bold(href="/products" style="border-radius: 30px; text-transform: uppercase;") Mua Ngay
-
-          //- SLIDE 2
-          .carousel-item
-            .banner-wrapper(style="position: relative; background-color: #000;")
-              img.d-block.w-100(src=banner2 alt="Kiểm Soát Thế Trận" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
-              .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; right: 8%; text-align: right; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
-                h1.display-3.font-weight-bold.text-uppercase(style="letter-spacing: 2px;") Kiểm Soát Trận Đấu
-                p.lead.mb-4(style="font-size: 1.3rem;") Dòng giày Adidas Predator với độ bám và kiểm soát đỉnh cao
-                a.btn.btn-danger.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=fg" style="border-radius: 30px; text-transform: uppercase;") Xem Chi Tiết
-
-          //- SLIDE 3
-          .carousel-item
-            .banner-wrapper(style="position: relative; background-color: #000;")
-              img.d-block.w-100(src=banner3 alt="Sale Khủng" style="height: calc(100vh - 66px); object-fit: cover; opacity: 0.6;")
-              .carousel-caption.d-none.d-md-block(style="top: 50%; transform: translateY(-50%); bottom: auto; text-align: center; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);")
-                h1.display-3.font-weight-bold.text-uppercase.text-warning(style="letter-spacing: 2px;") Sale Khủng Cuối Tuần
-                p.lead.mb-4(style="font-size: 1.3rem;") Giảm giá lên đến 50% cho các mẫu giày Futsal (IC)
-                a.btn.btn-warning.btn-lg.px-5.py-3.font-weight-bold(href="/products?category=ic" style="border-radius: 30px; text-transform: uppercase;") Săn Sale Ngay
-
+        //- Hai nút bấm 
         a.carousel-control-prev(href="#heroCarousel" role="button" data-slide="prev" style="width: 5%;")
           span.carousel-control-prev-icon(aria-hidden="true" style="width: 3rem; height: 3rem;")
           span.sr-only Previous
@@ -125,7 +125,8 @@ block main
                                     span.price-new #{item.priceNew ? item.priceNew.toLocaleString("vi-VN") : item.price.toLocaleString("vi-VN")}đ
                                     if (item.discountPercentage > 0)
                                         small.price-old #{item.price.toLocaleString("vi-VN")}đ
-    //- KHỐI MÃ GIẢM GIÁ (VOUCHER SLIDER)
+                                        
+    //- MÃ GIẢM GIÁ 
     if vouchers && vouchers.length > 0
       .container.my-5
         .row

@@ -1,9 +1,14 @@
 const Product = require("../../models/product.model");
 const Voucher = require("../../models/voucher.model");
+const SettingGeneral = require("../../models/setting-general.model");
 
 // [GET] /
 module.exports.index = async (req, res) => {
     try {
+        const settingGeneral = await SettingGeneral.findOne({});
+        const limitBestSelling = settingGeneral?.productsHomeBestSeller || 8;
+        const limitNew = settingGeneral?.productsHomeNew || 8;
+
         // Lấy Sản phẩm bán chạy
         const productsBestSelling = await Product.aggregate([
             { $match: { status: "active", deleted: false } },
@@ -26,7 +31,7 @@ module.exports.index = async (req, res) => {
                 }
             },
             { $sort: { sold: -1 } }, 
-            { $limit: 8 } 
+            { $limit: limitBestSelling } 
         ]);
 
         // Lấy Sản phẩm mới nhất 
@@ -51,7 +56,7 @@ module.exports.index = async (req, res) => {
                 }
             },
             { $sort: { createdAt: -1 } },
-            { $limit: 8 }
+            { $limit: limitNew }
         ]);
 
         // Lấy mã giảm giá

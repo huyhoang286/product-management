@@ -10,6 +10,8 @@ const settingGeneralSchema = new mongoose.Schema(
     ourStory: String, 
     productsPerRow: { type: Number, default: 4 },
     productsPerPage: { type: Number, default: 8 },
+    productsHomeNew: { type: Number, default: 8 }, 
+    productsHomeBestSeller: { type: Number, default: 8 },
     banners: [String]
   },
   { timestamps: true }
